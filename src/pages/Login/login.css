@@ -69,3 +69,41 @@
 .login-button:hover {
   background: #eab308;
 }
+
+/* ===== Responsive (ไม่กระทบดีไซน์หลัก) ===== */
+
+@media (max-width: 768px) {
+  .login-card {
+    width: 90%;
+    padding: 80px 24px;
+  }
+
+  .login-title {
+    font-size: 18px;
+  }
+
+  .login-card input {
+    font-size: 16px; /* กัน zoom iPhone */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    width: 92%;
+    padding: 60px 18px;
+    border-radius: 8px;
+  }
+
+  .login-logo {
+    width: 60px;
+  }
+
+  .login-title {
+    font-size: 17px;
+  }
+
+  .login-button {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
