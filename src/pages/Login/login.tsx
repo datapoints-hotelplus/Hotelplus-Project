@@ -9,10 +9,10 @@ export default function Login() {
 
         <h2 className="login-title">เข้าสู่ระบบ</h2>
 
-        <label>อีเมล</label>
+        <label>ชื่อผู้ใช้</label>
         <input
           type="email"
-          placeholder=""
+          placeholder="กรุณากรอกชื่อผู้ใช้"
         />
 
         <label>รหัสผ่าน</label>

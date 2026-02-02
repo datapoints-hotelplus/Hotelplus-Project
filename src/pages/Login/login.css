@@ -1,19 +1,17 @@
-
 /* พื้นหลังเต็มจอ */
 .login-page {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #F3F3F3;
-  
+  background: #f3f4f6;
 }
 
 /* การ์ดขาว */
 .login-card {
-  width: 380px;
+  width: 450px;
   background: #ffffff;
-  padding: 40px 36px;
+  padding: 120px 40px;
   border-radius: 10px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   display: flex;
