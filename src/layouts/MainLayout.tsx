@@ -1,16 +1,12 @@
-import Navbar from "../components/Navbar/Navbar.tsx"
-import Footer from "../components/Footer/Footer.tsx"
+import { Outlet } from "react-router-dom";
+import Navbar from "./Navbar/Navbar";
 
-type Props = {
-  children: React.ReactNode
-}
-
-export default function MainLayout({ children }: Props) {
+export default function MainLayout() {
   return (
-    <>
-      <Navbar />
-      <main>{children}</main>
-      <Footer />
-    </>
-  )
+    <div>
+      <Navbar></Navbar>
+      <Outlet />
+      
+    </div>
+  );
 }
