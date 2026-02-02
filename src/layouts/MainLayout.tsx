@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar.tsx"
-import Footer from "../components/Footer.tsx"
+import Navbar from "../components/Navbar/Navbar.tsx"
+import Footer from "../components/Footer/Footer.tsx"
 
 type Props = {
   children: React.ReactNode
