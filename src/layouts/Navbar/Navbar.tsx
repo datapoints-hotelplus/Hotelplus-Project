@@ -1,5 +1,6 @@
 import styles from "./Navbar.module.css"
 import logo from "../../assets/logo/Hotelplus-logo.jpg"
+import UserMenu from "../../components/Usermenu/UserMenu"
 
 export default function Navbar() {
   return (
@@ -16,10 +17,11 @@ export default function Navbar() {
         <a>Menu 5</a>
         <a>Menu 6</a>
         <a>Menu 7</a>
+        
       </nav>
 
       <div className={styles.right}>
-        <span className={styles.user}>test@hotelplus.asia</span>
+        <UserMenu />
       </div>
     </header>
   )

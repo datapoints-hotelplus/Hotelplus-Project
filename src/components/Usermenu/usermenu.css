@@ -1,0 +1,27 @@
+.user-menu {
+  position: relative;
+}
+
+.user-name {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  padding: 10px 10px;
+}
+
+.dropdown button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 8px 40px;
+}

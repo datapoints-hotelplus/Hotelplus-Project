@@ -1,0 +1,109 @@
+/* พื้นหลังเต็มจอ */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f4f6;
+}
+
+/* การ์ดขาว */
+.login-card {
+  width: 450px;
+  background: #ffffff;
+  padding: 120px 40px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+/* โลโก้ */
+.login-logo {
+  width: 70px;
+  margin: 0 auto 12px;
+}
+
+/* หัวข้อ */
+.login-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* label */
+.login-card label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  margin-top: 10px;
+}
+
+/* ช่องกรอก */
+.login-card input {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #facc15;
+}
+
+/* ปุ่ม */
+.login-button {
+  margin-top: 22px;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  background: #facc15;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.login-button:hover {
+  background: #eab308;
+}
+
+/* ===== Responsive (ไม่กระทบดีไซน์หลัก) ===== */
+
+@media (max-width: 768px) {
+  .login-card {
+    width: 90%;
+    padding: 80px 24px;
+  }
+
+  .login-title {
+    font-size: 18px;
+  }
+
+  .login-card input {
+    font-size: 16px; /* กัน zoom iPhone */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    width: 92%;
+    padding: 60px 18px;
+    border-radius: 8px;
+  }
+
+  .login-logo {
+    width: 60px;
+  }
+
+  .login-title {
+    font-size: 17px;
+  }
+
+  .login-button {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
