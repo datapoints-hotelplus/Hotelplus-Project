@@ -1,3 +1,3 @@
 export default function Footer() {
-  return <footer>Footer Bass-dev</footer>
+  return <footer>Footer</footer>
 }
