@@ -3,3 +3,25 @@
   margin: 0;
   box-sizing: border-box; 
 }
+/* ให้ทุก element ใช้ฟ้อนนี้เป็นพื้นฐาน */
+html, body, #root {
+  font-family: 'Noto Sans Thai', sans-serif;
+}
+
+/* กัน component บางตัว override ฟ้อน */
+* {
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* (ถ้าอยากให้หัวข้อเด่นขึ้น) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Kanit', sans-serif;
+  font-weight: 600;
+}

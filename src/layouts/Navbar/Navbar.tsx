@@ -10,7 +10,7 @@ export default function Navbar() {
       </div>
 
       <nav className={styles.menu}>
-        <a>Menu 1</a>
+        <a>KOL</a>
         <a>Menu 2</a>
         <a>Menu 3</a>
         <a>Menu 4</a>
