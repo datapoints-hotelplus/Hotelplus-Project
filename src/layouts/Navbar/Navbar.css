@@ -1,0 +1,102 @@
+.navbar {
+  width: 100%;
+  height: 80px;
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  position: relative;
+  font-family: 'Prompt', sans-serif;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  font-weight: bold;
+}
+
+.logo img {
+  width: 76px;
+  height: auto;
+}
+
+/* เมนูปกติ */
+.nav-menu {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+}
+
+.nav-menu li {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.nav-menu li:hover {
+  opacity: 0.6;
+}
+
+.nav-right {
+  font-size: 14px;
+}
+
+/* ================= MOBILE ================= */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: black;
+  transition: 0.3s;
+}
+
+/* animation X */
+.hamburger.open span:nth-child(1) {
+  transform: rotate(45deg) translateY(8px);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: rotate(-45deg) translateY(-8px);
+}
+
+/* 📱 เมื่อจอเล็ก */
+@media (max-width: 900px) {
+  .nav-menu {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: #FFD52B;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 25px 0;
+    display: none;
+  }
+
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-right {
+    display: none; /* ซ่อน UserMenu บนมือถือ (เอาออกได้ถ้าไม่อยากซ่อน) */
+  }
+}

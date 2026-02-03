@@ -2,8 +2,8 @@
 
 const Home = () => {
   return (
-    <div>Home Me
-
+    <div>
+      หน้าหลัก
     </div>
     
   )

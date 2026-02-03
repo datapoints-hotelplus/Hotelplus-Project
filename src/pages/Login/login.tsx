@@ -9,6 +9,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  
   const handleLogin = async () => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -24,11 +25,11 @@ export default function Login() {
 
   return (
     <form
-  className="login-page"
-  onSubmit={(e) => {
-    e.preventDefault();
-    handleLogin();
-  }}
+      className="login-page"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleLogin();
+      }}
 >
   <div className="login-card">
     <img src={logo} alt="Hotel Plus" className="login-logo" />
