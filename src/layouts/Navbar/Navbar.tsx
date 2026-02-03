@@ -1,11 +1,14 @@
 import { useState } from "react";
+import { useUserRole } from "../../hooks/useUserRole";
 import "./Navbar.css";
 import logo from "../../assets/logo/Hotelplus-logo.jpg";
 import UserMenu from "../../components/Usermenu/UserMenu";
 
-
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const role = useUserRole();
+  console.log("ROLE =", role);
+
 
   return (
     <header className="header">
@@ -15,15 +18,11 @@ export default function Navbar() {
             <img src={logo} alt="Hotel Plus" />
           </div>
 
-          {/* เมนูปกติ (จอใหญ่) */}
           <ul className={`nav-menu ${menuOpen ? "active" : ""}`}>
             <li>หน้าหลัก</li>
-            <li>KOLs</li>
-            <li>Menu 3</li>
-            <li>Menu 4</li>
-            <li>Menu 5</li>
-            <li>Menu 6</li>
-            <li>Menu 7</li>
+            {role === "MarCom" && <li>Kols</li>}
+            {role === "MarCom" && <li>Calculator</li>}
+            {role === "ORM" && <li>Shop Competitor Rate</li>}
           </ul>
         </div>
 
@@ -31,7 +30,6 @@ export default function Navbar() {
           <UserMenu />
         </div>
 
-        {/* ปุ่ม Hamburger (มือถือ) */}
         <div
           className={`hamburger ${menuOpen ? "open" : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
