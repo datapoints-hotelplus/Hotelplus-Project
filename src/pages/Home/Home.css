@@ -39,7 +39,7 @@
 
 /* ================= LEFT / RIGHT BUTTON ================= */
 
-.nav {
+.button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -52,7 +52,7 @@
   z-index: 2;
 }
 
-.nav:hover {
+.button:hover {
   background: var(--color-secondary);
 }
 
@@ -168,7 +168,7 @@
   }
 
   /* ปุ่มซ้ายขวาเล็กลง */
-  .nav {
+  .button {
     font-size: 22px;
     padding: 8px 12px;
   }

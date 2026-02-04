@@ -64,8 +64,8 @@ const HomePage: React.FC = () => {
             alt={slides[currentIndex].alt}
             className={`slide-image ${fade ? 'fade-in' : 'fade-out'}`}
           />
-          <button className="nav left" onClick={prevSlide}>❮</button>
-          <button className="nav right" onClick={nextSlide}>❯</button>
+          <button className="button left" onClick={prevSlide}>❮</button>
+          <button className="button right" onClick={nextSlide}>❯</button>
           <div className="indicators">
             {slides.map((_, index) => (
               <span
