@@ -3,6 +3,7 @@
 :root {
   --color-primary: #FFD52B;
   --color-secondary: #000;
+  --color-clean: #fff;
 }
 
 * {

@@ -1,0 +1,182 @@
+.main-content {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.content-wrapper {
+  width: 100%;
+  display: flex;
+}
+
+/* ================= IMAGE SLIDER ================= */
+
+.img-home-box {
+  width: 50%;
+  height: 450px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* รูป */
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ================= FADE EFFECT ================= */
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+/* ================= LEFT / RIGHT BUTTON ================= */
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: var(--color-primary);
+  border: none;
+  font-size: 25px;
+  padding: 10px 16px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.nav:hover {
+  background: var(--color-secondary);
+}
+
+.left {
+  left: 15px;
+}
+
+.right {
+  right: 15px;
+}
+
+/* ================= INDICATORS ================= */
+
+.indicators {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 2;
+}
+
+.dot {
+  width: 30px;
+  height: 6px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.dot.active {
+  background: white;
+}
+
+/* ================= TEXT ================= */
+
+.text-box {
+  width: 50%;
+  height: 450px;
+  background-color: var(--color-secondary);
+  color: white;
+  padding: 40px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 24px;
+}
+/* ================= BUTTON IN TEXT BOX ================= */
+
+.text-box {
+  position: relative;   /* สำคัญสำหรับวางปุ่มมุม */
+}
+
+/* ปุ่ม */
+.website-btn {
+  position: absolute;
+  right: 30px;
+  bottom: 30px;
+
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  text-decoration: none;
+
+  padding: 12px 26px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: bold;
+
+  transition: all 0.2s ease;
+}
+
+.website-btn:hover {
+  background: var(--color-clean);
+  transform: translateY(-2px);
+}
+
+
+/* ================= RESPONSIVE HOME SECTION ================= */
+
+@media (max-width: 900px) {
+
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .img-home-box {
+    width: 100%;
+    height: 300px;
+  }
+
+  .text-box {
+    width: 100%;
+    height: auto;
+    padding: 30px 20px;
+  }
+
+  .text-box h3 {
+    font-size: 26px;
+    text-align: center;
+  }
+
+  .text-box p {
+    font-size: 15px;
+    text-align: center;
+  }
+
+  /* ปรับ indicator ให้อยู่ต่ำลงนิด */
+  .indicators {
+    bottom: 12px;
+  }
+
+  /* ปุ่มซ้ายขวาเล็กลง */
+  .nav {
+    font-size: 22px;
+    padding: 8px 12px;
+  }
+
+  .website-btn {
+    position: static; 
+    margin-top: 25px;
+    align-self: center;
+  }
+  
+}

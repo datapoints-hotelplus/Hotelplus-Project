@@ -75,6 +75,7 @@
 
 /* 📱 เมื่อจอเล็ก */
 @media (max-width: 900px) {
+
   .nav-menu {
     position: absolute;
     top: 80px;
@@ -85,11 +86,20 @@
     align-items: center;
     gap: 25px;
     padding: 25px 0;
-    display: none;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+
+    transition: all 0.35s ease;
+
+    z-index: 1000;
   }
 
   .nav-menu.active {
-    display: flex;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
 
   .hamburger {
@@ -97,6 +107,7 @@
   }
 
   .nav-right {
-    display: none; /* ซ่อน UserMenu บนมือถือ (เอาออกได้ถ้าไม่อยากซ่อน) */
+    display: none;
   }
 }
+
