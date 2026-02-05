@@ -60,6 +60,12 @@ const HomePage: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [ticketName, setTicketName] = useState("");
+  const [ticketEmail, setTicketEmail] = useState("");
+  const [ticketTeam, setTicketTeam] = useState("");
+  const [ticketMessage, setTicketMessage] = useState("");
+  const [ticketStatus, setTicketStatus] = useState("");
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -108,6 +114,39 @@ const HomePage: React.FC = () => {
     changeSlide(index);
   };
 
+  const TICKET_API =
+  "https://n8n.hotelplus.asia/webhook/slack-ticket";
+
+
+  const handleSubmitTicket = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await fetch(TICKET_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: ticketName,
+          email: ticketEmail,
+          team: ticketTeam,
+          message: ticketMessage
+        })
+      });
+
+      setTicketStatus("ส่ง Ticket เรียบร้อยแล้ว ✅");
+
+      setTicketName("");
+      setTicketEmail("");
+      setTicketTeam("");
+      setTicketMessage("");
+
+    } catch (err) {
+      setTicketStatus("ส่งไม่สำเร็จ ❌");
+    }
+  };
+
   return (
     <div className="main-content">
       <div className="content-wrapper">
@@ -150,6 +189,7 @@ const HomePage: React.FC = () => {
           </a>
         </div>
       </div>
+
       <div className="container-second">
         <h3 className="section-title">ประกาศจากบริษัท</h3>
 
@@ -174,11 +214,72 @@ const HomePage: React.FC = () => {
         </h3>
       </div>
 
-      <div className="container-forth">
-        <h3>
-          forth
-        </h3>
+      <div className="container-foth">
+
+        <div className="ticket-wrapper">
+
+          <div className="ticket-text">
+            <h3>แจ้งปัญหาด้านการใช้งาน / ส่งผ่าน Ticket</h3>
+            <p>
+              หากพบปัญหาในการใช้งานระบบ สามารถกรอกข้อมูลด้านล่างเพื่อแจ้งปัญหา  
+              ทางทีมจะรีบตรวจสอบและติดต่อกลับโดยเร็วที่สุดค่ะ
+            </p>
+          </div>
+
+          <form className="ticket-form" onSubmit={handleSubmitTicket}>
+
+            <input
+              type="text"
+              placeholder="ชื่อผู้ติดต่อ"
+              value={ticketName}
+              onChange={(e) => setTicketName(e.target.value)}
+              required
+            />
+
+            <input
+              type="email"
+              placeholder="อีเมล"
+              value={ticketEmail}
+              onChange={(e) => setTicketEmail(e.target.value)}
+              required
+            />
+
+            <select
+              value={ticketTeam}
+              onChange={(e) => setTicketTeam(e.target.value)}
+            >
+              <option value="">TEAM</option>
+              <option value="The-Office">The Office</option>
+              <option value="Business-Development">Business Development</option>
+              <option value="Partner-Success-PS)">Partner Success (PS)</option>
+              <option value="Customer-success-CS">Customer success (CS)</option>
+              <option value="Online-Revenue-Management-ORM">Online Revenue Management (ORM)</option>
+              <option value="Marketing-Communication-MarCom">Marketing Communication (MarCom)</option>
+            </select>
+
+            <textarea
+              placeholder="รายละเอียดปัญหา"
+              value={ticketMessage}
+              onChange={(e) => setTicketMessage(e.target.value)}
+              required
+            />
+
+            <button type="submit">
+              ส่ง Ticket
+            </button>
+
+            {ticketStatus && (
+              <p className="ticket-status">{ticketStatus}</p>
+            )}
+
+          </form>
+
+        </div>
+
       </div>
+
+
+      
     </div>
   );
 };
