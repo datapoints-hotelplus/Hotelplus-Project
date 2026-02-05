@@ -3,10 +3,15 @@ import { useUserRole } from "../../hooks/useUserRole";
 import "./Navbar.css";
 import logo from "../../assets/logo/Hotelplus-logo.jpg";
 import UserMenu from "../../components/Usermenu/UserMenu";
+import UserRoleBadge from "../../components/UserRoleBadge/UserRoleBadge";
+import { Link } from "react-router-dom";
+
+
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const role = useUserRole();
+  const { role, loading } = useUserRole();
+  if (loading) return null;
   console.log("ROLE =", role);
 
 
@@ -19,15 +24,23 @@ export default function Navbar() {
           </div>
 
           <ul className={`nav-menu ${menuOpen ? "active" : ""}`}>
-            <li>หน้าหลัก</li>
-            {role === "MarCom" && <li>Kols</li>}
-            {role === "MarCom" && <li>Calculator</li>}
+            <li><Link to ="/">หน้าหลัก</Link></li>
+
+            {role === "MarCom" && (
+              <>
+                <li><Link to ="/kols">Kols</Link></li>
+                <li><Link to="/calculator">Calculator</Link></li>
+              </>
+            )}
+
             {role === "ORM" && <li>Shop Competitor Rate</li>}
           </ul>
         </div>
 
         <div className="nav-right">
+          <UserRoleBadge />
           <UserMenu />
+          
         </div>
 
         <div

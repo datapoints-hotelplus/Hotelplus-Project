@@ -39,11 +39,19 @@
   transition: opacity 0.2s ease;
 }
 
+.nav-menu li a {
+  text-decoration: none;
+  color: var(--color-secondary);
+}
+
 .nav-menu li:hover {
   opacity: 0.6;
 }
 
 .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
   font-size: 14px;
 }
 

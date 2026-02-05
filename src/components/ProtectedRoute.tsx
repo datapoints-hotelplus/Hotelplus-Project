@@ -1,32 +1,35 @@
-import { useEffect, useState, ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useUserRole } from "../hooks/useUserRole";
 import { supabase } from "../lib/supabase";
 
-export default function ProtectedRoute({ children }: { children: ReactNode }) {
+type Props = {
+  children: ReactNode;
+  allowedRoles?: string[];
+};
+
+export default function ProtectedRoute({ children, allowedRoles }: Props) {
+  const { role, loading: roleLoading } = useUserRole();
   const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    // ดึง session ปัจจุบัน
-    supabase.auth.getSession().then(({ data }) => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
       setSession(data.session);
-      setLoading(false);
-    });
-
-    // ฟังตอน login/logout
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-      }
-    );
-
-    return () => {
-      listener.subscription.unsubscribe();
-      
+      setAuthLoading(false);
     };
+
+    getSession();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (authLoading || roleLoading) return <div>Loading...</div>;
 
-  return session ? children : <Navigate to="/login" replace />;
+  if (!session) return <Navigate to="/login" replace />;
+
+  if (allowedRoles && (!role || !allowedRoles.includes(role))) {
+    return <Navigate to="/403" replace />;
+  }
+
+  return <>{children}</>;
 }

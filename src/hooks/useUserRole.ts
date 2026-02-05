@@ -3,12 +3,16 @@ import { supabase } from "../lib/supabase";
 
 export function useUserRole() {
   const [role, setRole] = useState<string | null>(null);
-  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRole = async () => {
+    const getRole = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       const { data, error } = await supabase
         .from("profiles")
@@ -16,11 +20,30 @@ export function useUserRole() {
         .eq("id", user.id)
         .single();
 
-      if (!error) setRole(data.role);
+      if (!error && data) {
+        setRole(data.role);
+      }
+
+      setLoading(false);
     };
 
-    fetchRole();
+    getRole();
+
+    // 🔥 สำคัญมาก: ฟังตอน login/logout
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!session?.user) {
+          setRole(null);
+          return;
+        }
+        getRole();
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
-  return role;
+  return { role, loading };
 }
