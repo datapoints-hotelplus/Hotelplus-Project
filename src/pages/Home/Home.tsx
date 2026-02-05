@@ -112,11 +112,6 @@ const HomePage: React.FC = () => {
           forth
         </h3>
       </div>
-      <div className="container-footer">
-        <h3>
-          footer
-        </h3>
-      </div>
     </div>
   );
 };
