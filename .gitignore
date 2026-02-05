@@ -133,3 +133,5 @@ dist
 client/node_modules/
 server/node_modules/
 client/dist/
+.vite/deps/_metadata.json
+.vite/deps/package.json
