@@ -13,6 +13,39 @@ type Slide = {
   alt: string;
 };
 
+type Announcement = {
+  title: string;
+  description: string;
+  date: string;
+};
+
+const formatThaiDate = (value: any) => {
+  if (!value) return "";
+
+  // กรณีเป็น Date object จาก Google
+  if (typeof value === "string" && value.includes("Date")) {
+    const parts = value.match(/\d+/g);
+    if (!parts) return "";
+
+    const year = Number(parts[0]);
+    const month = Number(parts[1]);
+    const day = Number(parts[2]);
+
+    const date = new Date(year, month, day);
+
+    return date.toLocaleDateString("th-TH", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  }
+
+  // กรณีเป็น string ปกติ
+  const date = new Date(value);
+  return date.toLocaleDateString("th-TH");
+};
+
+
 const HomePage: React.FC = () => {
 
   const slides: Slide[] = [
@@ -26,6 +59,7 @@ const HomePage: React.FC = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fade, setFade] = useState(true);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -34,6 +68,25 @@ const HomePage: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+  useEffect(() => {
+    fetch(
+      "https://docs.google.com/spreadsheets/d/1YVCkhxkn-UHy4UC8FGUV-_yK8o8vvdwqvSScw1iKdKo/gviz/tq?tqx=out:json"
+    )
+      .then(res => res.text())
+      .then(text => {
+        const json = JSON.parse(text.substring(47).slice(0, -2));
+        const rows = json.table.rows;
+
+        const data = rows.map((row: any) => ({
+          title: row.c[0]?.v || "",
+          description: row.c[1]?.v || "",
+          date: formatThaiDate(row.c[2]?.v)
+        }));
+
+        setAnnouncements(data);
+      });
+  }, []);
 
   const changeSlide = (index: number) => {
     setFade(false);
@@ -98,15 +151,29 @@ const HomePage: React.FC = () => {
         </div>
       </div>
       <div className="container-second">
-        <h3>
-          second
-        </h3>
+        <h3 className="section-title">ประกาศจากบริษัท</h3>
+
+        <div className="announcement-list">
+          {announcements.length === 0 ? (
+            <p>กำลังโหลดประกาศ...</p>
+          ) : (
+            announcements.map((item, index) => (
+              <div key={index} className="announcement-card">
+                <h4>{item.title}</h4>
+                <p>{item.description}</p>
+                <span>{item.date}</span>
+              </div>
+            ))
+          )}
+        </div>
       </div>
+
       <div className="container-third">
         <h3>
           third
         </h3>
       </div>
+
       <div className="container-forth">
         <h3>
           forth

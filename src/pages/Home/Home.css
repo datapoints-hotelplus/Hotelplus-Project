@@ -43,7 +43,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: var(--color-primary);
   border: none;
   font-size: 25px;
@@ -79,7 +79,7 @@
 .dot {
   width: 30px;
   height: 6px;
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.3s ease;
@@ -106,7 +106,7 @@
 /* ================= BUTTON IN TEXT BOX ================= */
 
 .text-box {
-  position: relative;   /* สำคัญสำหรับวางปุ่มมุม */
+  position: relative; /* สำคัญสำหรับวางปุ่มมุม */
 }
 
 /* ปุ่ม */
@@ -132,11 +132,9 @@
   transform: translateY(-2px);
 }
 
-
 /* ================= RESPONSIVE HOME SECTION ================= */
 
 @media (max-width: 900px) {
-
   .content-wrapper {
     flex-direction: column;
   }
@@ -174,9 +172,61 @@
   }
 
   .website-btn {
-    position: static; 
+    position: static;
     margin-top: 25px;
     align-self: center;
   }
-  
 }
+
+/* ================= ANNOUNCEMENT SECTION ================= */
+
+.container-second {
+  padding: 80px 10%;
+  background: #f9f9f9;
+}
+
+.section-title {
+  font-size: 32px;
+  text-align: center;
+}
+
+.announcement-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.announcement-card {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.announcement-card:hover {
+  transform: translateY(-5px);
+}
+
+.announcement-card h4 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.announcement-card p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 15px;
+}
+
+.announcement-card span {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+@media (max-width: 900px) {
+  .announcement-list {
+    grid-template-columns: 1fr;
+  }
+}
+
