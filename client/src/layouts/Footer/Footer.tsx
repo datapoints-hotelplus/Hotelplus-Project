@@ -43,6 +43,7 @@ export default function Footer() {
       <div className="footer-bottom">
         Copyright © 2023 by Hotelplus.asia All Right Reserved.
       </div>
+      //footer//
 
     </footer>
   );
