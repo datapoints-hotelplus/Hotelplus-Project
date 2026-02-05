@@ -1,0 +1,12 @@
+.role-badge {
+  padding: 12px 30px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: bold;
+  background: var(--bt-gray);
+  color: var(--color-secondary);
+}
+
+
+
+
