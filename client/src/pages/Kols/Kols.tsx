@@ -1,114 +1,134 @@
 import { useState } from "react";
-import { searchKols } from "../../lib/api";
-
-
+import { searchKols, getKolsResult } from "../../lib/api";
 
 export default function Kols() {
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<any[]>([]);
-  const [source, setSource] = useState<string>("");
-  const [loading, setLoading] = useState(false);  
+  const [source, setSource] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [queuePos, setQueuePos] = useState<number | null>(null);
 
   const handleSearch = async () => {
-  if (!keyword.trim()) return;
-  if (loading) return;
+    if (!keyword.trim() || loading) return;
 
-  setLoading(true);
-  setResults([]);
-
-  try {
-    const data = await searchKols(keyword, source ? [source] : []);
-
-    if (Array.isArray(data)) {
-      setResults(data);
-    } else {
-      console.error("Search failed:", data);
-      setResults([]);
-    }
-  } catch (err) {
-    console.error(err);
+    setLoading(true);
     setResults([]);
-  } finally {
-    setLoading(false);
-  }
-};
+    setQueuePos(null);
 
-  
+    try {
+      // 1️⃣ ส่ง search
+      const res = await searchKols(keyword, source ? [source] : []);
 
+      if (res.status !== "queued") {
+        throw new Error("Invalid response");
+      }
 
-    return (
+      setQueuePos(res.position);
+
+      // 2️⃣ polling
+      const jobId = res.jobId;
+      const interval = setInterval(async () => {
+        const result = await getKolsResult(jobId);
+
+        if (result.status === "done") {
+          clearInterval(interval);
+          setResults(result.data);
+          setLoading(false);
+          setQueuePos(null);
+        }
+
+        if (result.status === "error") {
+          clearInterval(interval);
+          setLoading(false);
+          alert("เกิดข้อผิดพลาดในการค้นหา");
+        }
+      }, 2000);
+
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h2>ค้นหาเว็บไซต์จาก keyword</h2>
+
       <div>
-        <h2>ค้นหาเว็บไซต์จาก keyword</h2>
+        <label>
+          <input
+            type="radio"
+            name="source"
+            checked={source === ""}
+            disabled={loading}
+            onChange={() => setSource("")}
+          />
+          ค้นหาทั่วไป
+        </label>
 
-        <div>
-          <label>
-            <input
-              type="radio"
-              name="source"
-              checked={source === ""}
-              onChange={() => setSource("")}
-            />
-            ค้นหาทั่วไป
-          </label>
+        <label>
+          <input
+            type="radio"
+            name="source"
+            checked={source === "facebook"}
+            disabled={loading}
+            onChange={() => setSource("facebook")}
+          />
+          Facebook
+        </label>
 
-          <label>
-            <input
-              type="radio"
-              name="source"
-              disabled={loading}   // 👈 เพิ่ม
-              checked={source === "facebook"}
-              onChange={() => setSource("facebook")}
-            />
-            Facebook
-          </label>
+        <label>
+          <input
+            type="radio"
+            name="source"
+            checked={source === "facebook_reels"}
+            disabled={loading}
+            onChange={() => setSource("facebook_reels")}
+          />
+          Facebook Reels
+        </label>
 
-
-          <label>
-            <input
-              type="radio"
-              name="source"
-              disabled={loading}   // 👈 เพิ่ม
-              checked={source === "facebook_reels"}
-              onChange={() => setSource("facebook_reels")}
-            />
-            Facebook Reels&Videos
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="source"
-              disabled={loading}   // 👈 เพิ่ม
-              checked={source === "tiktok"}
-              onChange={() => setSource("tiktok")}
-            />
-            TikTok
-          </label>
-        </div>
-
-        <input
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="เช่น โรงแรมยอดนิยม"
-        />
-
-        <button disabled={loading} onClick={handleSearch}>
-          ค้นหา
-        </button>
-
-        {loading && <p>กำลังค้นหา...</p>}
-
-        <div>
-          {results.map((item, index) => (
-            <div key={item.url} style={{ marginTop: 20 }}>
-              <h3>{index + 1}. {item.title}</h3>
-              <p>{item.snippet}</p>
-              <a href={item.url} target="_blank" rel="noreferrer">
-                {item.url}
-              </a>
-            </div>
-          ))}
-        </div>
+        <label>
+          <input
+            type="radio"
+            name="source"
+            checked={source === "tiktok"}
+            disabled={loading}
+            onChange={() => setSource("tiktok")}
+          />
+          TikTok
+        </label>
       </div>
-    );
-  }
+
+      <input
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+        placeholder="เช่น โรงแรมยอดนิยม"
+      />
+
+      <button disabled={loading} onClick={handleSearch}>
+        ค้นหา
+      </button>
+
+      {loading && (
+        <p>
+          {queuePos !== null
+            ? `อยู่ลำดับคิวที่ ${queuePos}`
+            : "กำลังค้นหา..."}
+        </p>
+      )}
+
+      <div>
+        {results.map((item, index) => (
+          <div key={item.url} style={{ marginTop: 20 }}>
+            <h3>{index + 1}. {item.title}</h3>
+            <p>{item.snippet}</p>
+            <a href={item.url} target="_blank" rel="noreferrer">
+              {item.url}
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -1,14 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
-const cheerio = require("cheerio");
 require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-
 
 function buildSourceQuery(sources = []) {
   const map = {
@@ -18,32 +15,65 @@ function buildSourceQuery(sources = []) {
   };
 
   const queries = sources.map(s => map[s]).filter(Boolean);
-
   if (queries.length === 0) return "";
-
   return `(${queries.join(" OR ")})`;
 }
 
+/* ================= QUEUE ================= */
 
-app.post("/search-kols", async (req, res) => {
+const jobQueue = [];
+const jobResults = {};
+let isProcessing = false;
+
+async function processQueue() {
+  if (isProcessing || jobQueue.length === 0) return;
+
+  isProcessing = true;
+  const job = jobQueue.shift();
+
+  try {
+    const result = await job.task();
+    jobResults[job.id] = {
+      status: "done",
+      data: result,
+    };
+  } catch (err) {
+    jobResults[job.id] = {
+      status: "error",
+      error: err.message,
+    };
+  } finally {
+    isProcessing = false;
+    processQueue();
+  }
+}
+
+/* ================= API ================= */
+
+app.post("/search-kols", (req, res) => {
   const { keyword, sources } = req.body;
 
   const sourceQuery = buildSourceQuery(sources);
   const finalQuery = `${keyword} ${sourceQuery}`.trim();
 
-  console.log("SEARCH:", finalQuery);
+  const jobId = Date.now().toString();
+  const position = jobQueue.length + (isProcessing ? 1 : 0);
 
-  try {
-    const MAX_PAGES = 20;   // 👈 20 หน้า
-    const PAGE_SIZE = 10;  // 1 หน้า = 10 results
-    const DELAY_MS = 700;  // หน่วงกัน SerpAPI
+  jobResults[jobId] = { status: "queued", position };
 
-    const results = [];
+  jobQueue.push({
+    id: jobId,
+    task: async () => {
+      console.log("PROCESS:", finalQuery);
 
-    for (let i = 0; i < MAX_PAGES; i++) {
-      const start = i * PAGE_SIZE;
+      const MAX_PAGES = 20;
+      const PAGE_SIZE = 10;
+      const DELAY_MS = 700;
+      const results = [];
 
-      try {
+      for (let i = 0; i < MAX_PAGES; i++) {
+        const start = i * PAGE_SIZE;
+
         const response = await axios.get(
           "https://serpapi.com/search.json",
           {
@@ -62,10 +92,7 @@ app.post("/search-kols", async (req, res) => {
         );
 
         const pageResults = response.data.organic_results || [];
-
-        if (pageResults.length === 0) {
-          break; // 🔥 ไม่มีผลแล้ว หยุดทันที
-        }
+        if (pageResults.length === 0) break;
 
         results.push(
           ...pageResults.map(r => ({
@@ -76,28 +103,27 @@ app.post("/search-kols", async (req, res) => {
         );
 
         await new Promise(r => setTimeout(r, DELAY_MS));
-      } catch (err) {
-        console.log("STOP AT PAGE", i + 1);
-        break;
       }
-    }
 
-    res.json(results);
+      return results;
+    },
+  });
 
-  } catch (err) {
-    if (err.response) {
-      console.log("SERP STATUS:", err.response.status);
-      console.log("SERP DATA:", err.response.data);
-    } else {
-      console.log("SERP ERROR:", err.message);
-    }
-    res.status(500).json({ error: "Google search failed" });
-  }
+  processQueue();
 
+  res.json({
+    status: "queued",
+    jobId,
+    position,
+  });
 });
 
-
-
-
+app.get("/search-kols/result/:jobId", (req, res) => {
+  const job = jobResults[req.params.jobId];
+  if (!job) {
+    return res.status(404).json({ status: "not_found" });
+  }
+  res.json(job);
+});
 
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));
