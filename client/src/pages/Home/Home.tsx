@@ -66,6 +66,7 @@ const HomePage: React.FC = () => {
   const [ticketMessage, setTicketMessage] = useState("");
   const [ticketStatus, setTicketStatus] = useState("");
 
+  const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -77,7 +78,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     fetch(
-      "https://docs.google.com/spreadsheets/d/1YVCkhxkn-UHy4UC8FGUV-_yK8o8vvdwqvSScw1iKdKo/gviz/tq?tqx=out:json"
+      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`
     )
       .then(res => res.text())
       .then(text => {
@@ -93,6 +94,7 @@ const HomePage: React.FC = () => {
         setAnnouncements(data);
       });
   }, []);
+
 
   const changeSlide = (index: number) => {
     setFade(false);
@@ -114,10 +116,7 @@ const HomePage: React.FC = () => {
     changeSlide(index);
   };
 
-  const TICKET_API =
-  "https://n8n.hotelplus.asia/webhook/slack-ticket";
-
-
+  const TICKET_API = import.meta.env.VITE_TICKET_API;
   const handleSubmitTicket = async (e: React.FormEvent) => {
     e.preventDefault();
 
