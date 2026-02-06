@@ -197,7 +197,7 @@ const HomePage: React.FC = () => {
       {popupIndex !== null && announcements[popupIndex] && (
           <div className="announcement-popup-overlay" onClick={handleClosePopup}>
             <div className="announcement-popup" onClick={handleClosePopup}>
-              <h3>📢 Announcement 📢</h3>
+              <h3>🚨ประกาศจากบริษัท🚨</h3>
               <h4>{announcements[popupIndex].title}</h4>
               <p>{announcements[popupIndex].description}</p>
               <div className="popup-footer">
@@ -251,7 +251,7 @@ const HomePage: React.FC = () => {
       </div>
 
       <div className="container-second">
-        <h3 className="section-title">📢 Announcement 📢</h3>
+        <h3 className="section-title">🚨ประกาศจากบริษัท🚨</h3>
 
         <div className="announcement-list">
           {announcements.length === 0 ? (

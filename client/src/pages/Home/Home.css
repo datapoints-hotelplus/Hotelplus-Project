@@ -216,7 +216,7 @@
   border-radius: 10px;
   animation: popupFade 0.3s ease;
   color: var(--color-clean);
-  border: 2px solid var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
 
 .announcement-popup h3 {
