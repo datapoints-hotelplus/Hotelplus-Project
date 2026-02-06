@@ -66,7 +66,7 @@ app.post("/search-kols", (req, res) => {
     task: async () => {
       console.log("PROCESS:", finalQuery);
 
-      const MAX_PAGES = 20;
+      const MAX_PAGES = 2;   // 🔥 ทดลองแค่ 2 หน้า (20 results)
       const PAGE_SIZE = 10;
       const DELAY_MS = 700;
       const results = [];
