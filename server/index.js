@@ -34,8 +34,8 @@ app.post("/search-kols", async (req, res) => {
   console.log("SEARCH:", finalQuery);
 
   try {
-    const MAX_PAGES = 2;   // 👈 20 หน้า
-    const PAGE_SIZE = 1;  // 1 หน้า = 10 results
+    const MAX_PAGES = 5;   // 👈 20 หน้า
+    const PAGE_SIZE = 10;  // 1 หน้า = 10 results
     const DELAY_MS = 700;  // หน่วงกัน SerpAPI
 
     const results = [];
