@@ -183,20 +183,115 @@
 
 .container-second {
   width: 100%;
-  max-width: 1440px; /* จำกัดความกว้างแทน */
   position: relative;
-  margin: 30px auto;
+  margin: 10px auto;
 
   background-image: url("../../assets/Images/phapok-eco.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  border-radius: 20px;
   overflow: hidden;
 
   padding: 80px 8%;
 }
+
+/* ================= ANNOUNCEMENT POPUP ================= */
+
+.announcement-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.announcement-popup {
+  background:var(--color-secondary);
+  max-width: 520px;
+  width: 90%;
+  padding: 30px;
+  border-radius: 10px;
+  animation: popupFade 0.3s ease;
+  color: var(--color-clean);
+  border: 2px solid var(--color-primary);
+}
+
+.announcement-popup h3 {
+  font-size: 40px;
+  margin-bottom:20px;
+  text-align: center;
+}
+
+.announcement-popup h4 {
+  margin-bottom: 12px;
+}
+
+.announcement-popup p {
+  white-space: pre-line;
+  margin-bottom: 20px;
+}
+
+.announcement-popup span {
+  display: block;
+  font-size: 12px;
+  opacity: 0.6;
+  margin-bottom: 20px;
+}
+
+.announcement-popup button {
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  border: none;
+  padding: 10px 26px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* ===== POPUP FOOTER ===== */
+
+.popup-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 25px;
+}
+
+.popup-footer span {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.popup-footer button {
+  background:var(--color-primary);
+  color: var(--color-secondary);
+  border: none;
+  padding: 8px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.popup-footer button:hover {
+  background: var(--color-clean);
+  transform: translateY(-1px);
+}
+
+
+@keyframes popupFade {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 
 /* Overlay */
 .container-second::before {
@@ -205,7 +300,7 @@
   inset: 0;
   z-index: 0;
   background: var(--color-secondary);
-  opacity: 0.55;
+  opacity: 0.4;
 }
 
 /* ดัน content ให้อยู่เหนือ overlay */
@@ -236,6 +331,9 @@
   border-radius: 16px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .announcement-card:hover {
@@ -251,11 +349,13 @@
   font-size: 14px;
   opacity: 0.8;
   margin-bottom: 15px;
+  white-space: pre-line;
 }
 
 .announcement-card span {
   font-size: 12px;
   opacity: 0.6;
+  margin-top: auto;
 }
 
 /* ================= MOBILE ================= */
@@ -388,4 +488,161 @@
   .ticket-text p {
     text-align: center;
   }
+}
+
+/* ================= ACTIVITY FEED (LOGIN KILL FEED) ================= */
+
+.container-third {
+  width: 100%;
+  max-width: 1440px;
+  margin: 20px auto;
+  padding: 30px 5%;
+  border-radius: 20px;
+  color: var(--color-clean);
+
+  position: relative;
+  overflow: hidden;
+
+  background-image: url("../../assets/Images/phapok-eco-bath.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Overlay */
+
+.container-third::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-secondary);
+  opacity: 0.4;
+  z-index: 0;
+}
+
+/* ดัน content ให้อยู่เหนือ overlay */
+
+.container-third > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* Header */
+
+.activity-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.activity-header h3 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.activity-header span {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+/* Feed Box */
+
+.activity-feed {
+  border-radius: 15px;
+  padding: 25px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+/* Item */
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+/* Dot */
+
+.activity-item .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Login Color */
+
+.activity-item.login .dot {
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34,197,94,0.6);
+}
+.activity-item.logout .dot {
+  background: #facc15; /* เหลือง */
+}
+
+
+/* Text */
+
+.activity-item p {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.activity-item strong {
+  font-weight: 600;
+}
+
+/* Time */
+
+.activity-item small {
+  font-size: 12px;
+  opacity: 0.5;
+  white-space: nowrap;
+}
+
+/* Scrollbar (optional) */
+
+.activity-feed::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 900px) {
+
+  .container-forth {
+    padding: 60px 5%;
+  }
+
+  .activity-header h3 {
+    font-size: 22px;
+  }
+
+  .activity-feed {
+    padding: 18px;
+    max-height: 320px;
+  }
+
+  .activity-item p {
+    font-size: 13px;
+  }
+
+  .activity-item small {
+    font-size: 11px;
+  }
+
 }

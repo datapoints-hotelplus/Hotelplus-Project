@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Home.css';
+import { supabase } from "../../lib/supabase";
 import img1 from '../../assets/Images/Hotelplus-home.jpg';
 import img2 from '../../assets/Images/Hotelplus-home1.jpg';
 import img3 from '../../assets/Images/Hotelplus-home2.jpg';
@@ -19,10 +20,15 @@ type Announcement = {
   date: string;
 };
 
+type Activity = {
+  id: string;
+  email: string;
+  action: string;
+  created_at: string;
+};
+
 const formatThaiDate = (value: any) => {
   if (!value) return "";
-
-  // กรณีเป็น Date object จาก Google
   if (typeof value === "string" && value.includes("Date")) {
     const parts = value.match(/\d+/g);
     if (!parts) return "";
@@ -39,15 +45,12 @@ const formatThaiDate = (value: any) => {
       year: "numeric",
     });
   }
-
-  // กรณีเป็น string ปกติ
   const date = new Date(value);
   return date.toLocaleDateString("th-TH");
 };
 
 
 const HomePage: React.FC = () => {
-
   const slides: Slide[] = [
     { id: 1, image: img1, alt: 'Slide 1' },
     { id: 2, image: img2, alt: 'Slide 2' },
@@ -65,7 +68,7 @@ const HomePage: React.FC = () => {
   const [ticketTeam, setTicketTeam] = useState("");
   const [ticketMessage, setTicketMessage] = useState("");
   const [ticketStatus, setTicketStatus] = useState("");
-
+  const [popupIndex, setPopupIndex] = useState<number | null>(null);
   const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
 
   useEffect(() => {
@@ -92,8 +95,23 @@ const HomePage: React.FC = () => {
         }));
 
         setAnnouncements(data);
+
+        // 👉 เปิด popup ตัวแรก
+        if (data.length > 0) {
+          setPopupIndex(0);
+        }
       });
   }, []);
+
+  const handleClosePopup = () => {
+    if (popupIndex === null) return;
+
+    if (popupIndex < announcements.length - 1) {
+      setPopupIndex(popupIndex + 1); // ไปอันถัดไป
+    } else {
+      setPopupIndex(null); // หมดแล้ว
+    }
+  };
 
 
   const changeSlide = (index: number) => {
@@ -145,9 +163,52 @@ const HomePage: React.FC = () => {
       setTicketStatus("ส่งไม่สำเร็จ ❌");
     }
   };
+  
+
+
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const timeAgo = (date: string) => {
+    const diff =
+      (Date.now() - new Date(date).getTime()) / 1000;
+
+    if (diff < 60) return `${Math.floor(diff)}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+  };
+  useEffect(() => {
+    const fetchLogins = async () => {
+      const { data, error } = await supabase
+        .from("login_activity")
+        .select("id, email, action, created_at")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (!error && data) {
+        setActivities(data);
+      }
+    };
+    fetchLogins();
+    const interval = setInterval(fetchLogins, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="main-content">
+      {popupIndex !== null && announcements[popupIndex] && (
+          <div className="announcement-popup-overlay" onClick={handleClosePopup}>
+            <div className="announcement-popup" onClick={handleClosePopup}>
+              <h3>📢 Announcement 📢</h3>
+              <h4>{announcements[popupIndex].title}</h4>
+              <p>{announcements[popupIndex].description}</p>
+              <div className="popup-footer">
+                <span>{announcements[popupIndex].date}</span>
+                <button onClick={handleClosePopup}>
+                  ปิดประกาศ
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       <div className="content-wrapper">
         <div className="img-home-box">
           <img
@@ -190,7 +251,7 @@ const HomePage: React.FC = () => {
       </div>
 
       <div className="container-second">
-        <h3 className="section-title">ประกาศจากบริษัท</h3>
+        <h3 className="section-title">📢 Announcement 📢</h3>
 
         <div className="announcement-list">
           {announcements.length === 0 ? (
@@ -208,15 +269,27 @@ const HomePage: React.FC = () => {
       </div>
 
       <div className="container-third">
-        <h3>
-          third
-        </h3>
+        <div className="activity-header">
+          <h3>Employee Activity</h3>
+          <span>Recent Logins</span>
+        </div>
+        <div className="activity-feed">
+          {activities.map(item => (
+            <div key={item.id} className={`activity-item ${item.action}`}>
+              <span className="dot"></span>
+              <p>
+                <strong>{item.email}</strong>{" "}
+                {item.action === "login" && "logged in"}
+                {item.action === "logout" && "logged out"}
+              </p>
+              <small>{timeAgo(item.created_at)}</small>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="container-foth">
-
         <div className="ticket-wrapper">
-
           <div className="ticket-text">
             <h3>แจ้งปัญหาด้านการใช้งาน / ส่งผ่าน Ticket</h3>
             <p>
@@ -224,9 +297,7 @@ const HomePage: React.FC = () => {
               ทางทีมจะรีบตรวจสอบและติดต่อกลับโดยเร็วที่สุดค่ะ
             </p>
           </div>
-
           <form className="ticket-form" onSubmit={handleSubmitTicket}>
-
             <input
               type="text"
               placeholder="ชื่อผู้ติดต่อ"
@@ -234,7 +305,6 @@ const HomePage: React.FC = () => {
               onChange={(e) => setTicketName(e.target.value)}
               required
             />
-
             <input
               type="email"
               placeholder="อีเมล"
@@ -242,7 +312,6 @@ const HomePage: React.FC = () => {
               onChange={(e) => setTicketEmail(e.target.value)}
               required
             />
-
             <select
               value={ticketTeam}
               onChange={(e) => setTicketTeam(e.target.value)}
@@ -272,13 +341,8 @@ const HomePage: React.FC = () => {
             )}
 
           </form>
-
         </div>
-
       </div>
-
-
-      
     </div>
   );
 };
