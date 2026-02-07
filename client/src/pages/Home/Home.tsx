@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Home.css';
+import Footer from "../../layouts/Footer/Footer";
 import { supabase } from "../../lib/supabase";
 import img1 from '../../assets/Images/Hotelplus-home.jpg';
 import img2 from '../../assets/Images/Hotelplus-home1.jpg';
@@ -332,6 +333,8 @@ const HomePage: React.FC = () => {
               required
             />
 
+            
+
             <button type="submit">
               ส่ง Ticket
             </button>
@@ -342,8 +345,17 @@ const HomePage: React.FC = () => {
 
           </form>
         </div>
+
+        
+        
       </div>
+      <Footer></Footer>
+
+      
     </div>
+
+    
+    
   );
 };
 
