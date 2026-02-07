@@ -1,14 +1,15 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
 import KolsSidebar from "../layouts/Sidebar/KolsSidebar";
+import '../styles/layout.css'
 
 const KolsLayout: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div style={{ display: "flex" }}>
+      <div className="layout">
         <KolsSidebar />
-        <main style={{ flex: 1, padding: 24 }}>
+        <main className="content">
           <Outlet />
         </main>
       </div>

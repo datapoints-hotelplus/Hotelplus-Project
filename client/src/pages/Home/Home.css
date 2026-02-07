@@ -1,6 +1,7 @@
 .main-content {
   width: 100%;
   min-height: 100vh;
+  margin-top: 80px;
   background-color: var(--color-clean);
 }
 

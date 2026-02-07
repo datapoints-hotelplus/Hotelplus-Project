@@ -1,6 +1,7 @@
 .container-403{
     width: 100%;
     height: 500px;
+    margin-top: 80px;
     background-color: var(--bt-gray);
     display: flex;
     justify-content: center;

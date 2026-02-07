@@ -6,9 +6,9 @@ const CalculatorLayout: React.FC = () => {
   return (
     <>
       <Navbar />
-      <div style={{ display: "flex" }}>
+      <div className="layout">
         <CalculatorSidebar />
-        <main style={{ flex: 1, padding: 24 }}>
+        <main className="content">
           <Outlet />
         </main>
       </div>

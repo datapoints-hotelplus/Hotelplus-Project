@@ -63,7 +63,7 @@ function App() {
         <Route
           element={
             <ProtectedRoute allowedRoles={["ORM"]}>
-              <KolsLayout /> {/* หรือ ORMLayout ถ้ามี */}
+              <KolsLayout /> 
             </ProtectedRoute>
           }
         >

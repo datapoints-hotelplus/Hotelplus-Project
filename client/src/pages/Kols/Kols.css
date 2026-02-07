@@ -1,0 +1,143 @@
+/* container */
+.kols-container {
+  padding: 24px;
+  
+}
+
+/* title */
+.kols-container h2 {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* search bar */
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.search-bar button {
+  padding: 10px 24px;
+  background-color: #ffd43b;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.search-bar button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* radio group */
+.source-filter {
+  margin-bottom: 20px;
+}
+
+.source-filter label {
+  margin-right: 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.kols-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.kols-table thead {
+  background-color: #fafafa;
+  
+}
+.kols-table th{
+    white-space: nowrap;
+}
+.kols-table th,
+.kols-table td {
+  padding: 12px;
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.kols-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.kols-table a {
+  color: #999;
+  word-break: break-all;
+}
+
+/* radio button */
+.source-filter {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+/* card หลัก */
+.radio-card {
+  position: relative;
+  cursor: pointer;
+}
+
+/* ซ่อน radio จริง */
+.radio-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* กล่องที่ user เห็น */
+.radio-card span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #d0d5dd;
+  background: #fff;
+  color: #344054;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  text-align: center;
+}
+
+/* hover */
+
+
+/* selected */
+.radio-card input:checked + span {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  font-weight: bold;
+  color: var(--color-secondary);
+ 
+}
+
+
+
+/* disabled */
+.radio-card input:disabled + span {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f2f4f7;
+}
+
+
