@@ -195,6 +195,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="main-content">
+
       {popupIndex !== null && announcements[popupIndex] && (
           <div className="announcement-popup-overlay" onClick={handleClosePopup}>
             <div className="announcement-popup" onClick={handleClosePopup}>

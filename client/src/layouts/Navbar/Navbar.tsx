@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useUserRole } from "../../hooks/useUserRole";
+import { useAuth } from "../../AuthProvider";
 import "./Navbar.css";
 import logo from "../../assets/logo/Hotelplus-logo.jpg";
 import UserMenu from "../../components/Usermenu/UserMenu";
@@ -10,9 +10,7 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { role, loading } = useUserRole();
-  if (loading) return null;
-  console.log("ROLE =", role);
+  const { role, loading } = useAuth();
 
 
   return (
@@ -24,32 +22,33 @@ export default function Navbar() {
           </div>
 
           <ul className={`nav-menu ${menuOpen ? "active" : ""}`}>
-            <li><Link to ="/">หน้าหลัก</Link></li>
+            <li><Link to="/">หน้าหลัก</Link></li>
 
-            {role === "MarCom" && (
+            {!loading && role === "MarCom" && (
               <>
-                <li><Link to ="/kols">Kols</Link></li>
+                <li><Link to="/kols">Kols</Link></li>
                 <li><Link to="/calculator">Calculator</Link></li>
               </>
             )}
 
-            {role === "ORM" && <li>Shop Competitor Rate</li>}
+            {!loading && role === "ORM" && (
+              <li><Link to="/shop-rate">Shop Rate</Link></li>
+            )}
           </ul>
         </div>
 
         <div className="nav-right">
-          <UserRoleBadge />
-          <UserMenu />
-          
+          {!loading && <UserRoleBadge />}
+          {!loading && <UserMenu />}
         </div>
 
         <div
           className={`hamburger ${menuOpen ? "open" : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span />
+          <span />
+          <span />
         </div>
       </nav>
     </header>

@@ -1,13 +1,17 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import KolsLayout from "./layouts/KolsLayout";
+import CalculatorLayout from "./layouts/CalculatorLayout";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/login";
 import Kols from "./pages/Kols/Kols";
+import Personal from "./pages/Personal/Personal";
+import Ai from "./pages/Ai/Ai";
 import ShopRate from "./pages/Shoprate/ShopRate";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Calculator from "./pages/Calculator/Calculator";
+import MainLayout from "./layouts/MainLayout";
 
 
 function App() {
@@ -15,12 +19,12 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* หน้า login ไม่ต้องกัน */}
+        {/* Login */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
         </Route>
 
-        {/* ทุกหน้าข้างล่างต้อง login ก่อน */}
+        {/* Home */} 
         <Route
           element={
             <ProtectedRoute>
@@ -29,40 +33,50 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
+        </Route>
 
-          {/* MarCom เท่านั้น */}
-          <Route
-            path="/kols"
-            element={
-              <ProtectedRoute allowedRoles={["MarCom"]}>
-                <Kols />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/calculator"
-            element={
-              <ProtectedRoute allowedRoles={["MarCom"]}>
-                <Calculator />
-              </ProtectedRoute>
-            }
-          />
+        {/* KOLS / PERSONAL / AI */}
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["MarCom"]}>
+              <KolsLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/kols" element={<Kols />} />
+          <Route path="/personal" element={<Personal />} />
+          <Route path="/ai-agent" element={<Ai />} />
+        </Route>
 
-          {/* ORM เท่านั้น */}
-          <Route
-            path="/shop-rate"
-            element={
-              <ProtectedRoute allowedRoles={["ORM"]}>
-                <ShopRate />
-              </ProtectedRoute>
-            }
-          />
+        {/* CALCULATOR */}
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["MarCom"]}>
+              <CalculatorLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/calculator" element={<Calculator />} />
+        </Route>
+
+        {/* ORM */}
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["ORM"]}>
+              <KolsLayout /> {/* หรือ ORMLayout ถ้ามี */}
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/shop-rate" element={<ShopRate />} />
         </Route>
 
         <Route path="/403" element={<Forbidden />} />
-
       </Routes>
     </BrowserRouter>
+
+
+
+
   );
 }
 

@@ -1,8 +1,9 @@
-import { useUserRole } from "../../hooks/useUserRole";
+import { useAuth } from "../../AuthProvider";
 import "./UserRoleBadge.css";
 
 export default function UserRoleBadge() {
-  const { role, loading } = useUserRole();
+  
+const { role, loading } = useAuth();
 
   if (loading || !role) return null;
 
