@@ -1,18 +1,24 @@
-export const searchKols = async (
-  keyword: string,
-  sources: string[]
-) => {
+export const searchKols = async ({
+  keyword,
+  sources,
+  folderId,
+}: {
+  keyword: string;
+  sources: string[];
+  folderId: string;
+}) => {
   const res = await fetch(
     `${import.meta.env.VITE_API_URL}/search-kols`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ keyword, sources }),
+      body: JSON.stringify({ keyword, sources, folderId }),
     }
   );
 
   return res.json();
 };
+
 
 export const exportKolsCsv = async (
   keyword: string,

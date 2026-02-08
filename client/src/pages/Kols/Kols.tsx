@@ -15,6 +15,8 @@ export default function Kols() {
   const [source, setSource] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
+  const [folderId, setFolderId] = useState("");
+
 
   const totalPages = Math.ceil(results.length / PAGE_SIZE);
 
@@ -24,23 +26,42 @@ export default function Kols() {
   }, [results, page]);
 
   const handleSearch = async () => {
-    if (!keyword.trim() || loading) return;
+    if (!keyword.trim()) {
+      alert("กรุณาใส่ keyword");
+      return;
+    }
+
+    if (!folderId) {
+      alert("กรุณาเลือกโฟลเดอร์ก่อน");
+      return;
+    }
+
+    if (loading) return;
 
     setLoading(true);
     setPage(1);
     setResults([]);
 
     try {
-      const data = await searchKols(keyword, source ? [source] : []);
-      if (Array.isArray(data)) {
-        setResults(data);
+      const data = await searchKols({
+        keyword,
+        sources: source ? [source] : [],
+        folderId,
+      });
+
+      if (Array.isArray(data.results)) {
+        setResults(data.results);
       }
+
+      console.log("Saved to drive:", data.savedFile);
     } catch (err) {
       console.error(err);
+      alert("ค้นหาหรือบันทึกไม่สำเร็จ");
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleExport = async () => {
     try {
@@ -127,6 +148,17 @@ export default function Kols() {
         >
           Export CSV All
         </button>
+      </div>
+
+      <div className="folder-row">
+        <select
+          value={folderId}
+          onChange={(e) => setFolderId(e.target.value)}
+        >
+          <option value="">-- เลือกโฟลเดอร์ --</option>
+          <option value="FOLDER_ID_1">โรงแรม A</option>
+          <option value="FOLDER_ID_2">โรงแรม B</option>
+        </select>
       </div>
 
 
