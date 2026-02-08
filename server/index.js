@@ -120,6 +120,26 @@ app.post("/export-csv", (req, res) => {
   res.send("\uFEFF" + csv); // BOM กัน Excel ภาษาไทยพัง
 });
 
+const drive = google.drive("v3");
+
+app.get("/api/drive/files", async (req, res) => {
+  const ROOT_FOLDER_ID =
+    process.env.GOOGLE_DRIVE_ROOT_FOLDER_ID;
+
+  try {
+    const response = await drive.files.list({
+      q: `'${ROOT_FOLDER_ID}' in parents and trashed=false`,
+      fields: "files(id,name,mimeType,webViewLink)",
+      key: process.env.GOOGLE_API_KEY
+    });
+
+    res.json(response.data.files);
+  } catch (err) {
+    console.error("DRIVE ERROR:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/api/drive/subfiles/:folderId", async (req, res) => {
   try {
     const response = await drive.files.list({
