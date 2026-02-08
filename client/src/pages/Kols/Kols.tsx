@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { searchKols, exportKolsCsv } from "../../lib/api";
 import Pagination from "../../components/Pagination/Pagination";
 import LoadingOverlay from "../../components/LoadingOverlay/LoadingOverlay";
 import "./Kols.css";
 
 const PAGE_SIZE = 10;
+
 
 
 
@@ -16,6 +17,21 @@ export default function Kols() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [folderId, setFolderId] = useState("");
+  const [folders, setFolders] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadFolders() {
+      try {
+        const res = await fetch("http://localhost:5000/api/drive/files");
+        const data = await res.json();
+        setFolders(data);
+      } catch (err) {
+        console.error("โหลดโฟลเดอร์ไม่สำเร็จ", err);
+      }
+    }
+
+    loadFolders();
+  }, []);
 
 
   const totalPages = Math.ceil(results.length / PAGE_SIZE);
@@ -30,11 +46,11 @@ export default function Kols() {
       alert("กรุณาใส่ keyword");
       return;
     }
-
     if (!folderId) {
       alert("กรุณาเลือกโฟลเดอร์ก่อน");
       return;
     }
+
 
     if (loading) return;
 
@@ -54,13 +70,15 @@ export default function Kols() {
       }
 
       console.log("Saved to drive:", data.savedFile);
+
     } catch (err) {
       console.error(err);
-      alert("ค้นหาหรือบันทึกไม่สำเร็จ");
+      alert("ค้นหาไม่สำเร็จ");
     } finally {
       setLoading(false);
     }
   };
+
 
 
   const handleExport = async () => {
@@ -156,10 +174,15 @@ export default function Kols() {
           onChange={(e) => setFolderId(e.target.value)}
         >
           <option value="">-- เลือกโฟลเดอร์ --</option>
-          <option value="FOLDER_ID_1">โรงแรม A</option>
-          <option value="FOLDER_ID_2">โรงแรม B</option>
+
+          {folders.map((folder) => (
+            <option key={folder.id} value={folder.id}>
+              {folder.name}
+            </option>
+          ))}
         </select>
       </div>
+
 
 
 
