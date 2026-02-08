@@ -117,7 +117,7 @@ app.post("/export-csv", (req, res) => {
   const csv = parser.parse(rows);
 
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
-  res.send("\uFEFF" + csv); // BOM กัน Excel ภาษาไทยพัง
+  res.send("\uFEFF" + csv); // BOM กัน Excel ภาษาไทย
 });
 
 const drive = google.drive("v3");
