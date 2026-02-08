@@ -13,7 +13,7 @@ function buildSourceQuery(sources = []) {
 function detectSource(url = "") {
   if (url.includes("facebook.com")) return "facebook";
   if (url.includes("tiktok.com")) return "tiktok";
-  return "ทั่วไป";
+  return "generic";
 }
 
 module.exports = { buildSourceQuery, detectSource };

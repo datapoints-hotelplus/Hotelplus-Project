@@ -15,5 +15,23 @@ function generateCsv(results = []) {
 
   return "\uFEFF" + parser.parse(rows); // BOM กัน Excel ไทย
 }
+function resultsToCsv(results = []) {
+  const header = ["order", "source", "title", "snippet", "url"];
+  const rows = results.map((r) => [
+    r.order,
+    r.source,
+    r.title,
+    r.snippet,
+    r.url,
+  ]);
 
-module.exports = { generateCsv };
+  return [header, ...rows]
+    .map((row) =>
+      row.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")
+    )
+    .join("\n");
+}
+
+
+
+module.exports = { generateCsv , resultsToCsv};

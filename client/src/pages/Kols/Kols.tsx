@@ -21,17 +21,16 @@ export default function Kols() {
 
   useEffect(() => {
     async function loadFolders() {
-      try {
-        const res = await fetch("http://localhost:5000/api/drive/files");
-        const data = await res.json();
-        setFolders(data);
-      } catch (err) {
-        console.error("โหลดโฟลเดอร์ไม่สำเร็จ", err);
-      }
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/drive/files`
+      );
+      const data = await res.json();
+      setFolders(data);
     }
 
     loadFolders();
   }, []);
+
 
 
   const totalPages = Math.ceil(results.length / PAGE_SIZE);
@@ -85,7 +84,7 @@ export default function Kols() {
     try {
       const blob = await exportKolsCsv(keyword, results);
 
-      const sourceName = source || "all";
+      const sourceName = source || "generic";
       const filename = `kols_${sourceName}_${keyword}.csv`;
 
       const url = window.URL.createObjectURL(blob);

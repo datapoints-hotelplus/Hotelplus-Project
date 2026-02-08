@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { searchKols } = require("../services/serp.service");
-const { uploadCsvToDrive } = require("../services/drive.service");
+const { uploadCsv } = require("../services/drive.service");
 const { generateCsv } = require("../utils/csv.util");
 
 router.post("/search-kols", async (req, res) => {
@@ -17,19 +17,20 @@ router.post("/search-kols", async (req, res) => {
   }
 
   try {
+    // 1️⃣ SEARCH
     const results = await searchKols({ keyword, sources });
 
-    // ⭐ สร้าง CSV
-    const csv = generateCsv(results);
+    // 2️⃣ GENERATE CSV
+    const csvContent = generateCsv(results);
 
-    const sourceName = sources[0] || "all";
+    const sourceName = sources[0] ?? "generic";
     const filename = `kols_${sourceName}_${keyword}.csv`;
 
-    // ⭐ upload เข้า Drive
-    const savedFile = await uploadCsvToDrive({
+    // 3️⃣ UPLOAD CSV → DRIVE
+    const savedFile = await uploadCsv({
       folderId,
       filename,
-      csv,
+      content: csvContent,
     });
 
     res.json({
@@ -37,7 +38,7 @@ router.post("/search-kols", async (req, res) => {
       savedFile,
     });
   } catch (err) {
-    console.error("SEARCH+UPLOAD ERROR:", err.message);
+    console.error("SEARCH+UPLOAD ERROR:", err);
     res.status(500).json({ error: "Search or upload failed" });
   }
 });

@@ -135,3 +135,5 @@ server/node_modules/
 client/dist/
 .vite/deps/_metadata.json
 .vite/deps/package.json
+
+service-account.json
