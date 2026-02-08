@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
-import { searchKols, exportKolsCsv } from "../../lib/api";
-import Pagination from "../../components/Pagination/Pagination";
-import LoadingOverlay from "../../components/LoadingOverlay/LoadingOverlay";
+import { searchKols, exportKolsCsv } from "../../../lib/api";
+import Pagination from "../../../components/Pagination/Pagination";
+import LoadingOverlay from "../../../components/LoadingOverlay/LoadingOverlay";
 import "./Kols.css";
 
 const PAGE_SIZE = 10;

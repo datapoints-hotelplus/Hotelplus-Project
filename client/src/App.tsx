@@ -4,21 +4,21 @@ import KolsLayout from "./layouts/KolsLayout";
 import CalculatorLayout from "./layouts/CalculatorLayout";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/login";
-import Kols from "./pages/Kols/Kols";
+import Kols from "./pages/Marketing-communication/Kols/Kols";
 import Personal from "./pages/Personal/Personal";
-import Ai from "./pages/Ai/Ai";
+import Ai from "./pages/Marketing-communication/Ai/Ai";
 import History from "./pages/History/History";
-import OrmCalculator from "./pages/OrmCalculator/OrmCalculator";
+import OrmCalculator from "./pages/Online-revenue-mangemanet/OrmCalculator/OrmCalculator";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Calculator from "./pages/Calculator/Calculator";
+import Calculator from "./pages/Marketing-communication/Calculator/Calculator";
 import MainLayout from "./layouts/MainLayout";
 import OrmCalLayout from "./layouts/OrmCalLayout";
-import OrmResults from "./pages/OrmResults/OrmResults";
-import OrmAnalyse from "./pages/OrmAnalyse/OrmAnalyse";
-import OrmManual from "./pages/OrmManual/OrmManual";
-import OrmPresentation from "./pages/OrmPresentation/OrmPresentation";
-import OrmAdr from "./pages/OrmAdr/OrmAdr";
+import OrmResults from "./pages/Online-revenue-mangemanet/OrmResults/OrmResults";
+import OrmAnalyse from "./pages/Online-revenue-mangemanet/OrmAnalyse/OrmAnalyse";
+import OrmManual from "./pages/Online-revenue-mangemanet/OrmManual/OrmManual";
+import OrmPresentation from "./pages/Online-revenue-mangemanet/OrmPresentation/OrmPresentation";
+import OrmAdr from "./pages/Online-revenue-mangemanet/OrmAdr/OrmAdr";
 
 function App() {
   return (

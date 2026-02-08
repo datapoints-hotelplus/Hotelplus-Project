@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDriveFiles, getSubDriveFiles } from "../../lib/api";
+import { getDriveFiles, getSubDriveFiles } from "../../../lib/api";
 import "./Ai.css";
 
 type DriveItem = {
