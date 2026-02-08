@@ -7,6 +7,7 @@ import Login from "./pages/Login/login";
 import Kols from "./pages/Kols/Kols";
 import Personal from "./pages/Personal/Personal";
 import Ai from "./pages/Ai/Ai";
+import History from "./pages/History/History";
 import ShopRate from "./pages/Shoprate/ShopRate";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -46,6 +47,7 @@ function App() {
           <Route path="/kols" element={<Kols />} />
           <Route path="/personal" element={<Personal />} />
           <Route path="/ai-agent" element={<Ai />} />
+          <Route path="/history" element={<History />} />
         </Route>
 
         {/* CALCULATOR */}

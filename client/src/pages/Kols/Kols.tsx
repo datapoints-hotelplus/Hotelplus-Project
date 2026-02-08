@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { searchKols } from "../../lib/api";
+import { searchKols, exportKolsCsv } from "../../lib/api";
 import Pagination from "../../components/Pagination/Pagination";
 import LoadingOverlay from "../../components/LoadingOverlay/LoadingOverlay";
 import "./Kols.css";
@@ -38,6 +38,27 @@ export default function Kols() {
       setLoading(false);
     }
   };
+
+  const handleExport = async () => {
+    try {
+      const blob = await exportKolsCsv(keyword, results);
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+
+      a.href = url;
+      a.download = `kols_${keyword}.csv`;
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Export CSV ไม่สำเร็จ");
+    }
+  };
+
+
+
 
   return (
     <div className="kols-container">
@@ -139,6 +160,15 @@ export default function Kols() {
               totalPages={totalPages}
               onChange={setPage}
             />
+
+            <button
+              className="export-btn"
+              disabled={results.length === 0 || loading}
+              onClick={handleExport}
+            >
+              Export CSV All
+            </button>
+
           </table>
 
 

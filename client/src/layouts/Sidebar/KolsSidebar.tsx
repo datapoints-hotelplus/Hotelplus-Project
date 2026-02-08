@@ -19,6 +19,15 @@ const Sidebar: React.FC = () => {
         </NavLink>
 
         <NavLink
+          to="/history"
+          className={({ isActive }) =>
+            `sidebar-item ${isActive ? "active" : ""}`
+          }
+        >
+          History
+        </NavLink>
+
+        <NavLink
           to="/personal"
           className={({ isActive }) =>
             `sidebar-item ${isActive ? "active" : ""}`
