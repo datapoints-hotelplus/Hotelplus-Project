@@ -6,12 +6,7 @@ import "./Kols.css";
 
 const PAGE_SIZE = 10;
 
-const toFileSafe = (text: string) =>
-  text
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "_")
-    .replace(/[^a-z0-9_]/g, "");
+
 
 
 export default function Kols() {
