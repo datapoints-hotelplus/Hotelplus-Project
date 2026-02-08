@@ -75,7 +75,7 @@ app.post("/search-kols", async (req, res) => {
         seen.add(r.link);
 
         results.push({
-          order: results.length + 1, // ⭐ ลำดับจริงจาก backend
+          order: results.length + 1, // ⭐ ลำดับจริงจาก 
           title: r.title,
           url: r.link,
           snippet: r.snippet,
