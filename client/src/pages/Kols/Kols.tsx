@@ -6,6 +6,14 @@ import "./Kols.css";
 
 const PAGE_SIZE = 10;
 
+const toFileSafe = (text: string) =>
+  text
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "_")
+    .replace(/[^a-z0-9_]/g, "");
+
+
 export default function Kols() {
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -43,11 +51,14 @@ export default function Kols() {
     try {
       const blob = await exportKolsCsv(keyword, results);
 
+      const sourceName = source || "all";
+      const filename = `kols_${sourceName}_${keyword}.csv`;
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
 
       a.href = url;
-      a.download = `kols_${keyword}.csv`;
+      a.download = filename;
       a.click();
 
       window.URL.revokeObjectURL(url);
@@ -60,55 +71,71 @@ export default function Kols() {
 
 
 
+
+
   return (
     <div className="kols-container">
       <h2>ค้นหาเว็บไซต์จาก keyword</h2>
 
       {/* radio */}
-      <div className="source-filter">
-        <label className="radio-card">
-          <input
-            type="radio"
-            name="source"
-            checked={source === ""}
-            onChange={() => setSource("")}
-          />
-          <span>ค้นหาทั่วไป</span>
-        </label>
+      {/* filter + export row */}
+      <div className="filter-row">
+        <div className="source-filter">
+          <label className="radio-card">
+            <input
+              type="radio"
+              name="source"
+              checked={source === ""}
+              onChange={() => setSource("")}
+            />
+            <span>ค้นหาทั่วไป</span>
+          </label>
 
-        <label className="radio-card">
-          <input
-            type="radio"
-            name="source"
-            disabled={loading}
-            checked={source === "facebook"}
-            onChange={() => setSource("facebook")}
-          />
-          <span>Facebook</span>
-        </label>
+          <label className="radio-card">
+            <input
+              type="radio"
+              name="source"
+              disabled={loading}
+              checked={source === "facebook"}
+              onChange={() => setSource("facebook")}
+            />
+            <span>Facebook</span>
+          </label>
 
-        <label className="radio-card">
-          <input
-            type="radio"
-            name="source"
-            disabled={loading}
-            checked={source === "facebook_reels"}
-            onChange={() => setSource("facebook_reels")}
-          />
-          <span>Facebook Reels & Videos</span>
-        </label>
+          <label className="radio-card">
+            <input
+              type="radio"
+              name="source"
+              disabled={loading}
+              checked={source === "facebook_reels"}
+              onChange={() => setSource("facebook_reels")}
+            />
+            <span>Facebook Reels & Videos</span>
+          </label>
 
-        <label className="radio-card">
-          <input
-            type="radio"
-            name="source"
-            disabled={loading}
-            checked={source === "tiktok"}
-            onChange={() => setSource("tiktok")}
-          />
-          <span>TikTok</span>
-        </label>
+          <label className="radio-card">
+            <input
+              type="radio"
+              name="source"
+              disabled={loading}
+              checked={source === "tiktok"}
+              onChange={() => setSource("tiktok")}
+            />
+            <span>TikTok</span>
+          </label>
+        </div>
+
+        <button
+          className="export-btn"
+          disabled={results.length === 0 || loading}
+          onClick={handleExport}
+        >
+          Export CSV All
+        </button>
       </div>
+
+
+
 
 
       {/* search bar */}
@@ -161,13 +188,7 @@ export default function Kols() {
               onChange={setPage}
             />
 
-            <button
-              className="export-btn"
-              disabled={results.length === 0 || loading}
-              onClick={handleExport}
-            >
-              Export CSV All
-            </button>
+
 
           </table>
 

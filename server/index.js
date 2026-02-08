@@ -97,19 +97,13 @@ app.post("/search-kols", async (req, res) => {
 const { Parser } = require("json2csv");
 
 app.post("/export-csv", (req, res) => {
-  const { keyword, results = [] } = req.body;
+  const { results = [] } = req.body;
 
-  if (!keyword || results.length === 0) {
+  if (results.length === 0) {
     return res.status(400).json({ error: "No data to export" });
   }
 
-  // 🔒 sanitize filename (กันภาษาไทยพัง header)
-  const safeKeyword = String(keyword)
-    .trim()
-    .replace(/[^\w-]+/g, "_");
-
-  const rows = results.map((r) => ({
-    keyword,
+  const rows = results.map(r => ({
     source: r.source || "ทั่วไป",
     order: r.order,
     title: r.title,
@@ -118,19 +112,13 @@ app.post("/export-csv", (req, res) => {
   }));
 
   const parser = new Parser({
-    fields: ["keyword", "source", "order", "title", "snippet", "url"],
+    fields: ["source", "order", "title", "snippet", "url"],
   });
 
   const csv = parser.parse(rows);
 
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
-  res.setHeader(
-    "Content-Disposition",
-    `attachment; filename="kols_${safeKeyword}.csv"`
-  );
-
-  // ⭐ BOM กันภาษาไทยพังใน Excel
-  res.send("\uFEFF" + csv);
+  res.send("\uFEFF" + csv); // BOM กัน Excel ภาษาไทยพัง
 });
 
 
