@@ -32,7 +32,7 @@ export default function Navbar() {
             )}
 
             {!loading && role === "ORM" && (
-              <li><Link to="/shop-rate">Shop Rate</Link></li>
+              <li><Link to="/orm-calculator">ORM Calculator</Link></li>
             )}
           </ul>
         </div>

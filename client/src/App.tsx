@@ -8,12 +8,17 @@ import Kols from "./pages/Kols/Kols";
 import Personal from "./pages/Personal/Personal";
 import Ai from "./pages/Ai/Ai";
 import History from "./pages/History/History";
-import ShopRate from "./pages/Shoprate/ShopRate";
+import OrmCalculator from "./pages/OrmCalculator/OrmCalculator";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Calculator from "./pages/Calculator/Calculator";
 import MainLayout from "./layouts/MainLayout";
-
+import OrmCalLayout from "./layouts/OrmCalLayout";
+import OrmResults from "./pages/OrmResults/OrmResults";
+import OrmAnalyse from "./pages/OrmAnalyse/OrmAnalyse";
+import OrmManual from "./pages/OrmManual/OrmManual";
+import OrmPresentation from "./pages/OrmPresentation/OrmPresentation";
+import OrmAdr from "./pages/OrmAdr/OrmAdr";
 
 function App() {
   return (
@@ -65,11 +70,16 @@ function App() {
         <Route
           element={
             <ProtectedRoute allowedRoles={["ORM"]}>
-              <KolsLayout /> 
+              <OrmCalLayout /> 
             </ProtectedRoute>
           }
         >
-          <Route path="/shop-rate" element={<ShopRate />} />
+          <Route path="/orm-calculator" element={<OrmCalculator />} />
+          <Route path="/orm-results" element={<OrmResults />} />
+          <Route path="/orm-analyse" element={<OrmAnalyse />} />
+          <Route path="/orm-manual" element={<OrmManual />} />
+          <Route path="/orm-presentation" element={<OrmPresentation />} />
+          <Route path="/orm-adr" element={<OrmAdr/>} />
         </Route>
 
         <Route path="/403" element={<Forbidden />} />
