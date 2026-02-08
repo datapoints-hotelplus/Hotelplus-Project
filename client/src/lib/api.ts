@@ -40,3 +40,16 @@ export const exportKolsCsv = async (
   return res.blob();
 };
 
+export const getDriveFiles = async () => {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/drive/files`
+  );
+  return res.json();
+};
+
+export const getSubDriveFiles = async (folderId: string) => {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/drive/subfiles/${folderId}`
+  );
+  return res.json();
+};

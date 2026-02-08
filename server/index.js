@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const { google } = require("googleapis");
 require("dotenv").config();
 
 const app = express();
@@ -82,8 +83,6 @@ app.post("/search-kols", async (req, res) => {
           source: detectSource(r.link),
         });
       }
-
-      await new Promise(r => setTimeout(r, DELAY_MS));
     }
 
     res.json(results);
@@ -121,7 +120,53 @@ app.post("/export-csv", (req, res) => {
   res.send("\uFEFF" + csv); // BOM กัน Excel ภาษาไทยพัง
 });
 
+app.get("/api/drive/subfiles/:folderId", async (req, res) => {
+  try {
+    const response = await drive.files.list({
+      q: `'${req.params.folderId}' in parents and trashed=false`,
+      fields: "files(id,name,mimeType,webViewLink)",
+      key: process.env.GOOGLE_API_KEY
+    });
 
+    res.json(response.data.files);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/ai/analyze", async (req, res) => {
+  const { files = [], prompt = "", model } = req.body;
+
+  try {
+    const filesContext = await buildFilesContext(files);
+
+    const aiMessage = await callOpenRouter({
+      model: model || "openai/gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: "You are a data analyst."
+        },
+        {
+          role: "user",
+          content: `
+          FILES CONTENT:
+          ${filesContext}
+
+          USER QUESTION:
+          ${prompt}
+          `
+        }
+      ]
+    });
+
+    res.json(aiMessage);
+
+  } catch (err) {
+    console.error("ANALYZE ERROR:", err.message);
+    res.status(500).json({ error: "AI failed" });
+  }
+});
 
 
 app.listen(5000, () =>
