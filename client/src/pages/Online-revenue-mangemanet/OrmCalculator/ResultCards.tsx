@@ -1,4 +1,4 @@
-import { BASE_COMMISSION_MAP } from "./fullCalculator";
+import { BASE_COMMISSION_MAP } from "./types/fullCalculator";
 
 type Props = {
   result: any;

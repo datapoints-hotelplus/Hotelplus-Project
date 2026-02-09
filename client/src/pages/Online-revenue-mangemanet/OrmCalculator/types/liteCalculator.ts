@@ -1,5 +1,5 @@
-import { CalculatorInput, RevenueResult } from "./types";
-import { applyRoomMaintenance, overwriteADR } from "./utils";
+import { CalculatorInput, RevenueResult } from "../types";
+import { applyRoomMaintenance, overwriteADR } from "../utils";
 
 export function calculateRevenue(
   input: CalculatorInput

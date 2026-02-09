@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "./OrmCalMain.css";
+import "./css/OrmCalMain.css";
 import { CalculatorInput } from "./types";
-import { runCalculation } from "./decisionEngine";
+import { runCalculation } from "./types/decisionEngine";
 import ResultCards from "./ResultCards";
 import PdfTemplate from "./PdfTemplate";
 

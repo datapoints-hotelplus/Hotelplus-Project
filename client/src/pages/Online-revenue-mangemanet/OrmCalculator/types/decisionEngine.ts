@@ -1,4 +1,4 @@
-import { CalculatorInput, CalculationResult } from "./types";
+import { CalculatorInput, CalculationResult } from "../types";
 import { calculateRevenue, getLiteTier } from "./liteCalculator";
 import { getFullTier, adjustedRate, smartPackage } from "./fullCalculator";
 import { isLiteEligible, isFullEligible } from "./eligibility";

@@ -1,4 +1,4 @@
-import { RevenueResult } from "./types";
+import { RevenueResult } from "../types";
 
 export function isLiteEligible(
   roomAvailable: number,

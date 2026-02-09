@@ -1,5 +1,5 @@
-import { RevenueResult } from "./types";
-import { clamp } from "./utils";
+import { RevenueResult } from "../types";
+import { clamp } from "../utils";
 
 export function getFullTier(avg: number) {
   if (avg < 120000) return "NOT_RECOMMENDED";

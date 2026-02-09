@@ -1,4 +1,4 @@
-import "./PdfTemplate.css";
+import "./css/PdfTemplate.css";
 import logo from "../../../assets/Logo/Hotelplus-logo.jpg";
 
 type Props = {
