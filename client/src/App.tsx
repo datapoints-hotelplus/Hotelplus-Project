@@ -7,7 +7,6 @@ import Login from "./pages/Login/login";
 import Kols from "./pages/Marketing-communication/Kols/Kols";
 import Personal from "./pages/Personal/Personal";
 import Ai from "./pages/Marketing-communication/Ai/Ai";
-import History from "./pages/History/History";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Calculator from "./pages/Marketing-communication/Calculator/Calculator";
