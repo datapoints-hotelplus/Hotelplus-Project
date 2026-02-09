@@ -8,17 +8,15 @@ import Kols from "./pages/Marketing-communication/Kols/Kols";
 import Personal from "./pages/Personal/Personal";
 import Ai from "./pages/Marketing-communication/Ai/Ai";
 import History from "./pages/History/History";
-import OrmCalculator from "./pages/Online-revenue-mangemanet/OrmCalculator/OrmCalculator";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Calculator from "./pages/Marketing-communication/Calculator/Calculator";
 import MainLayout from "./layouts/MainLayout";
+
+import OrmCalMain from "./pages/Online-revenue-mangemanet/OrmCalculator/OrmCalMain";
 import OrmCalLayout from "./layouts/OrmCalLayout";
-import OrmResults from "./pages/Online-revenue-mangemanet/OrmResults/OrmResults";
-import OrmAnalyse from "./pages/Online-revenue-mangemanet/OrmAnalyse/OrmAnalyse";
-import OrmManual from "./pages/Online-revenue-mangemanet/OrmManual/OrmManual";
-import OrmPresentation from "./pages/Online-revenue-mangemanet/OrmPresentation/OrmPresentation";
-import OrmAdr from "./pages/Online-revenue-mangemanet/OrmAdr/OrmAdr";
+
+
 
 function App() {
   return (
@@ -74,12 +72,7 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/orm-calculator" element={<OrmCalculator />} />
-          <Route path="/orm-results" element={<OrmResults />} />
-          <Route path="/orm-analyse" element={<OrmAnalyse />} />
-          <Route path="/orm-manual" element={<OrmManual />} />
-          <Route path="/orm-presentation" element={<OrmPresentation />} />
-          <Route path="/orm-adr" element={<OrmAdr/>} />
+          <Route path="/orm-calculator" element={<OrmCalMain />} />
         </Route>
 
         <Route path="/403" element={<Forbidden />} />
