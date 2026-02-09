@@ -7,7 +7,7 @@ export default function DriveFolders() {
     const [folders, setFolders] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
-    const ROOT_ID = null; // ใช้ null แทน root
+ 
 
 
     const loadFolders = async (folderId: string | null = null) => {
@@ -41,7 +41,9 @@ export default function DriveFolders() {
         await fetch(
             `${import.meta.env.VITE_API_URL}/api/drive/files/${item.id}`,
             { method: "DELETE" }
+            
         );
+        
 
         loadFolders(currentFolderId);
     };
