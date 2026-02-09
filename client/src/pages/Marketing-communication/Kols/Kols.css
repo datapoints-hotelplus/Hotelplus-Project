@@ -182,3 +182,51 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.folder-row{
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* select Folder*/
+.folder-select {
+  min-width: 260px;
+  height: 40px;
+  padding: 0 14px;
+
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+
+  font-size: 14px;
+  color: #111827;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%236b7280' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.folder-select:hover {
+  border-color: var(--color-secondary);
+}
+
+.folder-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.folder-select:disabled {
+
+  color: #9ca3af;
+  cursor: not-allowed;
+}
