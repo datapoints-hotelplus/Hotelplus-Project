@@ -50,7 +50,6 @@ function App() {
           <Route path="/kols" element={<Kols />} />
           <Route path="/personal" element={<Personal />} />
           <Route path="/ai-agent" element={<Ai />} />
-          <Route path="/history" element={<History />} />
         </Route>
 
         {/* CALCULATOR */}

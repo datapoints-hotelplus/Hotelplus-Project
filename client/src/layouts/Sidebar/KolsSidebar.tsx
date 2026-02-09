@@ -18,14 +18,7 @@ const Sidebar: React.FC = () => {
            Search Keyword
         </NavLink>
 
-        <NavLink
-          to="/history"
-          className={({ isActive }) =>
-            `sidebar-item ${isActive ? "active" : ""}`
-          }
-        >
-          History
-        </NavLink>
+        
 
         <NavLink
           to="/personal"
