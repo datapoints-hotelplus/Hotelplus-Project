@@ -7,7 +7,7 @@ export default function DriveFolders() {
     const [folders, setFolders] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
- 
+
 
 
     const loadFolders = async (folderId: string | null = null) => {
@@ -41,9 +41,9 @@ export default function DriveFolders() {
         await fetch(
             `${import.meta.env.VITE_API_URL}/api/drive/files/${item.id}`,
             { method: "DELETE" }
-            
+
         );
-        
+
 
         loadFolders(currentFolderId);
     };
@@ -88,12 +88,13 @@ export default function DriveFolders() {
                             {item.name}
                         </span>
 
-                        <span
-                            className="delete-icon"
+                        <button
+                            className="delete-btn"
                             onClick={(e) => handleDelete(item, e)}
                         >
-                            🗑️
-                        </span>
+                            ลบ
+                        </button>
+
                     </div>
                 ))}
             </div>

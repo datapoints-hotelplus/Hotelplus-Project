@@ -73,10 +73,14 @@ async function uploadCsv({ folderId, filename, content }) {
 
 /* ===== DELETE FILE / FOLDER ===== */
 async function deleteFile(fileId) {
-  await drive.files.delete({
-    fileId,
-    supportsAllDrives: true,
-  });
+  await drive.files.update({
+  fileId,
+  supportsAllDrives: true,
+  requestBody: {
+    trashed: true,
+  },
+});
+
 }
 
 async function canAccess(fileId) {

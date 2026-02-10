@@ -6,6 +6,10 @@
   border-bottom: 1px solid #eee;
 }
 
+.folder-list{
+  margin-top: 10px;
+}
+
 .delete-btn {
   background: transparent;
   border: 1px solid #e11d48;
