@@ -280,13 +280,7 @@ export default function OrmCalMain() {
         {result &&
           (result.model === "FULL" ||
            result.model === "LITE") && (
-            <button
-              className="calculate-btn"
-              onClick={handleExportPDF}
-              style={{ marginTop: 16 }}
-            >
-              📄 Export to PDF
-            </button>
+            <button className="export-pdf-btn"onClick={handleExportPDF}>📄 Export to PDF</button>
         )}
 
         {/* ===== RESULT ===== */}
