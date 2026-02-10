@@ -1,0 +1,123 @@
+.orm-lite-calculator {
+  max-width: 1440px;
+  margin: 40px auto;
+  padding: 24px;
+}
+
+.orm-lite-calculator > section {
+  background: var(--color-clean);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+}
+
+.orm-lite-calculator h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.orm-lite-calculator h3 {
+  font-size: 16px;
+  margin: 16px 0 8px;
+  color: var(--color-secondary);
+  text-transform: capitalize;
+}
+
+.orm-lite-calculator label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #475569;
+  margin-bottom: 14px;
+}
+
+.orm-lite-calculator input[type="number"] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-primary);
+  font-size: 14px;
+}
+
+.orm-lite-calculator input[type="number"]:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+}
+
+.orm-lite-calculator > section:first-of-type {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.orm-lite-calculator > section:first-of-type h2 {
+  grid-column: 1 / -1;
+}
+
+.orm-lite-calculator > section:nth-of-type(2) > div {
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.orm-lite-calculator > section:nth-of-type(2) > div label {
+  width: 100%;
+}
+
+.orm-lite-calculator button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.orm-lite-calculator button:first-child {
+  background: var(--color-primary);
+  color: var(--color-secondary);
+}
+
+.orm-lite-calculator button:last-child {
+  background: var(--color-secondary);
+  color: var(--color-primary);
+}
+
+/* ===============================
+   ERRORS
+=============================== */
+.orm-lite-calculator ul {
+  padding-left: 18px;
+}
+
+.orm-lite-calculator li {
+  color: #dc2626;
+  font-size: 14px;
+}
+
+/* ===============================
+   RESULT
+=============================== */
+.orm-lite-calculator p {
+  font-size: 14px;
+  margin: 6px 0;
+}
+
+.orm-lite-calculator small {
+  color: #64748b;
+}
+
+/* ===============================
+   ADD-ONS
+=============================== */
+.orm-lite-calculator input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* ===============================
+   RECOMMENDATION
+=============================== */
+.orm-lite-calculator strong {
+  color: #4f46e5;
+}

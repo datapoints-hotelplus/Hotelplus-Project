@@ -12,7 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Calculator from "./pages/Marketing-communication/Calculator/Calculator";
 import MainLayout from "./layouts/MainLayout";
 
-import OrmCalMain from "./pages/Online-revenue-mangemanet/OrmCalculator/OrmCalMain";
+import OrmCalMain from "./pages/Online-revenue-mangemanet/ORM-Lite-Calculator/ORMLiteCalculatorView";
 import OrmCalLayout from "./layouts/OrmCalLayout";
 
 
