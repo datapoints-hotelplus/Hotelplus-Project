@@ -2,7 +2,10 @@ import { useState, useMemo, useEffect } from "react";
 import { searchKols, exportKolsCsv } from "../../../lib/api";
 import Pagination from "../../../components/Pagination/Pagination";
 import LoadingOverlay from "../../../components/LoadingOverlay/LoadingOverlay";
+import CreateDriveFolderModal from "../../../components/CreateDriveFolderModal/CreateDriveFolderModal";
+
 import "./Kols.css";
+
 
 const PAGE_SIZE = 10;
 
@@ -18,6 +21,8 @@ export default function Kols() {
   const [page, setPage] = useState(1);
   const [folderId, setFolderId] = useState("");
   const [folders, setFolders] = useState<any[]>([]);
+
+
 
   useEffect(() => {
     async function loadFolders() {
@@ -106,6 +111,9 @@ export default function Kols() {
 
 
 
+
+
+
   return (
     <div className="kols-container">
       <h2>ค้นหาเว็บไซต์จาก keyword</h2>
@@ -169,10 +177,11 @@ export default function Kols() {
 
       <div className="folder-row">
         <select
+          className="folder-select"
           value={folderId}
           onChange={(e) => setFolderId(e.target.value)}
         >
-          <option value="">-- เลือกโฟลเดอร์ --</option>
+          <option value="">📁 เลือกโฟลเดอร์</option>
 
           {folders.map((folder) => (
             <option key={folder.id} value={folder.id}>
@@ -180,6 +189,18 @@ export default function Kols() {
             </option>
           ))}
         </select>
+
+        <CreateDriveFolderModal
+          disabled={loading}
+          onCreated={(folder) => {
+            setFolderId(folder.id);
+
+            fetch(`${import.meta.env.VITE_API_URL}/api/drive/files`)
+              .then((res) => res.json())
+              .then(setFolders);
+          }}
+        />
+
       </div>
 
 

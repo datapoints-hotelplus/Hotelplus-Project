@@ -18,6 +18,15 @@ const Sidebar: React.FC = () => {
            Search Keyword
         </NavLink>
 
+        <NavLink
+          to="/drive-folders"
+          className={({ isActive }) =>
+            `sidebar-item ${isActive ? "active" : ""}`
+          }
+        >
+           Folders Management
+        </NavLink>
+
         
 
         <NavLink

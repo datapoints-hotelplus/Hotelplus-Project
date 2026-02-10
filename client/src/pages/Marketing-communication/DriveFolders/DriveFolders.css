@@ -1,0 +1,60 @@
+.folder-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+.drive-folders{
+  padding: 15px;
+}
+.drive-folders h2{
+  font-size: 20px;
+}
+.folder-list{
+  margin-top: 10px;
+}
+
+.delete-btn {
+  background: transparent;
+  border: 1px solid #e11d48;
+  color: #e11d48;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #e11d48;
+  color: #fff;
+}
+
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.folder-row.clickable {
+  cursor: pointer;
+}
+
+.folder-row.clickable:hover {
+  background: #f3f3f3;
+}
+
+.back-row {
+  font-weight: 500;
+  color: #555;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e5e5;
+  opacity: 0.85;
+}
+
+.back-row:hover {
+  background: #eeeeee;
+  color: #000;
+  cursor: pointer;
+}
+

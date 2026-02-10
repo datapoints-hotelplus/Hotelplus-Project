@@ -41,13 +41,15 @@ async function createFolder(name, parentId) {
     requestBody: {
       name,
       mimeType: "application/vnd.google-apps.folder",
-      parents: parentId ? [parentId] : [],
+      parents: parentId ? [parentId] : undefined,
     },
-    fields: "id,name",
+    fields: "id, name",
+    supportsAllDrives: true,
   });
 
   return res.data;
 }
+
 
 /* ===== UPLOAD CSV ===== */
 async function uploadCsv({ folderId, filename, content }) {
@@ -69,6 +71,27 @@ async function uploadCsv({ folderId, filename, content }) {
   return res.data;
 }
 
+/* ===== DELETE FILE / FOLDER ===== */
+async function deleteFile(fileId) {
+  await drive.files.update({
+  fileId,
+  supportsAllDrives: true,
+  requestBody: {
+    trashed: true,
+  },
+});
+
+}
+
+async function canAccess(fileId) {
+  const res = await drive.files.get({
+    fileId,
+    fields: "id,name,mimeType,driveId,capabilities",
+    supportsAllDrives: true,
+  });
+  return res.data;
+}
+
 
 
 
@@ -78,4 +101,7 @@ module.exports = {
   downloadFile,
   createFolder,
   uploadCsv,
+  deleteFile,
+  canAccess
 };
+

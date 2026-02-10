@@ -14,6 +14,7 @@ import MainLayout from "./layouts/MainLayout";
 
 import OrmCalMain from "./pages/Online-revenue-mangemanet/ORM-Lite-Calculator/ORMLiteCalculatorView";
 import OrmCalLayout from "./layouts/OrmCalLayout";
+import DriveFolders from "./pages/Marketing-communication/DriveFolders/DriveFolders"
 
 
 
@@ -47,6 +48,7 @@ function App() {
           }
         >
           <Route path="/kols" element={<Kols />} />
+          <Route path="/drive-folders" element={<DriveFolders />} />
           <Route path="/personal" element={<Personal />} />
           <Route path="/ai-agent" element={<Ai />} />
         </Route>
