@@ -5,7 +5,12 @@
   padding: 10px 12px;
   border-bottom: 1px solid #eee;
 }
-
+.drive-folders{
+  padding: 15px;
+}
+.drive-folders h2{
+  font-size: 20px;
+}
 .folder-list{
   margin-top: 10px;
 }
