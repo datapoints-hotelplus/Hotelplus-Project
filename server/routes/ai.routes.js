@@ -47,6 +47,7 @@ function isEmptyCsvRow(line = "") {
 
 router.post("/analyze", async (req, res) => {
   const { files = [], masterPrompt = "", model, folderId } = req.body;
+  console.log("AI MODEL USED:", model);
 
 
   try {

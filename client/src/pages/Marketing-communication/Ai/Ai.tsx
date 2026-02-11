@@ -23,6 +23,8 @@ const MAX_FILES = 3;
 
 
 
+
+
 function parseCsv(csv: string): string[][] {
   const rows: string[][] = [];
   let current = "";
@@ -134,8 +136,10 @@ const Ai = () => {
   const [showPromptModal, setShowPromptModal] = useState(false);
   const [isEditingPrompt, setIsEditingPrompt] = useState(false);
 
-  const [selectedModel, setSelectedModel] =
-    useState("openai/gpt-4o-mini");
+  const [selectedModel, setSelectedModel] = useState("openai/gpt-4o-mini");
+
+  
+
 
   /* =======================
       LOAD DRIVE FOLDERS
@@ -363,11 +367,9 @@ const Ai = () => {
             onChange={(e) => setSelectedModel(e.target.value)}
           >
             <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+            <option value="openai/gpt-5.2">GPT-5.2</option>
             <option value="anthropic/claude-3.5-sonnet">
               Claude 3.5 Sonnet
-            </option>
-            <option value="google/gemini-1.5-pro">
-              Gemini 1.5 Pro
             </option>
           </select>
 
