@@ -1,71 +1,72 @@
 import { useMemo } from "react";
-
 import { ORMLiteResult } from "../model/ormLite.types";
-import {
-  FullPricingInput,
-  FullPricingResult,
-} from "../model/fullPricing.types";
-
+import { getFullTier } from "../logic/fullPricing/getFullTier";
 import { calculateFullPricing } from "../logic/fullPricing/calculateFullPricing";
-
-interface UseFullPricingParams {
-  revenueResult: ORMLiteResult | null;
-}
+import { calculateFixedPackage } from "../logic/fullPricing/calculateFixedPackage";
 
 export function useFullPricing({
   revenueResult,
-}: UseFullPricingParams) {
+}: {
+  revenueResult: ORMLiteResult | null;
+}) {
 
-  const fullPricing: FullPricingResult | null =
-    useMemo(() => {
+  const fullPricing = useMemo(() => {
 
-      if (!revenueResult) return null;
+    if (!revenueResult) return null;
 
-      const otaShare =
-        revenueResult.otaSharePercent / 100;
+    const tier = getFullTier(
+      revenueResult.averageRevenuePerMonth
+    );
 
-      const input: FullPricingInput = {
-        roomAvailable:
-          revenueResult.roomAvailable || 0,
+    const baseFull = calculateFullPricing(
+      tier,
+      revenueResult.roomAvailable,
+      revenueResult.otaRevenuePerMonth,
+      revenueResult.otaSharePercent,
+      revenueResult.highADR,
+      revenueResult.lowADR || 1
+    );
 
-        averageRevenuePerMonth:
-          revenueResult.averageRevenuePerMonth || 0,
+    if (!baseFull.isEligible) return baseFull;
 
-        otaRevenuePerMonth:
-          revenueResult.otaRevenuePerMonth || 0,
+    /* ---------- SMART (A + B) ---------- */
 
-        otaSharePercent:
-          revenueResult.otaSharePercent || 0,
+    const smartPackage =
+      Math.min(baseFull.A + baseFull.B, 60000);
 
-        // 🔒 ป้องกันหาร 0
-        highADR: revenueResult.highADR || 0,
-        lowADR: revenueResult.lowADR || 1,
+    /* ---------- FIXED (A Only) ---------- */
 
-        highOTARevenue:
-          (revenueResult.highRevenuePerMonth || 0) *
-          otaShare,
+    const lowB =
+      (revenueResult.lowRevenuePerMonth || 0) *
+      baseFull.adjustedCommissionRate;
 
-        shoulderOTARevenue:
-          (revenueResult.shoulderRevenuePerMonth || 0) *
-          otaShare,
+    const fixedPackage =
+      calculateFixedPackage(
+        tier,
+        baseFull.A,
+        lowB
+      ) || 0;
 
-        lowOTARevenue:
-          (revenueResult.lowRevenuePerMonth || 0) *
-          otaShare,
-      };
+    /* ---------- PERFORMANCE (B Only) ---------- */
 
-      return calculateFullPricing(
-        input,
-        0.08, // base commission rate
-        1.2,  // A multiplier
-        revenueResult.averageRevenuePerMonth < 120000
-      );
+    const bOnlyRate =
+      baseFull.adjustedCommissionRate + 0.02;
 
-    }, [revenueResult]);
+    const performancePackage =
+      revenueResult.otaRevenuePerMonth *
+      bOnlyRate;
 
-  return {
-    fullPricing,
-    isFullEligible:
-      !!fullPricing && fullPricing.tier !== "NONE",
-  };
+    return {
+      ...baseFull,
+
+      smartPackage,
+      fixedPackage,
+
+      performancePackage,
+      bOnlyRate,
+    };
+
+  }, [revenueResult]);
+
+  return { fullPricing };
 }

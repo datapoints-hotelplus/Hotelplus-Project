@@ -3,7 +3,7 @@ import {
   AddOnItem,
 } from "../../model/pricing.types";
 
-const BASE_FEE = 3900;
+const BASE_MONTHLY_FEE = 3900;
 const COMMISSION_RATE = 0.05;
 
 const TRIGGER_MAX = {
@@ -23,23 +23,34 @@ export function calculateLitePricing(
     0
   );
 
-  const commissionFee = otaRevenue * COMMISSION_RATE;
+  const commissionCost =
+    otaRevenue * COMMISSION_RATE;
 
   const triggerMax = TRIGGER_MAX[tier];
-  const isTriggerExceeded = addOnTotal > triggerMax;
+
+  const isTriggerExceeded =
+    addOnTotal > triggerMax;
 
   const totalFee =
-    BASE_FEE + commissionFee + addOnTotal;
+    BASE_MONTHLY_FEE +
+    commissionCost +
+    addOnTotal;
 
   return {
     tier,
-    baseFee: BASE_FEE,
-    commissionRate: COMMISSION_RATE,
 
+    // A
+    baseMonthlyFee: BASE_MONTHLY_FEE,
+
+    // B
+    commissionRate: COMMISSION_RATE,
+    commissionCost,
+
+    // Add-ons
     addOns: selectedAddOns,
     addOnTotal,
 
-    commissionFee,
+    // Total
     totalFee,
 
     triggerMax,

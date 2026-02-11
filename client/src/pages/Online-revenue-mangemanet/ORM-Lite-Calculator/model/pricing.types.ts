@@ -41,15 +41,16 @@ export interface AddOnItem {
 }
 
 export interface LitePricingResult {
-  tier: LiteTier;
+  tier: "L1" | "L2" | "L3";
 
-  baseFee: number;        // 3,900
-  commissionRate: number; // 0.05
+  baseMonthlyFee: number;
+
+  commissionRate: number;
+  commissionCost: number;
 
   addOns: AddOnItem[];
   addOnTotal: number;
 
-  commissionFee: number;
   totalFee: number;
 
   triggerMax: number;
@@ -57,6 +58,7 @@ export interface LitePricingResult {
 
   isEligible: boolean;
 }
+
 
 export interface FullPricingResult {
   tier: FullTier;

@@ -126,7 +126,8 @@ export default function ORMLiteCalculatorView() {
     );
   };
 
-  /* ------------ UI ------------ */
+  const [selectedFullPackage, setSelectedFullPackage] =
+  useState<"SMART" | "FIXED" | "PERFORMANCE">("SMART");
 
   return (
     <div className="orm-lite-calculator">
@@ -287,8 +288,7 @@ export default function ORMLiteCalculatorView() {
       )}
 
       {/* ADD-ONS (ONLY WHEN LITE) */}
-      {recommendation.recommendation === "LITE" &&
-        isLiteEligible && (
+      {isLiteEligible && (
           <section>
             <h2>Add-On Services</h2>
 
@@ -341,7 +341,8 @@ export default function ORMLiteCalculatorView() {
 
           {/* LITE */}
           {isLiteEligible && litePricing && (
-            <div>
+            <div className="package-card">
+
               <h3>
                 Lite Package
                 {recommendation.recommendation === "LITE" &&
@@ -350,10 +351,39 @@ export default function ORMLiteCalculatorView() {
 
               <p>Tier: {litePricing.tier}</p>
 
+              <div className="breakdown">
+                <p>
+                Base Monthly Fee:
+                {" "}
+                {formatCurrency(litePricing.baseMonthlyFee)}
+              </p>
+
               <p>
-                Total Fee:{" "}
+                Commission Rate:
+                {" "}
+                {(litePricing.commissionRate * 100).toFixed(2)}%
+              </p>
+
+              <p>
+                Commission Fee:
+                {" "}
+                {formatCurrency(litePricing.commissionCost)}
+              </p>
+
+              <p>
+                Add-ons:
+                {" "}
+                {formatCurrency(litePricing.addOnTotal)}
+              </p>
+              <p>
+                Total Monthly Fee:
+                {" "}
                 {formatCurrency(litePricing.totalFee)}
               </p>
+              
+              <hr />
+
+              </div>
 
               {litePricing.isTriggerExceeded && (
                 <p style={{ color: "red" }}>
@@ -361,35 +391,153 @@ export default function ORMLiteCalculatorView() {
                   Recommend Full Services.
                 </p>
               )}
+
             </div>
           )}
 
           {/* FULL */}
           {isFullEligible && fullPricing && (
-            <div>
-              <h3>
-                Full Services
-                {recommendation.recommendation === "FULL" &&
-                  " ⭐ Recommended"}
-              </h3>
+            <section>
 
-              <p>Tier: {fullPricing.tier}</p>
+              <h2>Full Services Packages</h2>
 
-              <p>
-                Recommended Package Type:{" "}
-                <strong>
-                  {fullPricing.recommendedPackage}
-                </strong>
-              </p>
+              {/* ---------- TABS ---------- */}
+              <div className="full-tabs">
 
-              <p>
-                Monthly Charge:{" "}
-                {formatCurrency(
-                  fullPricing.packages.smart.monthlyFee
-                )}
-              </p>
-            </div>
+                <button
+                  className={
+                    selectedFullPackage === "SMART"
+                      ? "tab active"
+                      : "tab"
+                  }
+                  onClick={() =>
+                    setSelectedFullPackage("SMART")
+                  }
+                >
+                  Smart Package (A + B) ⭐
+                </button>
+
+                <button
+                  className={
+                    selectedFullPackage === "FIXED"
+                      ? "tab active"
+                      : "tab"
+                  }
+                  onClick={() =>
+                    setSelectedFullPackage("FIXED")
+                  }
+                >
+                  Fixed Package (A Only)
+                </button>
+
+                <button
+                  className={
+                    selectedFullPackage === "PERFORMANCE"
+                      ? "tab active"
+                      : "tab"
+                  }
+                  disabled={
+                    fullPricing.performancePackage < 15000
+                  }
+                  onClick={() =>
+                    setSelectedFullPackage("PERFORMANCE")
+                  }
+                >
+                  Performance Package (B Only)
+                </button>
+
+              </div>
+
+              {/* ---------- SMART ---------- */}
+              {selectedFullPackage === "SMART" && (
+                <div className="package-box">
+
+                  <h3>Smart Package (A + B)</h3>
+
+                  <p>
+                    A (Fixed Fee):
+                    {" "}
+                    {formatCurrency(fullPricing.A)}
+                  </p>
+
+                  <p>
+                    B (Commission Fee):
+                    {" "}
+                    {formatCurrency(fullPricing.B)}
+                  </p>
+
+                  <hr />
+
+                  <p style={{ fontWeight: "bold" }}>
+                    Monthly Charge:
+                    {" "}
+                    {formatCurrency(fullPricing.smartPackage)}
+                  </p>
+
+                  {fullPricing.A + fullPricing.B > 60000 && (
+                    <small style={{ color: "#888" }}>
+                      * Price capped at 60,000 THB
+                    </small>
+                  )}
+
+                </div>
+              )}
+
+              {/* ---------- FIXED ---------- */}
+              {selectedFullPackage === "FIXED" && (
+                <div className="package-box">
+
+                  <h3>Fixed Package (A Only)</h3>
+
+                  <p>
+                    A (Fixed Fee):
+                    {" "}
+                    {formatCurrency(fullPricing.A)}
+                  </p>
+
+                  <p style={{ fontWeight: "bold" }}>
+                    Monthly Charge:
+                    {" "}
+                    {formatCurrency(fullPricing.fixedPackage)}
+                  </p>
+
+                </div>
+              )}
+
+              {/* ---------- PERFORMANCE ---------- */}
+              {selectedFullPackage === "PERFORMANCE" && (
+                <div className="package-box">
+
+                  <h3>Performance Package (B Only)</h3>
+
+                  <p>
+                    Base Commission Rate:
+                    {" "}
+                    {(fullPricing.adjustedCommissionRate * 100).toFixed(2)}%
+                  </p>
+
+                  <p>
+                    B Only Rate:
+                    {" "}
+                    {(fullPricing.bOnlyRate * 100).toFixed(2)}%
+                  </p>
+
+                  <hr />
+
+                  <p style={{ fontWeight: "bold" }}>
+                    Monthly Charge:
+                    {" "}
+                    {formatCurrency(
+                      fullPricing.performancePackage
+                    )}
+                  </p>
+
+                </div>
+              )}
+
+            </section>
           )}
+
 
           {/* NOT RECOMMENDED */}
           {!isLiteEligible && !isFullEligible && (

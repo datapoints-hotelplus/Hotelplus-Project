@@ -3,54 +3,128 @@ import {
   FullTier,
 } from "../../model/pricing.types";
 
-const FULL_CONFIG: Record<
+/* ---------------- HELPERS ---------------- */
+
+function calculateSystemCost(room: number) {
+  if (room <= 10) return 3500;
+  if (room <= 20) return 4000;
+  if (room <= 50) return 5200;
+  if (room <= 100) return 5400;
+  return 5800;
+}
+
+function adjustMultiplier(
+  base: number,
+  otaSharePercent: number
+) {
+  let m = base;
+
+  if (otaSharePercent > 80) m += 1;
+  if (otaSharePercent < 50) m -= 0.5;
+
+  return m;
+}
+
+function adjustCommissionRate(
+  baseRate: number,
+  otaSharePercent: number,
+  highADR: number,
+  lowADR: number
+) {
+  let rate = baseRate;
+
+  if (otaSharePercent > 80) rate += 0.01;
+  if (otaSharePercent < 50) rate -= 0.005;
+
+  const variance =
+    (highADR - lowADR) / lowADR;
+
+  if (variance > 1) rate += 0.005;
+
+  // clamp 3% - 15%
+  return Math.min(Math.max(rate, 0.03), 0.15);
+}
+
+/* ---------------- BASE TIER CONFIG ---------------- */
+
+const FULL_BASE: Record<
   FullTier,
-  { commissionRate: number; multiplier: number }
+  { baseCommission: number; baseMultiplier: number }
 > = {
-  NONE: { commissionRate: 0, multiplier: 0 },
-  F2: { commissionRate: 0.1, multiplier: 1.6 },
-  F3: { commissionRate: 0.09, multiplier: 1.6 },
-  F4: { commissionRate: 0.08, multiplier: 1.6 },
-  F5: { commissionRate: 0.07, multiplier: 1.5 },
-  F6: { commissionRate: 0.06, multiplier: 1.5 },
-  F7: { commissionRate: 0.05, multiplier: 1.4 },
-  F8: { commissionRate: 0.04, multiplier: 1.2 },
+  NONE: { baseCommission: 0, baseMultiplier: 0 },
+
+  F2: { baseCommission: 0.1, baseMultiplier: 1.6 },
+  F3: { baseCommission: 0.09, baseMultiplier: 1.6 },
+  F4: { baseCommission: 0.08, baseMultiplier: 1.6 },
+  F5: { baseCommission: 0.07, baseMultiplier: 1.5 },
+  F6: { baseCommission: 0.06, baseMultiplier: 1.5 },
+  F7: { baseCommission: 0.05, baseMultiplier: 1.4 },
+  F8: { baseCommission: 0.04, baseMultiplier: 1.2 },
 };
+
+/* ---------------- MAIN ---------------- */
 
 export function calculateFullPricing(
   tier: FullTier,
-  otaRevenue: number
+  roomAvailable: number,
+  otaRevenue: number,
+  otaSharePercent: number,
+  highADR: number,
+  lowADR: number
 ): FullPricingResult {
 
   if (tier === "NONE") {
     return {
       tier,
-      commissionRate: 0,
-      multiplier: 0,
-      estimatedPackageFee: 0,
-      minCharge: 8000,
-      finalCharge: 0,
       isEligible: false,
+
+      systemCost: 0,
+      aMultiplier: 0,
+      adjustedCommissionRate: 0,
+
+      A: 0,
+      B: 0,
+      totalMonthlyFee: 0,
     };
   }
 
-  const config = FULL_CONFIG[tier];
+  const base = FULL_BASE[tier];
 
-  const estimated =
-    otaRevenue * config.commissionRate *
-    config.multiplier;
+  // A multiplier
+  const aMultiplier =
+    adjustMultiplier(
+      base.baseMultiplier,
+      otaSharePercent
+    );
 
-  const finalCharge = Math.max(estimated, 8000);
+  // commission rate
+  const adjustedCommissionRate =
+    adjustCommissionRate(
+      base.baseCommission,
+      otaSharePercent,
+      highADR,
+      lowADR
+    );
+
+  // System Cost
+  const systemCost =
+    calculateSystemCost(roomAvailable);
+
+  // A & B
+  const A = systemCost * aMultiplier;
+  const B = otaRevenue * adjustedCommissionRate;
 
   return {
     tier,
-    commissionRate: config.commissionRate,
-    multiplier: config.multiplier,
-
-    estimatedPackageFee: estimated,
-    minCharge: 8000,
-    finalCharge,
-
     isEligible: true,
+
+    systemCost,
+    aMultiplier,
+    adjustedCommissionRate,
+
+    A,
+    B,
+
+    totalMonthlyFee: A + B,
   };
 }
