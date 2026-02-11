@@ -27,16 +27,6 @@ const Sidebar: React.FC = () => {
            Folders Management
         </NavLink>
 
-        
-
-        <NavLink
-          to="/personal"
-          className={({ isActive }) =>
-            `sidebar-item ${isActive ? "active" : ""}`
-          }
-        >
-          Personal
-        </NavLink>
 
         <NavLink
           to="/ai-agent"

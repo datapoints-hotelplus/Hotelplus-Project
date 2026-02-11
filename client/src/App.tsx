@@ -5,7 +5,6 @@ import CalculatorLayout from "./layouts/CalculatorLayout";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/login";
 import Kols from "./pages/Marketing-communication/Kols/Kols";
-import Personal from "./pages/Personal/Personal";
 import Ai from "./pages/Marketing-communication/Ai/Ai";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -49,7 +48,6 @@ function App() {
         >
           <Route path="/kols" element={<Kols />} />
           <Route path="/drive-folders" element={<DriveFolders />} />
-          <Route path="/personal" element={<Personal />} />
           <Route path="/ai-agent" element={<Ai />} />
         </Route>
 
