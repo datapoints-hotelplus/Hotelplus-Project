@@ -1,9 +1,7 @@
-
-
-const ThinkingDots = () => {
+const ThinkingDots = ({ text }: { text: string }) => {
   return (
     <div className="thinking">
-      <span>AI กำลังคิด</span>
+      <span>{text}</span>
       <span className="dots">
         <i></i>
         <i></i>
@@ -13,5 +11,4 @@ const ThinkingDots = () => {
   );
 };
 
-
-export default ThinkingDots
+export default ThinkingDots;

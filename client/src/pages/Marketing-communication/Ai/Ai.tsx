@@ -19,6 +19,98 @@ type Message = {
 
 type SendMode = "analyze" | "chat";
 
+const MAX_FILES = 3;
+
+
+
+function parseCsv(csv: string): string[][] {
+  const rows: string[][] = [];
+  let current = "";
+  let row: string[] = [];
+  let inQuotes = false;
+
+  for (let i = 0; i < csv.length; i++) {
+    const char = csv[i];
+    const next = csv[i + 1];
+
+    if (char === '"' && next === '"') {
+      current += '"';
+      i++;
+      continue;
+    }
+
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (char === "," && !inQuotes) {
+      row.push(current);
+      current = "";
+      continue;
+    }
+
+    if (char === "\n" && !inQuotes) {
+      row.push(current);
+      rows.push(row);
+      row = [];
+      current = "";
+      continue;
+    }
+
+    current += char;
+  }
+
+  if (current.length) {
+    row.push(current);
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+
+function rowsToCsv(rows: string[][]): string {
+  return rows
+    .map((row) =>
+      row
+        .map((cell) => {
+          const escaped = cell.replace(/"/g, '""');
+          return `"${escaped}"`;
+        })
+        .join(",")
+    )
+    .join("\r\n");
+}
+
+function exportCsvFromRows(
+  rows: string[][],
+  filename = "ai-result.csv"
+) {
+  const csvContent = "\uFEFF" + rowsToCsv(rows); // BOM สำคัญมาก
+  const blob = new Blob([csvContent], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function isValidUrl(text: string) {
+  try {
+    const url = new URL(text);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+
+
 const Ai = () => {
   /* =======================
       STATE
@@ -29,11 +121,13 @@ const Ai = () => {
   const [selectedFiles, setSelectedFiles] = useState<DriveItem[]>([]);
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
+  // const [input, setInput] = useState("");
 
   const [savedMasterPrompt, setSavedMasterPrompt] = useState("");
   const [masterPrompt, setMasterPrompt] = useState("");
   const [loadingMasterPrompt, setLoadingMasterPrompt] = useState(true);
+  const [statusText, setStatusText] = useState("");
+
 
   const [aiLoading, setAiLoading] = useState(false);
 
@@ -92,16 +186,25 @@ const Ai = () => {
   };
 
   const toggleFile = (file: DriveItem) => {
-    setSelectedFiles((prev) =>
-      prev.some((f) => f.id === file.id)
-        ? prev.filter((f) => f.id !== file.id)
-        : [...prev, file]
-    );
+    setSelectedFiles((prev) => {
+      // ถ้ากดซ้ำ = เอาออก
+      if (prev.some((f) => f.id === file.id)) {
+        return prev.filter((f) => f.id !== file.id);
+      }
+
+      // ถ้าเกิน MAX_FILES → ตัดตัวเก่าสุด (index 0) ออก
+      if (prev.length >= MAX_FILES) {
+        return [...prev.slice(1), file];
+      }
+
+      // กรณีปกติ
+      return [...prev, file];
+    });
   };
 
-  const selectAll = () => {
-    setSelectedFiles(files);
-  };
+
+
+
 
   /* =======================
       AI SEND
@@ -117,11 +220,11 @@ const Ai = () => {
       return;
     }
 
+    // 🧠 Step 1: เริ่มต้น
+    setStatusText("🧠 กำลังเตรียมข้อมูล...");
     setAiLoading(true);
 
-    setMessages((m) => [
-      ...m,
-      { role: "user", content: promptText },
+    setMessages([
       {
         role: "assistant",
         content: "",
@@ -129,29 +232,43 @@ const Ai = () => {
       }
     ]);
 
-
     try {
+      // 📊 Step 2: วิเคราะห์
+      setStatusText("กำลังวิเคราะห์ด้วย AI...");
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/ai/analyze`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            prompt: promptText,
+            masterPrompt,
             files: selectedFiles,
             model: selectedModel,
-            mode
+            folderId: selectedFolder
           })
         }
       );
 
+      // ☁️ Step 3: อัปโหลด Drive (backend ทำ)
+      setStatusText("☁️ กำลังอัปโหลดลง Google Drive...");
+
       const data = await res.json();
+
+      // ✅ Step 4: เสร็จสมบูรณ์
+      if (data.status?.uploaded) {
+        setStatusText("บันทึกไฟล์ลง Google Drive เรียบร้อย...");
+      } else {
+        setStatusText("วิเคราะห์เสร็จสมบูรณ์");
+      }
 
       setMessages((m) => [
         ...m.filter((msg) => !msg.loading),
         data
       ]);
     } catch (err) {
+      setStatusText("เกิดข้อผิดพลาด");
+
       setMessages((m) => [
         ...m.filter((msg) => !msg.loading),
         {
@@ -164,10 +281,11 @@ const Ai = () => {
     }
   };
 
-  const sendMessage = () => {
-    sendPromptToAI(input, "chat");
-    setInput("");
-  };
+
+  // const sendMessage = () => {
+  //   sendPromptToAI(input, "chat");
+  //   setInput("");
+  // };
 
   /* =======================
       SAVE MASTER PROMPT
@@ -208,18 +326,29 @@ const Ai = () => {
           ))}
         </select>
 
-        <button className="select-all-btn" onClick={selectAll}>
-          Select All
-        </button>
+
 
         <div className="file-list">
+          <h3>
+            เลือกไฟล์ได้ทั้งหมด
+            <span style={{ fontSize: 12, color: "#6b7280" }}>
+              {" "}
+              ({selectedFiles.length}/{MAX_FILES})
+            </span>
+          </h3>
+
           {files.map((f) => (
             <label key={f.id}>
               <input
                 type="checkbox"
                 checked={selectedFiles.some((sf) => sf.id === f.id)}
+                disabled={
+                  !selectedFiles.some((sf) => sf.id === f.id) &&
+                  selectedFiles.length >= MAX_FILES
+                }
                 onChange={() => toggleFile(f)}
               />
+
               {f.name}
             </label>
           ))}
@@ -254,6 +383,8 @@ const Ai = () => {
             วิเคราะห์จาก Master Prompt
           </button>
         </div>
+
+        
 
         {showPromptModal && (
           <div className="modal-backdrop">
@@ -317,11 +448,84 @@ const Ai = () => {
         )}
 
         <div className="gpt-messages">
-          {messages.map((m, i) => (
-            <div key={i} className={`gpt-msg ${m.role}`}>
-              {m.loading ? <ThinkingDots /> : m.content}
-            </div>
-          ))}
+          {messages.map((m, i) => {
+            if (m.loading) {
+              return (
+                <div key={i} className="gpt-msg assistant">
+                  <ThinkingDots text={statusText || "AI กำลังคิด..."} />
+                </div>
+              );
+            }
+
+
+            if (m.role === "assistant") {
+              const rows = parseCsv(m.content);
+              const [header, ...data] = rows;
+
+              return (
+                <div key={i} className="gpt-msg assistant wide">
+                  {/* EXPORT BAR */}
+                  <div className="ai-export-bar">
+                    <button
+                      onClick={() =>
+                        exportCsvFromRows(
+                          rows,
+                          `kols_Ai_sumarize_${new Date().toISOString().slice(0, 10)}.csv`
+                        )
+                      }
+                    >
+                      Export CSV
+                    </button>
+
+                  </div>
+
+                  <div className="ai-table-wrapper">
+                    <table className="ai-table">
+                      <thead>
+                        <tr>
+                          {header.map((h, idx) => (
+                            <th key={idx}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.map((row, rIdx) => (
+                          <tr key={rIdx}>
+                            {row.map((cell, cIdx) => (
+                              <td key={cIdx}>
+                                {isValidUrl(cell) ? (
+                                  <a
+                                    href={cell}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="ai-link"
+                                  >
+                                    {cell}
+                                  </a>
+                                ) : (
+                                  cell
+                                )}
+                              </td>
+                            ))}
+
+
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            }
+
+
+            return (
+              <div key={i} className={`gpt-msg ${m.role}`}>
+                {m.content}
+              </div>
+            );
+          })}
+
         </div>
 
 
@@ -340,7 +544,7 @@ const Ai = () => {
           </button>
         </div> */}
 
-        
+
       </main>
     </div>
   );
