@@ -1,4 +1,4 @@
-import { NormalizedORMInput, ORMLiteResult,} from "../model/ormLite.types";
+import type { NormalizedORMInput, ORMLiteResult,} from "../model/ormLite.types";
 
 const DAYS_PER_MONTH = 30;
 

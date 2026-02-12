@@ -87,3 +87,9 @@ export interface OverlapRecommendation {
   isOverlapZone: boolean; // 120K - 300K
   defaultRecommendation: "LITE" | "FULL";
 }
+
+
+
+export interface FixedPackageResult {
+  price: number;
+}

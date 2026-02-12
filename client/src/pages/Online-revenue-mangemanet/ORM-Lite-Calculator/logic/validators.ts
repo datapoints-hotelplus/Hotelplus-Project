@@ -1,4 +1,4 @@
-import { ORMLiteCalculatorInput } from "../model/ormLite.types";
+import type { ORMLiteCalculatorInput } from "../model/ormLite.types";
 
 export interface ValidationResult {
   isValid: boolean;

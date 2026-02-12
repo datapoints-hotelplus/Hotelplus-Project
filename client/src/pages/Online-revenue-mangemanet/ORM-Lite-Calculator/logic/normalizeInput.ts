@@ -1,4 +1,4 @@
-import { ORMLiteCalculatorInput, NormalizedORMInput,} from "../model/ormLite.types";
+import type { ORMLiteCalculatorInput, NormalizedORMInput,} from "../model/ormLite.types";
 
 const ROOM_MAINTENANCE_RATE = 0.2;
 
