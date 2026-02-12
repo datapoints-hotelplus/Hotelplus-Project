@@ -19,7 +19,7 @@ type Message = {
 
 type SendMode = "analyze" | "chat";
 
-const MAX_FILES = 3;
+const MAX_FILES = 4;
 
 
 
@@ -138,7 +138,12 @@ const Ai = () => {
 
   const [selectedModel, setSelectedModel] = useState("openai/gpt-4o-mini");
 
-  
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  const isAdmin = userRole === "Admin";
+
+
+
 
 
   /* =======================
@@ -205,6 +210,29 @@ const Ai = () => {
       return [...prev, file];
     });
   };
+
+  useEffect(() => {
+    async function loadUserRole() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (!error && data) {
+        setUserRole(data.role);
+      }
+    }
+
+    loadUserRole();
+  }, []);
+
 
 
 
@@ -386,7 +414,7 @@ const Ai = () => {
           </button>
         </div>
 
-        
+
 
         {showPromptModal && (
           <div className="modal-backdrop">
@@ -400,9 +428,12 @@ const Ai = () => {
                   </pre>
 
                   <div className="modal-actions">
-                    <button onClick={() => setIsEditingPrompt(true)}>
-                      แก้ไข
-                    </button>
+                    {isAdmin && (
+                      <button onClick={() => setIsEditingPrompt(true)}>
+                        แก้ไข
+                      </button>
+                    )}
+
                     <button
                       className="secondary"
                       onClick={() => setShowPromptModal(false)}
@@ -410,6 +441,7 @@ const Ai = () => {
                       ปิด
                     </button>
                   </div>
+
                 </>
               ) : (
                 <>

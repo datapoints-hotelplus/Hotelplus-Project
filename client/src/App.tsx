@@ -41,7 +41,7 @@ function App() {
         {/* KOLS / PERSONAL / AI */}
         <Route
           element={
-            <ProtectedRoute allowedRoles={["MarCom"]}>
+            <ProtectedRoute allowedRoles={["MarCom", "Admin"]}>
               <KolsLayout />
             </ProtectedRoute>
           }
@@ -54,7 +54,8 @@ function App() {
         {/* CALCULATOR */}
         <Route
           element={
-            <ProtectedRoute allowedRoles={["MarCom"]}>
+            <ProtectedRoute allowedRoles={["MarCom", "Admin"]}>
+
               <CalculatorLayout />
             </ProtectedRoute>
           }
@@ -65,7 +66,7 @@ function App() {
         {/* ORM */}
         <Route
           element={
-            <ProtectedRoute allowedRoles={["ORM"]}>
+            <ProtectedRoute allowedRoles={["ORM", "Admin"]}>
               <OrmCalLayout /> 
             </ProtectedRoute>
           }
