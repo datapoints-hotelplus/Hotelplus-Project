@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRevenueEngine } from "./hooks/useRevenueEngine";
 import { useLitePricing } from "./hooks/useLitePricing";
 import { useFullPricing } from "./hooks/useFullPricing";
@@ -129,177 +129,348 @@ export default function ORMLiteCalculatorView() {
   const [selectedFullPackage, setSelectedFullPackage] =
   useState<"SMART" | "FIXED" | "PERFORMANCE">("SMART");
 
+  /* ------------ SYSTEM COST CALCULATION ------------ */
+  const getSystemCost = (roomKey: number): number => {
+    if (roomKey <= 10) return 3500;
+    if (roomKey <= 20) return 4000;
+    if (roomKey <= 50) return 5200;
+    if (roomKey <= 100) return 5400;
+    return 5800;
+  };
+
+  const systemCost = getSystemCost(input.roomKey);
+
+  /* ------------ COMMISSION RATE CALCULATION ------------ */
+  const commissionData = useMemo(() => {
+    if (!revenueResult) {
+      return {
+        baseRate: 0,
+        otaAdjustment: 0,
+        varianceAdjustment: 0,
+        finalRate: 0,
+        tier: 'NONE'
+      };
+    }
+
+    const avgRevenue = revenueResult.averageRevenuePerMonth;
+    
+    // 1. หา Base Commission Rate จาก Tier
+    let baseRate = 0;
+    let tier = '';
+    
+    if (avgRevenue < 120000) {
+      baseRate = 0;
+      tier = '0';
+    } else if (avgRevenue >= 120000 && avgRevenue < 200000) {
+      baseRate = 0.10;
+      tier = 'F2';
+    } else if (avgRevenue >= 200000 && avgRevenue < 350000) {
+      baseRate = 0.09;
+      tier = 'F3';
+    } else if (avgRevenue >= 350000 && avgRevenue < 600000) {
+      baseRate = 0.08;
+      tier = 'F4';
+    } else if (avgRevenue >= 600000 && avgRevenue < 1000000) {
+      baseRate = 0.07;
+      tier = 'F5';
+    } else if (avgRevenue >= 1000000 && avgRevenue < 1500000) {
+      baseRate = 0.06;
+      tier = 'F6';
+    } else if (avgRevenue >= 1500000 && avgRevenue < 2500000) {
+      baseRate = 0.05;
+      tier = 'F7';
+    } else if (avgRevenue >= 2500000) {
+      baseRate = 0.04;
+      tier = 'F8';
+    }
+
+    // 2. ปรับตามสัดส่วน OTA
+    let otaAdjustment = 0;
+    if (input.otaSharePercent >= 80) { // เปลี่ยนจาก > เป็น >=
+      otaAdjustment = 0.01; // +1%
+    } else if (input.otaSharePercent < 50) {
+      otaAdjustment = -0.005; // -0.5%
+    }
+
+    // 3. ปรับตามความผันผวนของราคา (Seasonal Variance)
+    let varianceAdjustment = 0;
+    if (input.lowSeason.adr > 0) {
+      const seasonalVariance = (input.highSeason.adr - input.lowSeason.adr) / input.lowSeason.adr;
+      if (seasonalVariance >= 1.0) { // เปลี่ยนจาก > เป็น >=
+        varianceAdjustment = 0.005; // +0.5%
+      }
+    }
+
+    // 4. คำนวณ Final Rate และจำกัดขอบเขต 3% - 15%
+    let finalRate = baseRate + otaAdjustment + varianceAdjustment;
+    finalRate = Math.max(0.03, Math.min(0.15, finalRate));
+
+    return {
+      baseRate,
+      otaAdjustment,
+      varianceAdjustment,
+      finalRate,
+      tier
+    };
+  }, [revenueResult, input.otaSharePercent, input.highSeason.adr, input.lowSeason.adr]);
+
   return (
     <div className="orm-lite-calculator">
 
       {/* BASIC INFO */}
       <section>
-        <h2>Basic Information</h2>
+        <h2>ข้อมูลพื้นฐาน</h2>
 
-        <label>
-          Room Key
-          <input
-            type="number"
-            value={input.roomKey}
-            onChange={e =>
-              updateField("roomKey", Number(e.target.value))
-            }
-          />
-        </label>
+        <div className="basic-info-grid">
+          <label>
+            จำนวนห้องพัก <span className="required">*</span>
+            <input
+              type="number"
+              value={input.roomKey}
+              onChange={e =>
+                updateField("roomKey", Number(e.target.value))
+              }
+            />
+          </label>
 
-        <label>
-          Occupancy (%)
-          <input
-            type="number"
-            value={input.occupancyPercent}
-            onChange={e =>
-              updateField(
-                "occupancyPercent",
-                Number(e.target.value)
-              )
-            }
-          />
-        </label>
+          <label>
+            อัตราการเข้าพัก (%)
+            <input
+              type="number"
+              value={input.occupancyPercent}
+              onChange={e =>
+                updateField(
+                  "occupancyPercent",
+                  Number(e.target.value)
+                )
+              }
+            />
+          </label>
 
-        <label>
-          OTA Segment Sharing (%)
-          <input
-            type="number"
-            value={input.otaSharePercent}
-            onChange={e =>
-              updateField(
-                "otaSharePercent",
-                Number(e.target.value)
-              )
-            }
-          />
-        </label>
+          <label>
+            สัดส่วนการขายผ่าน OTA (%) <span className="required">*</span>
+            <input
+              type="number"
+              value={input.otaSharePercent}
+              onChange={e =>
+                updateField(
+                  "otaSharePercent",
+                  Number(e.target.value)
+                )
+              }
+            />
+          </label>
+        </div>
       </section>
 
       {/* SEASONS */}
       <section>
-        <h2>Season Setup</h2>
+        <h2>ข้อมูลตามฤดูกาล</h2>
 
-        {(["highSeason", "shoulderSeason", "lowSeason"] as const).map(
-          season => (
-            <div key={season}>
-              <h3>{season}</h3>
-
-              <label>
-                Months
-                <input
-                  type="number"
-                  value={input[season].months}
-                  onChange={e =>
-                    updateSeason(
-                      season,
-                      "months",
-                      Number(e.target.value)
-                    )
-                  }
-                />
-              </label>
-
-              <label>
-                ADR (THB / night)
-                <input
-                  type="number"
-                  value={input[season].adr}
-                  onChange={e =>
-                    updateSeason(
-                      season,
-                      "adr",
-                      Number(e.target.value)
-                    )
-                  }
-                />
-              </label>
+        <div className="seasons-grid">
+          {/* HIGH SEASON */}
+          <div className="season-card high">
+            <h3>High Season</h3>
+            
+            <div className="season-field">
+              <label>จำนวนเดือน</label>
+              <input
+                type="number"
+                value={input.highSeason.months}
+                onChange={e =>
+                  updateSeason(
+                    "highSeason",
+                    "months",
+                    Number(e.target.value)
+                  )
+                }
+              />
             </div>
-          )
-        )}
 
-          {/* ACTION */}
-          <section>
-            <button onClick={calculateRevenue}>
-              Calculate
-            </button>
-            <button
-              onClick={() => {
-                resetRevenue();
-                setSelectedAddOns([]);
-              }}
-            >
-              Reset
-            </button>
-          </section>
+            <div className="season-field">
+              <label>ADR (บาท)</label>
+              <input
+                type="number"
+                value={input.highSeason.adr}
+                onChange={e =>
+                  updateSeason(
+                    "highSeason",
+                    "adr",
+                    Number(e.target.value)
+                  )
+                }
+              />
+            </div>
+          </div>
 
+          {/* SHOULDER SEASON */}
+          <div className="season-card shoulder">
+            <h3>Shoulder Season</h3>
+            
+            <div className="season-field">
+              <label>จำนวนเดือน</label>
+              <input
+                type="number"
+                value={input.shoulderSeason.months}
+                onChange={e =>
+                  updateSeason(
+                    "shoulderSeason",
+                    "months",
+                    Number(e.target.value)
+                  )
+                }
+              />
+            </div>
+
+            <div className="season-field">
+              <label>ADR (บาท)</label>
+              <input
+                type="number"
+                value={input.shoulderSeason.adr}
+                onChange={e =>
+                  updateSeason(
+                    "shoulderSeason",
+                    "adr",
+                    Number(e.target.value)
+                  )
+                }
+              />
+            </div>
+          </div>
+
+          {/* LOW SEASON */}
+          <div className="season-card low">
+            <h3>Low Season</h3>
+            
+            <div className="season-field">
+              <label>จำนวนเดือน</label>
+              <input
+                type="number"
+                value={input.lowSeason.months}
+                onChange={e =>
+                  updateSeason(
+                    "lowSeason",
+                    "months",
+                    Number(e.target.value)
+                  )
+                }
+              />
+            </div>
+
+            <div className="season-field">
+              <label>ADR (บาท)</label>
+              <input
+                type="number"
+                value={input.lowSeason.adr}
+                onChange={e =>
+                  updateSeason(
+                    "lowSeason",
+                    "adr",
+                    Number(e.target.value)
+                  )
+                }
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ACTION BUTTONS */}
+        <div className="action-buttons">
+          <button className="btn-calculate" onClick={calculateRevenue}>
+            คำนวณผลลัพธ์
+          </button>
+          <button
+            className="btn-reset"
+            onClick={() => {
+              resetRevenue();
+              setSelectedAddOns([]);
+            }}
+          >
+            รีเซ็ต
+          </button>
+        </div>
       </section>
 
       {/* ERRORS */}
       {revenueErrors.length > 0 && (
-        <section>
-          <h3>Errors</h3>
+        <div className="errors-section">
+          <h3>ข้อผิดพลาด</h3>
           <ul>
             {revenueErrors.map((err, i) => (
               <li key={i}>{err}</li>
             ))}
           </ul>
-        </section>
+        </div>
       )}
 
       {/* RESULT */}
       {revenueResult && (
-        <section>
-          <h2>Result (Estimated)</h2>
+        <section className="results-section">
+          <h2>ผลลัพธ์ (ประมาณการ)</h2>
           <small>
-            * Revenue is calculated based on 30 days per month
+            * รายได้คำนวณจากจำนวน 30 วันต่อเดือน
           </small>
 
-          <p>
-            Room Available:{" "}
-            {formatNumber(round(revenueResult.roomAvailable, 0))} ห้อง
-          </p>
+          <div className="results-grid">
+            <div className="result-item">
+              <strong>จำนวนห้องพักที่มีจำหน่าย</strong>
+              <div className="value">
+                {formatNumber(round(revenueResult.roomAvailable, 0))} ห้อง
+              </div>
+            </div>
 
-          <p>
-            High Revenue / Month:{" "}
-            {formatCurrency(revenueResult.highRevenuePerMonth)}
-          </p>
+            <div className="result-item">
+              <strong>รายได้เฉลี่ย / เดือน</strong>
+              <div className="value">
+                {formatCurrency(revenueResult.averageRevenuePerMonth)}
+              </div>
+            </div>
 
-          <p>
-            Shoulder Revenue / Month:{" "}
-            {formatCurrency(revenueResult.shoulderRevenuePerMonth)}
-          </p>
+            <div className="result-item">
+              <strong>รายได้ High Season / เดือน</strong>
+              <div className="value">
+                {formatCurrency(revenueResult.highRevenuePerMonth)}
+              </div>
+            </div>
 
-          <p>
-            Low Revenue / Month:{" "}
-            {formatCurrency(revenueResult.lowRevenuePerMonth)}
-          </p>
+            <div className="result-item">
+              <strong>รายได้ Shoulder Season / เดือน</strong>
+              <div className="value">
+                {formatCurrency(revenueResult.shoulderRevenuePerMonth)}
+              </div>
+            </div>
 
-          <p>
-            Average Revenue / Month:{" "}
-            {formatCurrency(revenueResult.averageRevenuePerMonth)}
-          </p>
+            <div className="result-item">
+              <strong>รายได้ Low Season / เดือน</strong>
+              <div className="value">
+                {formatCurrency(revenueResult.lowRevenuePerMonth)}
+              </div>
+            </div>
 
-          <p>
-            OTA Revenue / Month:{" "}
-            {formatCurrency(revenueResult.otaRevenuePerMonth)}
-          </p>
+            <div className="result-item">
+              <strong>รายได้จาก OTA / เดือน</strong>
+              <div className="value">
+                {formatCurrency(revenueResult.otaRevenuePerMonth)}
+              </div>
+            </div>
+          </div>
         </section>
       )}
 
       {/* ADD-ONS (ONLY WHEN LITE) */}
       {isLiteEligible && (
           <section>
-            <h2>Add-On Services</h2>
+            <h2>บริการเสริม (Add-On Services)</h2>
 
             {ADD_ON_SERVICES.map(service => (
-              <div key={service.code}>
+              <div key={service.code} className="addon-service">
                 <h3>{service.name}</h3>
 
                 {service.options.map(option => (
-                  <label key={option.id} style={{ display: "block" }}>
+                  <div key={option.id} className="addon-option">
                     <input
                       type="checkbox"
+                      id={option.id}
                       checked={selectedAddOns.some(
                         o => o.id === option.id
                       )}
@@ -307,9 +478,10 @@ export default function ORMLiteCalculatorView() {
                         toggleAddOnOption(option)
                       }
                     />
-                    {option.label} –{" "}
-                    {formatCurrency(option.price)}
-                  </label>
+                    <label htmlFor={option.id}>
+                      {option.label} – {formatCurrency(option.price)}
+                    </label>
+                  </div>
                 ))}
               </div>
             ))}
@@ -319,22 +491,22 @@ export default function ORMLiteCalculatorView() {
       {/* PACKAGE RECOMMENDATION */}
       {revenueResult && (
         <section>
-          <h2>Package Recommendation</h2>
+          <h2>แนะนำแพ็คเกจ</h2>
 
           <p>
-            Recommended Package:{" "}
+            แพ็คเกจที่แนะนำ:{" "}
             <strong>
               {recommendation.recommendation}
             </strong>
           </p>
 
           <p>
-            Reason: {recommendation.reason}
+            เหตุผล: {recommendation.reason}
           </p>
 
           {recommendation.gapPercent !== undefined && (
             <p>
-              Price Gap:{" "}
+              ส่วนต่างราคา:{" "}
               {recommendation.gapPercent.toFixed(2)}%
             </p>
           )}
@@ -346,49 +518,44 @@ export default function ORMLiteCalculatorView() {
               <h3>
                 Lite Package
                 {recommendation.recommendation === "LITE" &&
-                  " ⭐ Recommended"}
+                  " ⭐ แนะนำ"}
               </h3>
 
-              <p>Tier: {litePricing.tier}</p>
+              <p>ระดับ: {litePricing.tier}</p>
 
               <div className="breakdown">
                 <p>
-                Base Monthly Fee:
-                {" "}
-                {formatCurrency(litePricing.baseMonthlyFee)}
-              </p>
+                  <span>ค่าบริการรายเดือนพื้นฐาน:</span>
+                  <span>{formatCurrency(litePricing.baseMonthlyFee)}</span>
+                </p>
 
-              <p>
-                Commission Rate:
-                {" "}
-                {(litePricing.commissionRate * 100).toFixed(2)}%
-              </p>
+                <p>
+                  <span>อัตราค่าคอมมิชชั่น:</span>
+                  <span>{(litePricing.commissionRate * 100).toFixed(2)}%</span>
+                </p>
 
-              <p>
-                Commission Fee:
-                {" "}
-                {formatCurrency(litePricing.commissionCost)}
-              </p>
+                <p>
+                  <span>ค่าคอมมิชชั่น:</span>
+                  <span>{formatCurrency(litePricing.commissionCost)}</span>
+                </p>
 
-              <p>
-                Add-ons:
-                {" "}
-                {formatCurrency(litePricing.addOnTotal)}
-              </p>
-              <p>
-                Total Monthly Fee:
-                {" "}
-                {formatCurrency(litePricing.totalFee)}
-              </p>
-              
-              <hr />
+                <p>
+                  <span>บริการเสริม:</span>
+                  <span>{formatCurrency(litePricing.addOnTotal)}</span>
+                </p>
 
+                <hr />
+
+                <p style={{ fontWeight: "bold", fontSize: "16px" }}>
+                  <span>รวมค่าบริการรายเดือน:</span>
+                  <span>{formatCurrency(litePricing.totalFee)}</span>
+                </p>
               </div>
 
               {litePricing.isTriggerExceeded && (
-                <p style={{ color: "red" }}>
-                  Add-on exceeds tier limit.
-                  Recommend Full Services.
+                <p style={{ color: "#e53e3e", marginTop: "12px" }}>
+                  บริการเสริมเกินจำนวนที่กำหนด
+                  แนะนำให้เลือก Full Services
                 </p>
               )}
 
@@ -399,7 +566,7 @@ export default function ORMLiteCalculatorView() {
           {isFullEligible && fullPricing && (
             <section>
 
-              <h2>Full Services Packages</h2>
+              <h2>แพ็คเกจ Full Services</h2>
 
               {/* ---------- TABS ---------- */}
               <div className="full-tabs">
@@ -452,32 +619,209 @@ export default function ORMLiteCalculatorView() {
               {selectedFullPackage === "SMART" && (
                 <div className="package-box">
 
-                  <h3>Smart Package (A + B)</h3>
+                  <div className="package-header">
+                    <h3>🍊 แพคเกจมาตรฐาน (A + B)</h3>
+                    <span className="recommended-badge">แนะนำ</span>
+                  </div>
 
-                  <p>
-                    A (Fixed Fee):
-                    {" "}
-                    {formatCurrency(fullPricing.A)}
-                  </p>
+                  <div className="price-highlight">
+                    {revenueResult && formatCurrency(
+                      Math.min(
+                        fullPricing.A + (revenueResult.otaRevenuePerMonth * commissionData.finalRate),
+                        60000
+                      )
+                    )} บาท/เดือน
+                  </div>
 
-                  <p>
-                    B (Commission Fee):
-                    {" "}
-                    {formatCurrency(fullPricing.B)}
-                  </p>
+                  <div className="package-breakdown">
+                    <div className="breakdown-row">
+                      <span>ค่าบริการระบบ (A)</span>
+                      <span className="amount">{formatCurrency(fullPricing.A)} บาท</span>
+                    </div>
 
-                  <hr />
+                    <div className="breakdown-row">
+                      <span>ค่าคอมมิชชั่นเฉลี่ย (B)</span>
+                      <span className="amount">
+                        {revenueResult && formatCurrency(revenueResult.otaRevenuePerMonth * commissionData.finalRate)} บาท
+                      </span>
+                    </div>
+                  </div>
 
-                  <p style={{ fontWeight: "bold" }}>
-                    Monthly Charge:
-                    {" "}
-                    {formatCurrency(fullPricing.smartPackage)}
-                  </p>
+                  {/* SEASONAL PRICING BREAKDOWN */}
+                  <div className="seasonal-breakdown">
+                    <h4>🔥 ค่าบริการตามฤดูกาล</h4>
+                    
+                    {revenueResult && (
+                      <>
+                        {(() => {
+                          // Calculate OTA Revenue for each season
+                          const highOtaRevenue = revenueResult.highRevenuePerMonth * (input.otaSharePercent / 100);
+                          const shoulderOtaRevenue = revenueResult.shoulderRevenuePerMonth * (input.otaSharePercent / 100);
+                          const lowOtaRevenue = revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100);
+                          
+                          // Use the calculated commission rate
+                          const commissionRate = commissionData.finalRate;
+                          
+                          // Calculate seasonal pricing
+                          const highSeasonPrice = Math.min(
+                            fullPricing.A + (highOtaRevenue * commissionRate),
+                            60000
+                          );
+                          const shoulderSeasonPrice = Math.min(
+                            fullPricing.A + (shoulderOtaRevenue * commissionRate),
+                            60000
+                          );
+                          const lowSeasonPrice = Math.min(
+                            fullPricing.A + (lowOtaRevenue * commissionRate),
+                            60000
+                          );
+                          
+                          return (
+                            <>
+                              <div className="season-revenue-item">
+                                <span className="season-icon">🔥</span>
+                                <span>High Season ({input.highSeason.months} เดือน)</span>
+                                <span className="amount">
+                                  {formatCurrency(highSeasonPrice)} บาท
+                                </span>
+                              </div>
+
+                              <div className="season-revenue-item">
+                                <span className="season-icon">🍂</span>
+                                <span>Shoulder Season ({input.shoulderSeason.months} เดือน)</span>
+                                <span className="amount">
+                                  {formatCurrency(shoulderSeasonPrice)} บาท
+                                </span>
+                              </div>
+
+                              <div className="season-revenue-item">
+                                <span className="season-icon">❄️</span>
+                                <span>Low Season ({input.lowSeason.months} เดือน)</span>
+                                <span className="amount">
+                                  {formatCurrency(lowSeasonPrice)} บาท
+                                </span>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </>
+                    )}
+                  </div>
+
+                  {/* CALCULATION DETAILS */}
+                  <div className="calculation-details">
+                    <h4>📊 รายละเอียดการคำนวณ</h4>
+                    
+                    <div className="detail-row">
+                      <span>System Cost ({input.roomKey} ห้อง)</span>
+                      <span className="amount">{formatCurrency(systemCost)} บาท</span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span>A Multiplier (ตัวคูณ)</span>
+                      <span className="amount">1.5x</span>
+                    </div>
+
+                    <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '4px' }}>
+                      <span><strong>A = System Cost × 1.5</strong></span>
+                      <span className="amount"><strong>{formatCurrency(fullPricing.A)} บาท</strong></span>
+                    </div>
+
+                    <div className="detail-row" style={{ marginTop: '12px' }}>
+                      <span>รายได้ OTA เฉลี่ย/เดือน</span>
+                      <span className="amount">{revenueResult && formatCurrency(revenueResult.otaRevenuePerMonth)} บาท</span>
+                    </div>
+
+                    {/* Commission Rate Calculation */}
+                    <div className="detail-row" style={{ marginTop: '12px', background: '#fef3c7', marginLeft: '-16px', marginRight: '-16px', paddingLeft: '16px', paddingRight: '16px', paddingTop: '8px', paddingBottom: '8px' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 'bold' }}>การคำนวณ Commission Rate:</span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span>รายได้เฉลี่ย/เดือน</span>
+                      <span className="amount">
+                        {revenueResult && formatCurrency(revenueResult.averageRevenuePerMonth)} บาท
+                      </span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span>Tier (จากรายได้เฉลี่ย)</span>
+                      <span className="amount">{commissionData.tier}</span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span>Base Commission Rate</span>
+                      <span className="amount">{(commissionData.baseRate * 100).toFixed(1)}%</span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span>OTA Share</span>
+                      <span className="amount">{input.otaSharePercent}%</span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span>ปรับตาม OTA Share ({input.otaSharePercent}%)
+                        {input.otaSharePercent >= 80 && ' (≥80% ✓)'}
+                        {input.otaSharePercent < 50 && ' (<50%)'}
+                      </span>
+                      <span className="amount" style={{ color: commissionData.otaAdjustment > 0 ? '#059669' : commissionData.otaAdjustment < 0 ? '#dc2626' : '#6b7280' }}>
+                        {commissionData.otaAdjustment > 0 ? '+' : ''}{(commissionData.otaAdjustment * 100).toFixed(1)}%
+                      </span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span>Seasonal Variance
+                        {(() => {
+                          if (input.lowSeason.adr > 0) {
+                            const variance = (input.highSeason.adr - input.lowSeason.adr) / input.lowSeason.adr;
+                            return ` (${variance.toFixed(2)}${variance >= 1.0 ? ' ≥1.0 ✓' : ''})`;
+                          }
+                          return '';
+                        })()}
+                      </span>
+                      <span className="amount">{input.lowSeason.adr > 0 ? ((input.highSeason.adr - input.lowSeason.adr) / input.lowSeason.adr).toFixed(2) : 'N/A'}</span>
+                    </div>
+
+                    <div className="detail-row">
+                      <span>ปรับตาม Seasonal Variance
+                        {(() => {
+                          if (input.lowSeason.adr > 0) {
+                            const variance = (input.highSeason.adr - input.lowSeason.adr) / input.lowSeason.adr;
+                            return variance >= 1.0 ? ' (≥1.0 ✓)' : ' (<1.0)';
+                          }
+                          return '';
+                        })()}
+                      </span>
+                      <span className="amount" style={{ color: commissionData.varianceAdjustment > 0 ? '#059669' : '#6b7280' }}>
+                        {commissionData.varianceAdjustment > 0 ? '+' : ''}{(commissionData.varianceAdjustment * 100).toFixed(1)}%
+                      </span>
+                    </div>
+
+                    <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '4px' }}>
+                      <span><strong>Adjusted Commission Rate (จำกัด 3%-15%)</strong></span>
+                      <span className="amount"><strong>{(commissionData.finalRate * 100).toFixed(1)}%</strong></span>
+                    </div>
+
+                    <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '4px' }}>
+                      <span><strong>B = รายได้ OTA × Rate</strong></span>
+                      <span className="amount">
+                        <strong>
+                          {revenueResult && formatCurrency(revenueResult.otaRevenuePerMonth * commissionData.finalRate)} บาท
+                        </strong>
+                      </span>
+                    </div>
+
+                    <div className="detail-row" style={{ fontSize: '11px', color: '#6b7280', borderTop: '1px dashed #d1d5db', paddingTop: '8px', marginTop: '8px' }}>
+                      <span style={{ fontStyle: 'italic' }}>
+                        * System Cost: ≤10=3,500 | 11-20=4,000 | 21-50=5,200 | 51-100=5,400 | &gt;100=5,800
+                      </span>
+                    </div>
+                  </div>
 
                   {fullPricing.A + fullPricing.B > 60000 && (
-                    <small style={{ color: "#888" }}>
-                      * Price capped at 60,000 THB
-                    </small>
+                    <div className="info-note">
+                      * ราคาสูงสุดไม่เกิน 60,000 บาท
+                    </div>
                   )}
 
                 </div>
@@ -487,19 +831,141 @@ export default function ORMLiteCalculatorView() {
               {selectedFullPackage === "FIXED" && (
                 <div className="package-box">
 
-                  <h3>Fixed Package (A Only)</h3>
+                  <div className="package-header">
+                    <h3>💎 แพคเกจเหมาจ่าย (A Only)</h3>
+                    <span className="status-badge stable">ค่าบริการคงที่</span>
+                  </div>
 
-                  <p>
-                    A (Fixed Fee):
-                    {" "}
-                    {formatCurrency(fullPricing.A)}
-                  </p>
+                  <div className="price-highlight">
+                    {formatCurrency(fullPricing.fixedPackage)} บาท/เดือน
+                  </div>
 
-                  <p style={{ fontWeight: "bold" }}>
-                    Monthly Charge:
-                    {" "}
-                    {formatCurrency(fullPricing.fixedPackage)}
-                  </p>
+                  <div className="info-box">
+                    <span className="info-icon">💡</span>
+                    <div>
+                      <p>เหมาะสำหรับโรงแรมที่ต้องการความมั่นคงไม่เสี่ยงกับยอดขาย OTA</p>
+                      <p>ค่าบริการคงที่ ไม่ขึ้นกับรายได้โรงแรม</p>
+                    </div>
+                  </div>
+
+                  {/* CALCULATION FORMULA */}
+                  <div className="calculation-details">
+                    <h4>📊 สูตรการคำนวณ (Tier: {commissionData.tier})</h4>
+                    
+                    {revenueResult && (() => {
+                      const lowOtaRevenue = revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100);
+                      const lowB = lowOtaRevenue * commissionData.finalRate; // ใช้ Commission Rate ที่คำนวณใหม่
+                      let weight = 1;
+                      let discount = 1;
+                      
+                      switch(commissionData.tier) {
+                        case 'F2':
+                          weight = 0.85;
+                          discount = 0.70;
+                          break;
+                        case 'F3':
+                          weight = 0.90;
+                          discount = 0.75;
+                          break;
+                        case 'F4':
+                          weight = 0.95;
+                          discount = 0.80;
+                          break;
+                        case 'F5':
+                          weight = 1;
+                          discount = 0.83;
+                          break;
+                        case 'F6':
+                          weight = 1;
+                          discount = 0.85;
+                          break;
+                        case 'F7':
+                          weight = 1;
+                          discount = 0.87;
+                          break;
+                        case 'F8':
+                          weight = 1;
+                          discount = 0.90;
+                          break;
+                      }
+                      
+                      const base = fullPricing.A + (lowB * weight);
+                      const baseDiscounted = base * discount;
+                      const minValue = fullPricing.A + 5000;
+                      
+                      return (
+                        <>
+                          <div className="detail-row">
+                            <span>A (System Cost × 1.5)</span>
+                            <span className="amount">{formatCurrency(fullPricing.A)} บาท</span>
+                          </div>
+
+                          <div className="detail-row">
+                            <span>Low Season OTA Revenue</span>
+                            <span className="amount">{formatCurrency(lowOtaRevenue)} บาท</span>
+                          </div>
+                          
+                          <div className="detail-row">
+                            <span>Adjusted Commission Rate</span>
+                            <span className="amount">{(commissionData.finalRate * 100).toFixed(1)}%</span>
+                          </div>
+
+                          <div className="detail-row">
+                            <span>Low B = Low OTA × {(commissionData.finalRate * 100).toFixed(1)}%</span>
+                            <span className="amount">{formatCurrency(lowB)} บาท</span>
+                          </div>
+                          
+                          <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '8px' }}>
+                            <span>Weight (น้ำหนัก)</span>
+                            <span className="amount">{(weight * 100).toFixed(0)}%</span>
+                          </div>
+                          
+                          <div className="detail-row">
+                            <span><strong>Base = A + (Low B × {(weight * 100).toFixed(0)}%)</strong></span>
+                            <span className="amount"><strong>{formatCurrency(base)} บาท</strong></span>
+                          </div>
+                          
+                          <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '8px' }}>
+                            <span>Discount (ส่วนลด)</span>
+                            <span className="amount">{(discount * 100).toFixed(0)}%</span>
+                          </div>
+                          
+                          <div className="detail-row">
+                            <span>Base × {(discount * 100).toFixed(0)}%</span>
+                            <span className="amount">{formatCurrency(baseDiscounted)} บาท</span>
+                          </div>
+
+                          <div className="detail-row">
+                            <span>A + 5,000 (ขั้นต่ำ)</span>
+                            <span className="amount">{formatCurrency(minValue)} บาท</span>
+                          </div>
+                          
+                          <div className="detail-row" style={{ borderTop: '2px solid #059669', paddingTop: '10px', marginTop: '10px', background: '#f0fdf4', marginLeft: '-16px', marginRight: '-16px', paddingLeft: '16px', paddingRight: '16px' }}>
+                            <span style={{ fontWeight: 'bold', fontSize: '15px' }}>Fixed = max(Base × Discount, A + 5,000)</span>
+                            <span className="amount" style={{ fontWeight: 'bold', color: '#059669', fontSize: '16px' }}>
+                              {formatCurrency(Math.max(baseDiscounted, minValue))} บาท
+                            </span>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  {/* SETUP FEE */}
+                  <div className="calculation-details" style={{ background: '#fef3c7', borderColor: '#fbbf24' }}>
+                    <h4>💰 ค่าใช้จ่ายเริ่มต้น</h4>
+                    
+                    <div className="detail-row">
+                      <span>Setup Fee (C) - จ่ายครั้งแรก</span>
+                      <span className="amount">{formatCurrency(systemCost)} บาท</span>
+                    </div>
+
+                    <div className="detail-row" style={{ fontSize: '11px', color: '#78350f', borderTop: '1px dashed #fbbf24', paddingTop: '6px', marginTop: '4px' }}>
+                      <span style={{ fontStyle: 'italic' }}>
+                        * System Cost: ≤10=3,500 | 11-20=4,000 | 21-50=5,200 | 51-100=5,400 | &gt;100=5,800
+                      </span>
+                    </div>
+                  </div>
 
                 </div>
               )}
@@ -508,29 +974,141 @@ export default function ORMLiteCalculatorView() {
               {selectedFullPackage === "PERFORMANCE" && (
                 <div className="package-box">
 
-                  <h3>Performance Package (B Only)</h3>
+                  <div className="package-header">
+                    <h3>🎯 แพคเกจคอมมิชชั่นเท่านั้น (B Only)</h3>
+                    <span className="status-badge performance">ประสิทธิภาพสูง</span>
+                  </div>
 
-                  <p>
-                    Base Commission Rate:
-                    {" "}
-                    {(fullPricing.adjustedCommissionRate * 100).toFixed(2)}%
-                  </p>
+                  {(() => {
+                    // คำนวณ B Only Rate และ B Only
+                    const bOnlyRate = commissionData.finalRate + 0.02; // เพิ่ม 2%
+                    const bOnlyAmount = revenueResult ? revenueResult.otaRevenuePerMonth * bOnlyRate : 0;
+                    
+                    return (
+                      <>
+                        <div className="price-highlight">
+                          {formatCurrency(bOnlyAmount)} บาท/เดือน
+                        </div>
 
-                  <p>
-                    B Only Rate:
-                    {" "}
-                    {(fullPricing.bOnlyRate * 100).toFixed(2)}%
-                  </p>
+                        {/* CHECK ELIGIBILITY */}
+                        {bOnlyAmount < 15000 && (
+                          <div className="info-box warning" style={{ background: '#fee2e2', borderLeftColor: '#dc2626' }}>
+                            <span className="info-icon">⚠️</span>
+                            <div>
+                              <p style={{ fontWeight: 'bold', color: '#991b1b' }}>แพคเกจนี้ไม่สามารถใช้งานได้</p>
+                              <p style={{ color: '#991b1b' }}>เงื่อนไข: B Only ต้อง ≥ 15,000 บาท</p>
+                              <p style={{ color: '#991b1b' }}>ปัจจุบัน: {formatCurrency(bOnlyAmount)} บาท</p>
+                            </div>
+                          </div>
+                        )}
 
-                  <hr />
+                        {/* CALCULATION DETAILS */}
+                        <div className="calculation-details">
+                          <h4>📊 รายละเอียดการคำนวณ</h4>
 
-                  <p style={{ fontWeight: "bold" }}>
-                    Monthly Charge:
-                    {" "}
-                    {formatCurrency(
-                      fullPricing.performancePackage
-                    )}
-                  </p>
+                          {revenueResult && (
+                            <>
+                              <div className="detail-row">
+                                <span>รายได้ OTA เฉลี่ย/เดือน</span>
+                                <span className="amount">{formatCurrency(revenueResult.otaRevenuePerMonth)} บาท</span>
+                              </div>
+
+                              <div className="detail-row">
+                                <span>Adjusted Commission Rate</span>
+                                <span className="amount">{(commissionData.finalRate * 100).toFixed(2)}%</span>
+                              </div>
+
+                              <div className="detail-row">
+                                <span>เพิ่ม 2% สำหรับ B Only</span>
+                                <span className="amount">+2.00%</span>
+                              </div>
+
+                              <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '8px' }}>
+                                <span><strong>B Only Rate = Adjusted Rate + 2%</strong></span>
+                                <span className="amount"><strong>{(bOnlyRate * 100).toFixed(2)}%</strong></span>
+                              </div>
+
+                              <div className="detail-row" style={{ borderTop: '2px solid #8b5cf6', paddingTop: '10px', marginTop: '10px', background: '#faf5ff', marginLeft: '-16px', marginRight: '-16px', paddingLeft: '16px', paddingRight: '16px' }}>
+                                <span style={{ fontWeight: 'bold', fontSize: '15px' }}>B Only = รายได้ OTA × B Only Rate</span>
+                                <span className="amount" style={{ fontWeight: 'bold', color: '#8b5cf6', fontSize: '16px' }}>
+                                  {formatCurrency(bOnlyAmount)} บาท
+                                </span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        <div className="info-box">
+                          <span className="info-icon">⚡</span>
+                          <div>
+                            <p><strong>เงื่อนไขการใช้งาน:</strong></p>
+                            <p>✓ เหมาะสำหรับโรงแรมที่บริหารจัดการได้เองในยอดขาย OTA</p>
+                            <p>✓ ใช้ได้เฉพาะโรงแรมที่ไม่ใช่ "รายได้ต่ำ"</p>
+                            <p>✓ B Only ต้อง ≥ 15,000 บาท</p>
+                          </div>
+                        </div>
+
+                        {/* SEASONAL BREAKDOWN */}
+                        {revenueResult && (
+                          <div className="seasonal-breakdown">
+                            <h4>🔥 ค่าบริการตามฤดูกาล</h4>
+                            
+                            <div className="season-revenue-item">
+                              <span className="season-icon">🔥</span>
+                              <span>High Season ({input.highSeason.months} เดือน)</span>
+                              <span className="amount">
+                                {formatCurrency(
+                                  (revenueResult.highRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate
+                                )} บาท
+                              </span>
+                            </div>
+
+                            <div className="season-revenue-item">
+                              <span className="season-icon">🍂</span>
+                              <span>Shoulder Season ({input.shoulderSeason.months} เดือน)</span>
+                              <span className="amount">
+                                {formatCurrency(
+                                  (revenueResult.shoulderRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate
+                                )} บาท
+                              </span>
+                            </div>
+
+                            <div className="season-revenue-item">
+                              <span className="season-icon">❄️</span>
+                              <span>Low Season ({input.lowSeason.months} เดือน)</span>
+                              <span className="amount">
+                                {formatCurrency(
+                                  (revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate
+                                )} บาท
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* SETUP FEE */}
+                        <div className="calculation-details" style={{ background: '#fef3c7', borderColor: '#fbbf24' }}>
+                          <h4>💰 ค่าใช้จ่ายเริ่มต้น</h4>
+                          
+                          <div className="detail-row">
+                            <span>Setup Fee (C) - จ่ายครั้งแรก</span>
+                            <span className="amount">{formatCurrency(systemCost)} บาท</span>
+                          </div>
+
+                          <div className="detail-row" style={{ fontSize: '11px', color: '#78350f', borderTop: '1px dashed #fbbf24', paddingTop: '6px', marginTop: '4px' }}>
+                            <span style={{ fontStyle: 'italic' }}>
+                              * System Cost: ≤10=3,500 | 11-20=4,000 | 21-50=5,200 | 51-100=5,400 | &gt;100=5,800
+                            </span>
+                          </div>
+                        </div>
+
+                        {bOnlyAmount < 15000 && (
+                          <div className="info-note" style={{ color: '#dc2626' }}>
+                            ⚠️ แพคเกจนี้ต้องมีค่าบริการขั้นต่ำ 15,000 บาท
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
 
                 </div>
               )}
@@ -541,8 +1119,8 @@ export default function ORMLiteCalculatorView() {
 
           {/* NOT RECOMMENDED */}
           {!isLiteEligible && !isFullEligible && (
-            <p style={{ color: "red" }}>
-              No suitable package can be recommended
+            <p style={{ color: "#e53e3e", textAlign: "center" }}>
+              ไม่สามารถแนะนำแพ็คเกจที่เหมาะสมได้
             </p>
           )}
         </section>

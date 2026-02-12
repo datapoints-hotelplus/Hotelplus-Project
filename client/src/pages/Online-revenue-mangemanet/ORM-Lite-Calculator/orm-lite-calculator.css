@@ -1,160 +1,613 @@
 .orm-lite-calculator {
   max-width: 1440px;
-  margin: 40px auto;
-  padding: 24px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-.orm-lite-calculator > section {
-  background: var(--color-clean);
-  border-radius: 14px;
+/* Section Styling */
+.orm-lite-calculator section {
+  background: white;
+  border-radius: 12px;
   padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.orm-lite-calculator h2 {
+.orm-lite-calculator section h2 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Add icons to section headers */
+.orm-lite-calculator section h2::before {
+  content: "⭐";
   font-size: 20px;
-  margin-bottom: 16px;
 }
 
-.orm-lite-calculator h3 {
-  font-size: 16px;
-  margin: 16px 0 8px;
-  color: var(--color-secondary);
-  text-transform: capitalize;
+.orm-lite-calculator section:nth-of-type(2) h2::before {
+  content: "📅";
+}
+
+/* Basic Information Section */
+.basic-info-grid {
+  display: grid;
+  gap: 16px;
 }
 
 .orm-lite-calculator label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 13px;
-  color: #475569;
-  margin-bottom: 14px;
+  gap: 8px;
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+.orm-lite-calculator label .required {
+  color: #e53e3e;
+  margin-left: 4px;
 }
 
 .orm-lite-calculator input[type="number"] {
   padding: 10px 12px;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  border: 1px solid var(--color-primary);
   font-size: 14px;
+  transition: all 0.2s;
+  background: #f8f9fa;
 }
 
 .orm-lite-calculator input[type="number"]:focus {
   outline: none;
-  border-color: var(--color-secondary);
+  border-color: #4299e1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
 }
 
-.orm-lite-calculator > section:first-of-type {
+/* Season Setup Section */
+.seasons-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+  margin-bottom: 20px;
 }
 
-.orm-lite-calculator > section:first-of-type h2 {
-  grid-column: 1 / -1;
-}
-
-.orm-lite-calculator > section:nth-of-type(2) > div {
-  background: #f1f5f9;
+.season-card {
+  border: 2px solid;
   border-radius: 12px;
   padding: 16px;
-  margin-bottom: 16px;
+  background: #fafafa;
 }
 
-.orm-lite-calculator > section:nth-of-type(2) > div label {
-  width: 100%;
+.season-card.high {
+  border-color: #e53e3e;
+  background: #fff5f5;
+}
+
+.season-card.shoulder {
+  border-color: #ed8936;
+  background: #fffaf0;
+}
+
+.season-card.low {
+  border-color: #4299e1;
+  background: #ebf8ff;
+}
+
+.season-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.season-card.high h3::before {
+  content: "🔥";
+}
+
+.season-card.shoulder h3::before {
+  content: "🍂";
+}
+
+.season-card.low h3::before {
+  content: "❄️";
+}
+
+.season-card h3 {
+  color: inherit;
+}
+
+.season-card.high h3 {
+  color: #c53030;
+}
+
+.season-card.shoulder h3 {
+  color: #c05621;
+}
+
+.season-card.low h3 {
+  color: #2c5282;
+}
+
+.season-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.season-field label {
+  flex-direction: row;
+  align-items: center;
+  min-width: 120px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.season-field input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .orm-lite-calculator button {
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 12px 32px;
   border: none;
+  border-radius: 8px;
   font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-calculate {
+  background: #48bb78;
+  color: white;
+  flex: 1;
+}
+
+.btn-calculate:hover {
+  background: #38a169;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.btn-calculate::before {
+  content: "📊";
+}
+
+.btn-reset {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.btn-reset:hover {
+  background: #cbd5e0;
+}
+
+/* Errors Section */
+.errors-section {
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.errors-section h3 {
+  color: #c53030;
+  margin: 0 0 12px 0;
+  font-size: 15px;
+}
+
+.errors-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.errors-section li {
+  color: #742a2a;
+  margin-bottom: 4px;
+}
+
+/* Results Section */
+.results-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: rgb(0, 0, 0);
+  padding: 24px;
+}
+
+.results-section h2 {
+  color: white;
+  margin-bottom: 8px;
+}
+
+.results-section small {
+  opacity: 0.9;
+  font-size: 12px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.result-item {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.result-item strong {
+  display: block;
+  font-size: 13px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.result-item .value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Add-ons Section */
+.addon-service {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.addon-service:last-child {
+  border-bottom: none;
+}
+
+.addon-service h3 {
+  font-size: 15px;
+  margin: 0 0 12px 0;
+  color: #2d3748;
+}
+
+.addon-option {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+
+.addon-option:hover {
+  background: #f7fafc;
+}
+
+.addon-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
   cursor: pointer;
 }
 
-.orm-lite-calculator button:first-child {
-  background: var(--color-primary);
-  color: var(--color-secondary);
-}
-
-.orm-lite-calculator button:last-child {
-  background: var(--color-secondary);
-  color: var(--color-primary);
-}
-
-/* ===============================
-   ERRORS
-=============================== */
-.orm-lite-calculator ul {
-  padding-left: 18px;
-}
-
-.orm-lite-calculator li {
-  color: #dc2626;
-  font-size: 14px;
-}
-
-/* ===============================
-   RESULT
-=============================== */
-.orm-lite-calculator p {
-  font-size: 14px;
-  margin: 6px 0;
-}
-
-.orm-lite-calculator small {
-  color: #64748b;
-}
-
-/* ===============================
-   ADD-ONS
-=============================== */
-.orm-lite-calculator input[type="checkbox"] {
-  margin-right: 8px;
-}
-
-/* ===============================
-   RECOMMENDATION
-=============================== */
-.orm-lite-calculator strong {
-  color: #4f46e5;
-}
-
-.full-tabs {
-  display: flex;
-  gap: 12px;
+/* Package Cards */
+.package-card {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
   margin-bottom: 16px;
 }
 
-.tab {
-  padding: 10px 18px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  background: #f9f9f9;
-  cursor: pointer;
-  font-weight: 500;
+.package-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #2d3748;
 }
 
-.tab:hover {
-  background: #f1f1f1;
+.breakdown p {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  font-size: 14px;
+  color: #4a5568;
 }
 
-.tab.active {
-  background: #22c55e;
+.breakdown hr {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Full Services Tabs */
+.full-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.full-tabs .tab {
+  flex: 1;
+  padding: 12px;
+  background: #f7fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  transition: all 0.2s;
+}
+
+.full-tabs .tab:hover:not(:disabled) {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.full-tabs .tab.active {
+  background: #4299e1;
   color: white;
-  border-color: #22c55e;
+  border-color: #4299e1;
 }
 
-.tab:disabled {
-  opacity: 0.4;
+.full-tabs .tab:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .package-box {
-  border: 1px solid #ddd;
+  background: #f8f9fa;
   border-radius: 12px;
-  padding: 18px;
-  background: #fafafa;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.package-box h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #2d3748;
+}
+
+.package-box p {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+/* Package Header */
+.package-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.package-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #2d3748;
+}
+
+/* Badges */
+.recommended-badge {
+  background: #fbbf24;
+  color: #78350f;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.stable {
+  background: #10b981;
+  color: white;
+}
+
+.status-badge.performance {
+  background: #8b5cf6;
+  color: white;
+}
+
+/* Price Highlight */
+.price-highlight {
+  font-size: 28px;
+  font-weight: 700;
+  color: #059669;
+  margin: 16px 0;
+  padding: 16px;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Package Breakdown */
+.package-breakdown {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.breakdown-row .amount {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Seasonal Breakdown */
+.seasonal-breakdown {
+  background: #f7fafc;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #e2e8f0;
+}
+
+.seasonal-breakdown h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.season-revenue-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 8px 0;
+  background: white;
+  border-radius: 6px;
+  gap: 10px;
+}
+
+.season-revenue-item .season-icon {
+  font-size: 20px;
+  min-width: 24px;
+}
+
+.season-revenue-item span:nth-child(2) {
+  flex: 1;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.season-revenue-item .amount {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Info Box */
+.info-box {
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  display: flex;
+  gap: 12px;
+}
+
+.info-box.warning {
+  background: #fef3c7;
+  border-left-color: #f59e0b;
+}
+
+.info-box.warning[style*="bold"] {
+  background: #fee2e2;
+  border-left-color: #dc2626;
+}
+
+.info-box .info-icon {
+  font-size: 20px;
+  min-width: 24px;
+}
+
+.info-box p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #1e40af;
+}
+
+.info-box.warning p {
+  color: #92400e;
+}
+
+.info-box.warning[style*="bold"] p {
+  color: #991b1b;
+}
+
+.info-box p strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Calculation Details */
+.calculation-details {
+  background: #f0fdf4;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #bbf7d0;
+}
+
+.calculation-details h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 13px;
+  color: #166534;
+}
+
+.detail-row .amount {
+  font-weight: 600;
+  color: #15803d;
+}
+
+/* Info Note */
+.info-note {
+  text-align: center;
+  color: #718096;
+  font-size: 12px;
+  margin-top: 12px;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .seasons-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .full-tabs {
+    flex-direction: column;
+  }
 }
