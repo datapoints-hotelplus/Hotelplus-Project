@@ -29,9 +29,9 @@ export type FullPricingResult = {
 
   totalMonthlyFee: number;
 
-  // ✅ เพิ่ม
   smartPackage?: number;
   fixedPackage?: FixedPackageResult;
-  performancePackage?: number;
-  bOnlyRate?: number;
+  performancePackage?: number;   // ✅
+  bOnlyRate?: number;            // ✅
 };
+

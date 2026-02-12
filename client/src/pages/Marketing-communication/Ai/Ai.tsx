@@ -127,7 +127,7 @@ const Ai = () => {
 
   const [savedMasterPrompt, setSavedMasterPrompt] = useState("");
   const [masterPrompt, setMasterPrompt] = useState("");
-  const [loadingMasterPrompt, setLoadingMasterPrompt] = useState(true);
+  const [,setLoadingMasterPrompt] = useState(true);
   const [statusText, setStatusText] = useState("");
 
 

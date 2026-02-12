@@ -1,9 +1,10 @@
 import { useState } from "react";
 
-import {
+import type {
   ORMLiteCalculatorInput,
-  ORMLiteResult,
+  ORMLiteResult
 } from "../model/ormLite.types";
+
 
 import { validateORMLiteInput } from "../logic/validators";
 import { normalizeInput } from "../logic/normalizeInput";

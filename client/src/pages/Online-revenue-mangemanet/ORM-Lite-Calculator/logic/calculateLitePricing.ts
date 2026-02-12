@@ -1,39 +1,23 @@
 import type {
   LitePricingResult,
+  LiteTier,
   AddOnOption,
-} from "../../model/pricing.types";
-
-/* ================= CONSTANTS ================= */
+} from "../model/pricing.types";
 
 const BASE_MONTHLY_FEE = 3900;
 const COMMISSION_RATE = 0.05;
 
-const TRIGGER_MAX = {
+const TRIGGER_MAX: Record<LiteTier, number> = {
   L1: 4000,
   L2: 5500,
   L3: 7000,
 };
 
-/* ================= TIER HELPER ================= */
-
-function getLiteTier(
-  averageRevenuePerMonth: number
-): "L1" | "L2" | "L3" {
-
-  if (averageRevenuePerMonth < 200000) return "L1";
-  if (averageRevenuePerMonth < 500000) return "L2";
-  return "L3";
-}
-
-/* ================= MAIN ================= */
-
 export function calculateLitePricing(
-  averageRevenuePerMonth: number,
-  otaRevenue: number,
+  tier: LiteTier,
+  otaRevenuePerMonth: number,
   selectedAddOns: AddOnOption[]
 ): LitePricingResult {
-
-  const tier = getLiteTier(averageRevenuePerMonth);
 
   const addOnTotal = selectedAddOns.reduce(
     (sum, a) => sum + a.price,
@@ -41,7 +25,7 @@ export function calculateLitePricing(
   );
 
   const commissionCost =
-    otaRevenue * COMMISSION_RATE;
+    otaRevenuePerMonth * COMMISSION_RATE;
 
   const triggerMax = TRIGGER_MAX[tier];
 

@@ -1,145 +1,95 @@
-import { useState } from "react";
+import { useMemo } from "react";
 
 import type {
   ORMLiteCalculatorInput,
   ORMLiteResult,
+  PackageComparisonResult,
 } from "../model/ormLite.types";
 
-import { validateORMLiteInput } from "../logic/validators";
-import { normalizeInput } from "../logic/normalizeInput";
-import { calculateORMLite } from "../logic/calculateORMLite";
-
 import type {
-  PackageComparisonResult,
   LitePricingResult,
   FullPricingResult,
 } from "../model/pricing.types";
 
-import { getLiteTier } from "../logic/pricing/getLiteTier";
-import { calculateLitePricing } from "../logic/pricing/calculateLitePricing";
-import { getFullTier } from "../logic/pricing/getFullTier";
-import { calculateFullPricing } from "../logic/pricing/calculateFullPricing";
+import { normalizeInput } from "../logic/normalizeInput";
+import { calculateORMLite } from "../logic/calculateORMLite";
+
+import { useLitePricing } from "./useLitePricing";
+import { useFullPricing } from "./useFullPricing";
+
 import { compareLiteVsFull } from "../logic/pricing/compareLiteVsFull";
+import { recommendPackage } from "../logic/recommendation/recommendPackage";
 
-/* ---------------- DEFAULT INPUT ---------------- */
+/* ===================================================== */
 
-const defaultInput: ORMLiteCalculatorInput = {
-  roomKey: 0,
-  occupancyPercent: 0,
-  otaSharePercent: 0,
+export function useORMLiteCalculator(
+  input: ORMLiteCalculatorInput
+) {
 
-  highSeason: {
-    months: 0,
-    adr: 0,
-  },
-  shoulderSeason: {
-    months: 0,
-    adr: 0,
-  },
-  lowSeason: {
-    months: 0,
-    adr: 0,
-  },
-};
+  /* ---------- NORMALIZE ---------- */
 
-/* ------------------------------------------------ */
+  const normalizedInput = useMemo(
+    () => normalizeInput(input),
+    [input]
+  );
 
-export function useORMLiteCalculator() {
+  /* ---------- ORM LITE ---------- */
 
-  /* ----------- STATE ----------- */
+  const revenueResult: ORMLiteResult = useMemo(
+    () => calculateORMLite(normalizedInput),
+    [normalizedInput]
+  );
 
-  const [input, setInput] =
-    useState<ORMLiteCalculatorInput>(defaultInput);
+  /* ---------- LITE ---------- */
 
-  const [result, setResult] =
-    useState<ORMLiteResult | null>(null);
+  const { litePricing } = useLitePricing({
+    revenueResult,
+    selectedAddOns: [], // add-ons ถูกควบคุมที่ View
+  });
 
-  const [pricingResult, setPricingResult] =
-    useState<PackageComparisonResult | null>(null);
+  /* ---------- FULL ---------- */
 
-  const [errors, setErrors] = useState<string[]>([]);
+  const { fullPricing } = useFullPricing({
+    revenueResult,
+    input,
+  });
 
-  /* ----------- ACTIONS ----------- */
+  /* ---------- COMPARE ---------- */
 
-  const calculate = (selectedAddOns: any[] = []) => {
+  const comparison: PackageComparisonResult | null =
+    useMemo(() => {
 
-    // 1. Validate
-    const validation = validateORMLiteInput(input);
+      if (!litePricing || !fullPricing)
+        return null;
 
-    if (!validation.isValid) {
-      setErrors(validation.errors);
-      setResult(null);
-      setPricingResult(null);
-      return;
-    }
-
-    // 2. Revenue calculation
-    const normalizedInput = normalizeInput(input);
-    const revenueResult = calculateORMLite(normalizedInput);
-    setResult(revenueResult);
-
-    // 3. Pricing Input
-    const pricingInput = {
-      averageRevenuePerMonth:
-        revenueResult.averageRevenuePerMonth,
-      otaRevenuePerMonth:
-        revenueResult.otaRevenuePerMonth,
-    };
-
-    /* -------- LITE PRICING -------- */
-
-    const liteTier =
-      getLiteTier(pricingInput.averageRevenuePerMonth);
-
-    let litePricing: LitePricingResult | null = null;
-
-    if (liteTier !== "NONE") {
-      litePricing = calculateLitePricing(
-        liteTier,
-        pricingInput.otaRevenuePerMonth,
-        selectedAddOns
+      return compareLiteVsFull(
+        litePricing,
+        fullPricing
       );
-    }
 
-    /* -------- FULL PRICING -------- */
+    }, [litePricing, fullPricing]);
 
-    const fullTier =
-      getFullTier(pricingInput.averageRevenuePerMonth);
+  /* ---------- RECOMMEND ---------- */
 
-    let fullPricing: FullPricingResult | null = null;
+  const recommendation = useMemo(() => {
 
-    if (fullTier !== "NONE") {
-      fullPricing = calculateFullPricing(
-        fullTier,
-        pricingInput.otaRevenuePerMonth
-      );
-    }
+    return recommendPackage({
+      revenueResult,
+      litePricing,
+      fullPricing,
+    });
 
-    /* -------- COMPARE -------- */
+  }, [revenueResult, litePricing, fullPricing]);
 
-    const comparison =
-      compareLiteVsFull(litePricing, fullPricing);
-
-    setErrors([]);
-    setPricingResult(comparison);
-  };
-
-  const reset = () => {
-    setInput(defaultInput);
-    setResult(null);
-    setPricingResult(null);
-    setErrors([]);
-  };
-
-  /* ----------- EXPORT ----------- */
+  /* ---------- RETURN ---------- */
 
   return {
-    input,
-    setInput,
-    result,
-    pricingResult,
-    errors,
-    calculate,
-    reset,
+    revenueResult,
+
+    litePricing,
+    fullPricing,
+
+    comparison,
+    recommendation,
   };
 }

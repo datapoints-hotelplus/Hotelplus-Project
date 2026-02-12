@@ -1,49 +1,30 @@
-// Lite Tier
-export type LiteTier = "NONE" | "L1" | "L2" | "L3";
+/* =====================================================
+   ADD-ON
+===================================================== */
 
-// Full Tier
-export type FullTier =
-  | "NONE"
-  | "F2"
-  | "F3"
-  | "F4"
-  | "F5"
-  | "F6"
-  | "F7"
-  | "F8";
-
-// Package Recommendation
-export type PackageType = "LITE" | "FULL" | "NOT_RECOMMENDED";
-
-export type AddOnCode =
-  | "SHOP_RATE_MONITORING"
-  | "COMPSET_SURVEY"
-  | "VISIBILITY_MANAGEMENT"
-  | "EXTRA_OTA"
-  | "RESERVATION_MANAGEMENT";
-
-export interface AddOnOption {
+export type AddOnOption = {
   id: string;
   label: string;
   price: number;
-}
+};
 
-export interface AddOnItem extends AddOnOption {}
-
-export interface AddOnService {
-  code: AddOnCode;
+export type AddOnService = {
+  code: string;
   name: string;
   options: AddOnOption[];
-}
+};
 
-export interface AddOnItem {
-  code: AddOnCode;
-  name: string;
-  price: number;
-}
+/* ใช้ alias ให้ AddOnItem = AddOnOption */
+export type AddOnItem = AddOnOption;
 
-export interface LitePricingResult {
-  tier: "L1" | "L2" | "L3";
+/* =====================================================
+   LITE PRICING
+===================================================== */
+
+export type LiteTier = "L1" | "L2" | "L3";
+
+export type LitePricingResult = {
+  tier: LiteTier;
 
   baseMonthlyFee: number;
 
@@ -59,32 +40,54 @@ export interface LitePricingResult {
   isTriggerExceeded: boolean;
 
   isEligible: boolean;
-}
+};
 
+/* =====================================================
+   FULL PRICING
+===================================================== */
 
-export interface FullPricingResult {
+export type FullTier =
+  | "NONE"
+  | "F2"
+  | "F3"
+  | "F4"
+  | "F5"
+  | "F6"
+  | "F7"
+  | "F8";
+
+export type FixedPackageResult = {
+  baseValue: number;
+  discountedValue: number;
+  price: number;
+  finalFee: number;
+};
+
+export type FullPricingResult = {
   tier: FullTier;
-
-  commissionRate: number;
-  multiplier: number;
-
-  estimatedPackageFee: number;
-
-  minCharge: number;   // 8,000
-  finalCharge: number;
-
   isEligible: boolean;
-}
 
-export interface PackageComparisonResult {
-  lite: LitePricingResult | null;
-  full: FullPricingResult | null;
+  systemCost: number;
+  aMultiplier: number;
+  adjustedCommissionRate: number;
 
-  recommendedPackage: PackageType;
-  gapPercent: number;
-}
+  A: number;
+  B: number;
 
-export interface PricingInput {
-  averageRevenuePerMonth: number;
-  otaRevenuePerMonth: number;
-}
+  totalMonthlyFee: number;
+
+  smartPackage?: number;
+  fixedPackage?: FixedPackageResult;
+  performancePackage?: number;
+  bOnlyRate?: number;
+};
+
+/* =====================================================
+   PACKAGE COMPARISON
+===================================================== */
+
+export type PackageComparisonResult = {
+  recommendation: "LITE" | "FULL";
+  reason: string;
+  gapPercent?: number;
+};
