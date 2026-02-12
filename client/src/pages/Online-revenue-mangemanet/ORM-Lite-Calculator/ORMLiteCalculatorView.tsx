@@ -9,7 +9,7 @@ import "./orm-lite-calculator.css";
 
 const ADD_ON_SERVICES: AddOnService[] = [
   {
-    code: "SHOP_RATE_MONITORING", 
+    code: "SHOP_RATE_MONITORING",
     name: "Shop Rate Monitoring",
     options: [
       { id: "SR_1", label: "1 time", price: 1500 },
@@ -485,6 +485,25 @@ export default function ORMLiteCalculatorView() {
                 ))}
               </div>
             ))}
+
+            {/* CHECK ADD-ON TOTAL */}
+            {(() => {
+              const addOnTotal = selectedAddOns.reduce((sum, addon) => sum + addon.price, 0);
+              
+              if (addOnTotal > 4000) {
+                return (
+                  <div className="info-box warning" style={{ background: '#fee2e2', borderLeftColor: '#dc2626', marginTop: '16px' }}>
+                    <span className="info-icon">⚠️</span>
+                    <div>
+                      <p style={{ fontWeight: 'bold', color: '#991b1b' }}>บริการเสริมเกินจำนวนที่กำหนด</p>
+                      <p style={{ color: '#991b1b' }}>ยอดรวมบริการเสริม: {formatCurrency(addOnTotal)} บาท (เกิน 4,000 บาท)</p>
+                      <p style={{ color: '#991b1b' }}>แนะนำให้เลือก Full Services</p>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })()}
           </section>
         )}
 
@@ -836,136 +855,106 @@ export default function ORMLiteCalculatorView() {
                     <span className="status-badge stable">ค่าบริการคงที่</span>
                   </div>
 
-                  <div className="price-highlight">
-                    {formatCurrency(fullPricing.fixedPackage)} บาท/เดือน
-                  </div>
+                  {(() => {
+                    if (!revenueResult) return null;
 
-                  <div className="info-box">
-                    <span className="info-icon">💡</span>
-                    <div>
-                      <p>เหมาะสำหรับโรงแรมที่ต้องการความมั่นคงไม่เสี่ยงกับยอดขาย OTA</p>
-                      <p>ค่าบริการคงที่ ไม่ขึ้นกับรายได้โรงแรม</p>
-                    </div>
-                  </div>
-
-                  {/* CALCULATION FORMULA */}
-                  <div className="calculation-details">
-                    <h4>📊 สูตรการคำนวณ (Tier: {commissionData.tier})</h4>
+                    const lowOtaRevenue = revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100);
+                    const lowB = lowOtaRevenue * commissionData.finalRate;
+                    let weight = 1;
+                    let discount = 1;
                     
-                    {revenueResult && (() => {
-                      const lowOtaRevenue = revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100);
-                      const lowB = lowOtaRevenue * commissionData.finalRate; // ใช้ Commission Rate ที่คำนวณใหม่
-                      let weight = 1;
-                      let discount = 1;
-                      
-                      switch(commissionData.tier) {
-                        case 'F2':
-                          weight = 0.85;
-                          discount = 0.70;
-                          break;
-                        case 'F3':
-                          weight = 0.90;
-                          discount = 0.75;
-                          break;
-                        case 'F4':
-                          weight = 0.95;
-                          discount = 0.80;
-                          break;
-                        case 'F5':
-                          weight = 1;
-                          discount = 0.83;
-                          break;
-                        case 'F6':
-                          weight = 1;
-                          discount = 0.85;
-                          break;
-                        case 'F7':
-                          weight = 1;
-                          discount = 0.87;
-                          break;
-                        case 'F8':
-                          weight = 1;
-                          discount = 0.90;
-                          break;
-                      }
-                      
-                      const base = fullPricing.A + (lowB * weight);
-                      const baseDiscounted = base * discount;
-                      const minValue = fullPricing.A + 5000;
-                      
-                      return (
-                        <>
-                          <div className="detail-row">
-                            <span>A (System Cost × 1.5)</span>
-                            <span className="amount">{formatCurrency(fullPricing.A)} บาท</span>
-                          </div>
+                    switch(commissionData.tier) {
+                      case 'F2':
+                        weight = 0.85;
+                        discount = 0.70;
+                        break;
+                      case 'F3':
+                        weight = 0.90;
+                        discount = 0.75;
+                        break;
+                      case 'F4':
+                        weight = 0.95;
+                        discount = 0.80;
+                        break;
+                      case 'F5':
+                        weight = 1;
+                        discount = 0.83;
+                        break;
+                      case 'F6':
+                        weight = 1;
+                        discount = 0.85;
+                        break;
+                      case 'F7':
+                        weight = 1;
+                        discount = 0.87;
+                        break;
+                      case 'F8':
+                        weight = 1;
+                        discount = 0.90;
+                        break;
+                    }
+                    
+                    const base = fullPricing.A + (lowB * weight);
+                    const baseDiscounted = base * discount;
+                    const minValue = fullPricing.A + 5000;
+                    const rawFixed = Math.max(baseDiscounted, minValue);
+                    
+                    // ปัดขึ้นหลักสิบ
+                    const fixedPrice = Math.ceil(rawFixed / 10) * 10;
 
+                    return (
+                      <>
+                        <div className="price-highlight">
+                          {formatCurrency(fixedPrice)} บาท/เดือน
+                        </div>
+
+                        <div className="info-box">
+                          <span className="info-icon">💡</span>
+                          <div>
+                            <p>เหมาะสำหรับโรงแรมที่ต้องการความมั่นคงไม่เสี่ยงกับยอดขาย OTA</p>
+                            <p>ค่าบริการคงที่ ไม่ขึ้นกับรายได้โรงแรม</p>
+                          </div>
+                        </div>
+
+                        {/* CALCULATION FORMULA - SIMPLIFIED */}
+                        <div className="calculation-details">
+                          <h4>📊 สูตรการคำนวณ (Tier: {commissionData.tier})</h4>
+                          
                           <div className="detail-row">
                             <span>Low Season OTA Revenue</span>
                             <span className="amount">{formatCurrency(lowOtaRevenue)} บาท</span>
                           </div>
-                          
+
                           <div className="detail-row">
                             <span>Adjusted Commission Rate</span>
                             <span className="amount">{(commissionData.finalRate * 100).toFixed(1)}%</span>
                           </div>
-
-                          <div className="detail-row">
-                            <span>Low B = Low OTA × {(commissionData.finalRate * 100).toFixed(1)}%</span>
-                            <span className="amount">{formatCurrency(lowB)} บาท</span>
-                          </div>
                           
-                          <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '8px' }}>
-                            <span>Weight (น้ำหนัก)</span>
-                            <span className="amount">{(weight * 100).toFixed(0)}%</span>
-                          </div>
-                          
-                          <div className="detail-row">
+                          <div className="detail-row" style={{ marginTop: '8px' }}>
                             <span><strong>Base = A + (Low B × {(weight * 100).toFixed(0)}%)</strong></span>
                             <span className="amount"><strong>{formatCurrency(base)} บาท</strong></span>
                           </div>
                           
-                          <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '8px' }}>
-                            <span>Discount (ส่วนลด)</span>
-                            <span className="amount">{(discount * 100).toFixed(0)}%</span>
-                          </div>
-                          
-                          <div className="detail-row">
-                            <span>Base × {(discount * 100).toFixed(0)}%</span>
-                            <span className="amount">{formatCurrency(baseDiscounted)} บาท</span>
-                          </div>
-
-                          <div className="detail-row">
-                            <span>A + 5,000 (ขั้นต่ำ)</span>
-                            <span className="amount">{formatCurrency(minValue)} บาท</span>
-                          </div>
-                          
                           <div className="detail-row" style={{ borderTop: '2px solid #059669', paddingTop: '10px', marginTop: '10px', background: '#f0fdf4', marginLeft: '-16px', marginRight: '-16px', paddingLeft: '16px', paddingRight: '16px' }}>
-                            <span style={{ fontWeight: 'bold', fontSize: '15px' }}>Fixed = max(Base × Discount, A + 5,000)</span>
+                            <span style={{ fontWeight: 'bold', fontSize: '15px' }}>Fixed Rate</span>
                             <span className="amount" style={{ fontWeight: 'bold', color: '#059669', fontSize: '16px' }}>
-                              {formatCurrency(Math.max(baseDiscounted, minValue))} บาท
+                              {formatCurrency(fixedPrice)} บาท
                             </span>
                           </div>
-                        </>
-                      );
-                    })()}
-                  </div>
+                        </div>
 
-                  {/* SETUP FEE */}
-                  <div className="calculation-details" style={{ background: '#fef3c7', borderColor: '#fbbf24' }}>
-                    <h4>💰 ค่าใช้จ่ายเริ่มต้น</h4>
-                    
-                    <div className="detail-row">
-                      <span>Setup Fee (C) - จ่ายครั้งแรก</span>
-                      <span className="amount">{formatCurrency(systemCost)} บาท</span>
-                    </div>
-
-                    <div className="detail-row" style={{ fontSize: '11px', color: '#78350f', borderTop: '1px dashed #fbbf24', paddingTop: '6px', marginTop: '4px' }}>
-                      <span style={{ fontStyle: 'italic' }}>
-                        * System Cost: ≤10=3,500 | 11-20=4,000 | 21-50=5,200 | 51-100=5,400 | &gt;100=5,800
-                      </span>
-                    </div>
-                  </div>
+                        {/* SETUP FEE */}
+                        <div className="calculation-details" style={{ background: '#fef3c7', borderColor: '#fbbf24' }}>
+                          <h4>💰 ค่าใช้จ่ายเริ่มต้น</h4>
+                          
+                          <div className="detail-row">
+                            <span>Setup Fee (C) - จ่ายครั้งแรก</span>
+                            <span className="amount">{formatCurrency(systemCost)} บาท</span>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()}
 
                 </div>
               )}
@@ -982,12 +971,14 @@ export default function ORMLiteCalculatorView() {
                   {(() => {
                     // คำนวณ B Only Rate และ B Only
                     const bOnlyRate = commissionData.finalRate + 0.02; // เพิ่ม 2%
-                    const bOnlyAmount = revenueResult ? revenueResult.otaRevenuePerMonth * bOnlyRate : 0;
+                    const bOnlyBase = revenueResult ? revenueResult.otaRevenuePerMonth * bOnlyRate : 0;
+                    const bOnlyAmount = bOnlyBase + 5000; // บวก 5,000
+                    const minCharge = 8000; // ค่าบริการขั้นต่ำ 8,000 บาท
                     
                     return (
                       <>
                         <div className="price-highlight">
-                          {formatCurrency(bOnlyAmount)} บาท/เดือน
+                          {formatCurrency(Math.max(bOnlyAmount, minCharge))} บาท/เดือน
                         </div>
 
                         {/* CHECK ELIGIBILITY */}
@@ -1002,7 +993,7 @@ export default function ORMLiteCalculatorView() {
                           </div>
                         )}
 
-                        {/* CALCULATION DETAILS */}
+                        {/* CALCULATION DETAILS - SIMPLIFIED */}
                         <div className="calculation-details">
                           <h4>📊 รายละเอียดการคำนวณ</h4>
 
@@ -1013,18 +1004,8 @@ export default function ORMLiteCalculatorView() {
                                 <span className="amount">{formatCurrency(revenueResult.otaRevenuePerMonth)} บาท</span>
                               </div>
 
-                              <div className="detail-row">
-                                <span>Adjusted Commission Rate</span>
-                                <span className="amount">{(commissionData.finalRate * 100).toFixed(2)}%</span>
-                              </div>
-
-                              <div className="detail-row">
-                                <span>เพิ่ม 2% สำหรับ B Only</span>
-                                <span className="amount">+2.00%</span>
-                              </div>
-
                               <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '8px' }}>
-                                <span><strong>B Only Rate = Adjusted Rate + 2%</strong></span>
+                                <span><strong>B Only Rate</strong></span>
                                 <span className="amount"><strong>{(bOnlyRate * 100).toFixed(2)}%</strong></span>
                               </div>
 
@@ -1034,6 +1015,13 @@ export default function ORMLiteCalculatorView() {
                                   {formatCurrency(bOnlyAmount)} บาท
                                 </span>
                               </div>
+
+                              {bOnlyAmount < minCharge && (
+                                <div className="detail-row" style={{ marginTop: '8px', color: '#dc2626' }}>
+                                  <span>ค่าบริการขั้นต่ำ</span>
+                                  <span className="amount" style={{ color: '#dc2626' }}>{formatCurrency(minCharge)} บาท</span>
+                                </div>
+                              )}
                             </>
                           )}
                         </div>
@@ -1058,7 +1046,10 @@ export default function ORMLiteCalculatorView() {
                               <span>High Season ({input.highSeason.months} เดือน)</span>
                               <span className="amount">
                                 {formatCurrency(
-                                  (revenueResult.highRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate
+                                  Math.max(
+                                    ((revenueResult.highRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate) + 5000,
+                                    minCharge
+                                  )
                                 )} บาท
                               </span>
                             </div>
@@ -1068,7 +1059,10 @@ export default function ORMLiteCalculatorView() {
                               <span>Shoulder Season ({input.shoulderSeason.months} เดือน)</span>
                               <span className="amount">
                                 {formatCurrency(
-                                  (revenueResult.shoulderRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate
+                                  Math.max(
+                                    ((revenueResult.shoulderRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate) + 5000,
+                                    minCharge
+                                  )
                                 )} บาท
                               </span>
                             </div>
@@ -1078,27 +1072,24 @@ export default function ORMLiteCalculatorView() {
                               <span>Low Season ({input.lowSeason.months} เดือน)</span>
                               <span className="amount">
                                 {formatCurrency(
-                                  (revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate
+                                  Math.max(
+                                    ((revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100)) * bOnlyRate) + 5000,
+                                    minCharge
+                                  )
                                 )} บาท
                               </span>
                             </div>
                           </div>
                         )}
 
-                        {/* SETUP FEE */}
+                        {/* PAYMENT TERMS */}
                         <div className="calculation-details" style={{ background: '#fef3c7', borderColor: '#fbbf24' }}>
-                          <h4>💰 ค่าใช้จ่ายเริ่มต้น</h4>
+                          <h4>💰 เงื่อนไขการเรียกเก็บค่าบริการ</h4>
                           
-                          <div className="detail-row">
-                            <span>Setup Fee (C) - จ่ายครั้งแรก</span>
-                            <span className="amount">{formatCurrency(systemCost)} บาท</span>
-                          </div>
-
-                          <div className="detail-row" style={{ fontSize: '11px', color: '#78350f', borderTop: '1px dashed #fbbf24', paddingTop: '6px', marginTop: '4px' }}>
-                            <span style={{ fontStyle: 'italic' }}>
-                              * System Cost: ≤10=3,500 | 11-20=4,000 | 21-50=5,200 | 51-100=5,400 | &gt;100=5,800
-                            </span>
-                          </div>
+                          <p style={{ fontSize: '13px', lineHeight: '1.6', margin: '0', color: '#78350f' }}>
+                            บริษัทฯ จะเรียกเก็บค่าบริการจากยอดการจองที่เกิดขึ้นจริงในแต่ละเดือน หรือค่าบริการขั้นต่ำจำนวน <strong>8,000 บาท</strong> (แปดพันบาทถ้วน) ต่อเดือน 
+                            ทั้งนี้ บริษัทฯ จะเรียกเก็บค่าบริการตามจำนวนที่มีมูลค่าสูงกว่า
+                          </p>
                         </div>
 
                         {bOnlyAmount < 15000 && (
