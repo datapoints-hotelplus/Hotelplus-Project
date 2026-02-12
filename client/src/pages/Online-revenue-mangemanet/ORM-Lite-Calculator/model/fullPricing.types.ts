@@ -13,21 +13,25 @@ export type FullTier =
 export interface FixedPackageResult {
   baseValue: number;
   discountedValue: number;
-  price: number;
   finalFee: number;     // 🔥 เพิ่ม
 }
 
-export interface FullPricingResult {
+export type FullPricingResult = {
   tier: FullTier;
+  isEligible: boolean;
+
+  systemCost: number;
+  aMultiplier: number;
+  adjustedCommissionRate: number;
 
   A: number;
   B: number;
 
-  smartPackage: number;
-  performancePackage: number;
-
-  fixedPackage: FixedPackageResult;
-
-  systemCost: number;   // 🔥 ต้องมี
   totalMonthlyFee: number;
-}
+
+  // ✅ เพิ่ม
+  smartPackage?: number;
+  fixedPackage?: FixedPackageResult;
+  performancePackage?: number;
+  bOnlyRate?: number;
+};

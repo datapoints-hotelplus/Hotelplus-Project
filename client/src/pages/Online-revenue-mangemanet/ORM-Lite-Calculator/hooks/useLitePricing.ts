@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 
 import type { ORMLiteResult } from "../model/ormLite.types";
-import type { LitePricingResult } from "../model/pricing.types";
-import type { AddOnOption } from "../model/pricing.types";
+import type {
+  LitePricingResult,
+  AddOnOption,
+} from "../model/pricing.types";
 
-
-import { getLiteTier } from "../logic/pricing/getLiteTier";
 import { calculateLitePricing } from "../logic/pricing/calculateLitePricing";
 
 interface UseLitePricingParams {
@@ -18,25 +18,17 @@ export function useLitePricing({
   selectedAddOns,
 }: UseLitePricingParams) {
 
-  const litePricing: LitePricingResult | null =
-    useMemo(() => {
-      if (!revenueResult) return null;
+  const litePricing = useMemo<LitePricingResult | null>(() => {
 
-      const tier = getLiteTier(
-        revenueResult.averageRevenuePerMonth
-      );
+    if (!revenueResult) return null;
 
-      if (tier === "NONE") return null;
+    return calculateLitePricing(
+      revenueResult.averageRevenuePerMonth,
+      revenueResult.otaRevenuePerMonth,
+      selectedAddOns
+    );
 
-      return calculateLitePricing(
-        tier,
-        revenueResult.otaRevenuePerMonth,
-        selectedAddOns
-      );
-    }, [revenueResult, selectedAddOns]);
+  }, [revenueResult, selectedAddOns]);
 
-  return {
-    litePricing,
-    isLiteEligible: !!litePricing,
-  };
+  return { litePricing };
 }
