@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import {
+import type {
   ORMLiteCalculatorInput,
   ORMLiteResult,
 } from "../model/ormLite.types";
@@ -9,7 +9,7 @@ import { validateORMLiteInput } from "../logic/validators";
 import { normalizeInput } from "../logic/normalizeInput";
 import { calculateORMLite } from "../logic/calculateORMLite";
 
-import {
+import type {
   PackageComparisonResult,
   LitePricingResult,
   FullPricingResult,

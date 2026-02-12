@@ -1,7 +1,4 @@
-import {
-  FixedPackageResult,
-  FullTier,
-} from "../../model/fullPricing.types";
+import type {FixedPackageResult,FullTier,} from "../../model/fullPricing.types";
 
 const CONFIG: Record<
   FullTier,
@@ -40,6 +37,6 @@ export function calculateFixedPackage(
   return {
     baseValue,
     discountedValue,
-    finalFee,
+    price: finalFee,
   };
 }

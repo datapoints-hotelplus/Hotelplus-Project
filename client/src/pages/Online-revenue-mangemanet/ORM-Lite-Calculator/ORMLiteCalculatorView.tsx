@@ -415,7 +415,7 @@ export default function ORMLiteCalculatorView() {
             <div className="result-item">
               <strong>จำนวนห้องพักที่มีจำหน่าย</strong>
               <div className="value">
-                {formatNumber(round(revenueResult.roomAvailable, 0))} ห้อง
+                {formatNumber(round(revenueResult.roomAvailable ?? 0, 0))} ห้อง
               </div>
             </div>
 
@@ -523,10 +523,9 @@ export default function ORMLiteCalculatorView() {
             เหตุผล: {recommendation.reason}
           </p>
 
-          {recommendation.gapPercent !== undefined && (
+          {(recommendation as any).gapPercent !== undefined && (
             <p>
-              ส่วนต่างราคา:{" "}
-              {recommendation.gapPercent.toFixed(2)}%
+              ส่วนต่างราคา: {(recommendation as any).gapPercent.toFixed(2)}%
             </p>
           )}
 

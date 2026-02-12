@@ -1,6 +1,6 @@
-import { ORMLiteResult } from "../../model/ormLite.types";
-import { LitePricingResult } from "../../model/pricing.types";
-import { FullPricingResult } from "../../logic/fullPricing/calculateFullPricing";
+import type { ORMLiteResult } from "../../model/ormLite.types";
+import type { LitePricingResult } from "../../model/pricing.types";
+import type { FullPricingResult } from "../../logic/fullPricing/calculateFullPricing";
 
 type Params = {
   revenueResult: ORMLiteResult | null;

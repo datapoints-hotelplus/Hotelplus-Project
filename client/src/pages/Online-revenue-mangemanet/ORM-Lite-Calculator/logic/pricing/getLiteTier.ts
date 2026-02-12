@@ -1,4 +1,4 @@
-import { LiteTier } from "../../model/pricing.types";
+import type{ LiteTier } from "../../model/pricing.types";
 
 export function getLiteTier(
   averageRevenue: number

@@ -1,4 +1,4 @@
-import {
+import type{
   SmartPackageResult,
 } from "../../model/fullPricing.types";
 

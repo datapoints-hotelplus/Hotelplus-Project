@@ -1,4 +1,4 @@
-import { FullTier } from "../../model/fullPricing.types";
+import type{ FullTier } from "../../model/fullPricing.types";
 
 export function getFullTier(
   averageRevenue: number

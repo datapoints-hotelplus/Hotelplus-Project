@@ -1,6 +1,8 @@
-export function round(value: number, decimals = 2): number {
-  return Number(value.toFixed(decimals));
+export function round(value: number | undefined | null, decimals = 0) {
+  const safe = typeof value === "number" ? value : 0;
+  return Number(safe.toFixed(decimals));
 }
+
 
 export function formatCurrency(
   value: number,

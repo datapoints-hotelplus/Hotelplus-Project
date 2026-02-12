@@ -1,4 +1,4 @@
-import {
+import type{
   FullPackageType,
   FullPackagePrices,
 } from "../../model/fullPricing.types";

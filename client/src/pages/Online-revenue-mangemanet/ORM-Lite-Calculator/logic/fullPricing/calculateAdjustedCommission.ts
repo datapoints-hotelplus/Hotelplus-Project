@@ -1,4 +1,4 @@
-import {
+import type{
   AdjustedCommissionResult,
 } from "../../model/fullPricing.types";
 

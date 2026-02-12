@@ -1,4 +1,4 @@
-import {
+import type{
   FullPricingResult,
   FullTier,
 } from "../../model/pricing.types";

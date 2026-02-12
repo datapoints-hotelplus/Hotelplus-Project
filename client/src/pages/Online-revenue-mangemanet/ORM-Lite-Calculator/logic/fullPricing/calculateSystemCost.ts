@@ -1,4 +1,4 @@
-import {
+import type{
   SystemCostResult,
 } from "../../model/fullPricing.types";
 

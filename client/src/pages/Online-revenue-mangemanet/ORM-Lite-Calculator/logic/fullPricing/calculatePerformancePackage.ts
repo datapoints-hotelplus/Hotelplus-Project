@@ -1,4 +1,4 @@
-import {
+import type{
   PerformancePackageResult,
 } from "../../model/fullPricing.types";
 

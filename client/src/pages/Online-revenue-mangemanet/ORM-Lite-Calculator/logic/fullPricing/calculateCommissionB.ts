@@ -1,4 +1,4 @@
-import {
+import type{
   CommissionResult,
 } from "../../model/fullPricing.types";
 

@@ -15,7 +15,7 @@ export function normalizeInput(
   } = input;
 
   // 1. Room Available
-  const roomAvailable = roomKey * (1 - ROOM_MAINTENANCE_RATE);
+  const roomAvailable = roomKey * (1 - ROOM_MAINTENANCE_RATE); 
 
   // 2. Convert percentage to decimal
   const occupancy = occupancyPercent / 100;
@@ -38,26 +38,13 @@ export function normalizeInput(
   }
 
   return {
-    roomAvailable,
-    occupancy,
-    otaShare,
+    roomKey: input.roomKey,
+    occupancy: input.occupancyPercent / 100,
+    otaShare: input.otaSharePercent / 100,
 
-    high: {
-      months: highSeason.months,
-      adr: highADR,
-      revenue: 0, // คำนวณใน step ถัดไป
-    },
-
-    shoulder: {
-      months: shoulderSeason.months,
-      adr: shoulderADR,
-      revenue: 0,
-    },
-
-    low: {
-      months: lowSeason.months,
-      adr: lowADR,
-      revenue: 0,
-    },
+    high: { ...input.highSeason, adr: highADR },
+    shoulder: { ...input.shoulderSeason, adr: shoulderADR },
+    low: { ...input.lowSeason, adr: lowADR }
   };
+
 }

@@ -1,4 +1,4 @@
-import {
+import type{
   LitePricingResult,
   AddOnItem,
 } from "../../model/pricing.types";
