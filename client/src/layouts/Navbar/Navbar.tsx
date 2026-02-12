@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../AuthProvider";
 import "./Navbar.css";
-import logo from "../../assets/logo/Hotelplus-logo.jpg";
+const logo = "/logo/Hotelplus-logo.jpg";
 import UserMenu from "../../components/Usermenu/UserMenu";
 import UserRoleBadge from "../../components/UserRoleBadge/UserRoleBadge";
 import { Link } from "react-router-dom";
@@ -21,7 +21,7 @@ export default function Navbar() {
       <nav className="navbar">
         <div className="nav-left">
           <div className="logo">
-            <img src={logo} alt="Hotel Plus" />
+            <img src={logo} alt="Hotelplus" />
           </div>
 
           <ul className={`nav-menu ${menuOpen ? "active" : ""}`}>
