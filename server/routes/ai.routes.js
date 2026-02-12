@@ -56,6 +56,7 @@ router.post("/analyze", async (req, res) => {
       "ชื่อเพจ / ช่อง,ลิงก์เพจ,หมวดหมู่,เหตุผลที่เลือก"
     ];
 
+
     const seen = new Set();
 
     for (const file of files) {

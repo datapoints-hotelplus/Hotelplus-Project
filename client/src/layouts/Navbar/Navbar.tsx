@@ -11,6 +11,9 @@ import { Link } from "react-router-dom";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { role, loading } = useAuth();
+  const isAdmin = role === "Admin";
+  const isMarCom = role === "MarCom" || isAdmin;
+  const isOrm = role === "ORM" || isAdmin;
 
 
   return (
@@ -24,14 +27,14 @@ export default function Navbar() {
           <ul className={`nav-menu ${menuOpen ? "active" : ""}`}>
             <li><Link to="/">หน้าหลัก</Link></li>
 
-            {!loading && role === "MarCom" && (
+            {!loading && isMarCom && (
               <>
                 <li><Link to="/kols">Kols</Link></li>
                 <li><Link to="/calculator">Calculator</Link></li>
               </>
             )}
 
-            {!loading && role === "ORM" && (
+            {!loading && isOrm && (
               <li><Link to="/orm-calculator">ORM Calculator</Link></li>
             )}
           </ul>
