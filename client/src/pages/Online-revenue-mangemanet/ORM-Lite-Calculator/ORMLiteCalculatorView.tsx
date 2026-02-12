@@ -9,7 +9,7 @@ import "./orm-lite-calculator.css";
 
 const ADD_ON_SERVICES: AddOnService[] = [
   {
-    code: "SHOP_RATE_MONITORING",
+    code: "SHOP_RATE_MONITORING", 
     name: "Shop Rate Monitoring",
     options: [
       { id: "SR_1", label: "1 time", price: 1500 },
