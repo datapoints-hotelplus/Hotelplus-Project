@@ -3,7 +3,7 @@ import { useRevenueEngine } from "./hooks/useRevenueEngine";
 import { useLitePricing } from "./hooks/useLitePricing";
 import { useFullPricing } from "./hooks/useFullPricing";
 import {formatCurrency,formatNumber,round,} from "../../../utils/number";
-import {AddOnService,AddOnOption,} from "./model/pricing.types";
+import type {AddOnService,AddOnOption,} from "./model/pricing.types";
 import {recommendPackage,} from "./logic/recommendation/recommendPackage";
 import "./orm-lite-calculator.css";
 
@@ -98,7 +98,7 @@ export default function ORMLiteCalculatorView() {
   /* ------------ HELPERS ------------ */
 
   const updateField = (field: string, value: number) => {
-    setInput(prev => ({
+    setInput((prev: any) => ({
       ...prev,
       [field]: value,
     }));
@@ -109,7 +109,7 @@ export default function ORMLiteCalculatorView() {
     field: "months" | "adr",
     value: number
   ) => {
-    setInput(prev => ({
+    setInput((prev: any) => ({
       ...prev,
       [season]: {
         ...prev[season],
