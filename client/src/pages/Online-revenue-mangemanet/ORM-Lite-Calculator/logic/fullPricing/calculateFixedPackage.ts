@@ -1,4 +1,9 @@
-import type {FixedPackageResult,FullTier,} from "../../model/fullPricing.types";
+import type {
+  FixedPackageResult,
+  FullTier,
+} from "../../model/fullPricing.types";
+
+/* ================= CONFIG ================= */
 
 const CONFIG: Record<
   FullTier,
@@ -14,20 +19,27 @@ const CONFIG: Record<
   F8: { weight: 1, discount: 0.9 },
 };
 
+/* ================= MAIN ================= */
+
 export function calculateFixedPackage(
   tier: FullTier,
   A: number,
   lowB: number
 ): FixedPackageResult {
 
-  const { weight, discount } =
-    CONFIG[tier];
+  if (tier === "NONE") {
+    return {
+      baseValue: 0,
+      discountedValue: 0,
+      finalFee: 0,
+    };
+  }
 
-  const baseValue =
-    A + lowB * weight;
+  const { weight, discount } = CONFIG[tier];
 
-  const discountedValue =
-    baseValue * discount;
+  const baseValue = A + lowB * weight;
+
+  const discountedValue = baseValue * discount;
 
   const finalFee = Math.max(
     discountedValue,
@@ -37,6 +49,6 @@ export function calculateFixedPackage(
   return {
     baseValue,
     discountedValue,
-    price: finalFee,
+    finalFee,
   };
 }

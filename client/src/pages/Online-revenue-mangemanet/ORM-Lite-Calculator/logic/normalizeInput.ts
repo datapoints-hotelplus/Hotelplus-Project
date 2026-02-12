@@ -1,27 +1,14 @@
-import type { ORMLiteCalculatorInput, NormalizedORMInput,} from "../model/ormLite.types";
-
-const ROOM_MAINTENANCE_RATE = 0.2;
+import type {
+  ORMLiteCalculatorInput,
+  NormalizedORMInput,
+} from "../model/ormLite.types";
 
 export function normalizeInput(
   input: ORMLiteCalculatorInput
 ): NormalizedORMInput {
-  const {
-    roomKey,
-    occupancyPercent,
-    otaSharePercent,
-    highSeason,
-    shoulderSeason,
-    lowSeason,
-  } = input;
 
-  // 1. Room Available
-  const roomAvailable = roomKey * (1 - ROOM_MAINTENANCE_RATE); 
+  const { highSeason, shoulderSeason, lowSeason } = input;
 
-  // 2. Convert percentage to decimal
-  const occupancy = occupancyPercent / 100;
-  const otaShare = otaSharePercent / 100;
-
-  // 3. ADR overwrite check
   const isSameADR =
     highSeason.adr === shoulderSeason.adr &&
     shoulderSeason.adr === lowSeason.adr;
@@ -30,6 +17,7 @@ export function normalizeInput(
   let shoulderADR = shoulderSeason.adr;
   let lowADR = lowSeason.adr;
 
+  // หากทุกฤดูใช้ ADR เท่ากัน → กระจายราคาอัตโนมัติ
   if (isSameADR) {
     const baseADR = highSeason.adr;
     lowADR = baseADR;
@@ -42,9 +30,19 @@ export function normalizeInput(
     occupancy: input.occupancyPercent / 100,
     otaShare: input.otaSharePercent / 100,
 
-    high: { ...input.highSeason, adr: highADR },
-    shoulder: { ...input.shoulderSeason, adr: shoulderADR },
-    low: { ...input.lowSeason, adr: lowADR }
-  };
+    high: {
+      months: input.highSeason.months,
+      adr: highADR,
+    },
 
+    shoulder: {
+      months: input.shoulderSeason.months,
+      adr: shoulderADR,
+    },
+
+    low: {
+      months: input.lowSeason.months,
+      adr: lowADR,
+    },
+  };
 }

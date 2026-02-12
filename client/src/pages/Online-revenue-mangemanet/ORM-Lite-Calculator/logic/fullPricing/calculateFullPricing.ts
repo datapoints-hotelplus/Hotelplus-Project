@@ -1,4 +1,6 @@
-import type{ FullTier } from "../../model/pricing.types";
+import type { FullTier } from "../../model/pricing.types";
+
+/* ================= RESULT TYPE ================= */
 
 export type FullPricingResult = {
   tier: FullTier;
@@ -14,13 +16,13 @@ export type FullPricingResult = {
   totalMonthlyFee: number;
 };
 
-/* ---------- helpers ---------- */
+/* ================= HELPERS ================= */
 
-function getSystemCost(room: number) {
-  if (room <= 10) return 3500;
-  if (room <= 20) return 4000;
-  if (room <= 50) return 5200;
-  if (room <= 100) return 5400;
+function getSystemCost(roomKey: number) {
+  if (roomKey <= 10) return 3500;
+  if (roomKey <= 20) return 4000;
+  if (roomKey <= 50) return 5200;
+  if (roomKey <= 100) return 5400;
   return 5800;
 }
 
@@ -48,12 +50,12 @@ function adjustCommissionRate(
   const variance =
     (highADR - lowADR) / lowADR;
 
-  if (variance > 1) rate += 0.005;
+  if (variance >= 1) rate += 0.005;
 
   return Math.min(Math.max(rate, 0.03), 0.15);
 }
 
-/* ---------- base config ---------- */
+/* ================= BASE CONFIG ================= */
 
 const BASE_CONFIG: Record<
   FullTier,
@@ -69,11 +71,11 @@ const BASE_CONFIG: Record<
   F8: { baseCommission: 0.04, baseMultiplier: 1.2 },
 };
 
-/* ---------- main ---------- */
+/* ================= MAIN ================= */
 
 export function calculateFullPricing(
   tier: FullTier,
-  roomAvailable: number,
+  roomKey: number,               // ✅ changed
   otaRevenue: number,
   otaSharePercent: number,
   highADR: number,
@@ -110,7 +112,7 @@ export function calculateFullPricing(
     );
 
   const systemCost =
-    getSystemCost(roomAvailable);
+    getSystemCost(roomKey);   // ✅ fixed
 
   const A = systemCost * aMultiplier;
   const B = otaRevenue * adjustedCommissionRate;

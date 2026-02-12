@@ -1,11 +1,9 @@
 import { useMemo } from "react";
 
-import { ORMLiteResult } from "../model/ormLite.types";
-import {
-  LitePricingResult,
-} from "../model/pricing.types";
+import type { ORMLiteResult } from "../model/ormLite.types";
+import type { LitePricingResult } from "../model/pricing.types";
+import type { AddOnOption } from "../model/pricing.types";
 
-import { AddOnOption } from "../model/pricing.types";
 
 import { getLiteTier } from "../logic/pricing/getLiteTier";
 import { calculateLitePricing } from "../logic/pricing/calculateLitePricing";

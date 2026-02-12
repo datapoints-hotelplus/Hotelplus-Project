@@ -78,7 +78,9 @@ export default function ORMLiteCalculatorView() {
 
   const { fullPricing } = useFullPricing({
     revenueResult,
+    input,
   });
+
 
   /* ----------- RECOMMENDATION ----------- */
 

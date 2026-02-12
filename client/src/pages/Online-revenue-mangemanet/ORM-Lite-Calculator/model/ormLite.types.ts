@@ -1,50 +1,40 @@
+// model/ormLite.types.ts
+
+export interface SeasonInput {
+  months: number;
+  adr: number;
+}
+
+/* ------------ INPUT ------------ */
+
 export interface ORMLiteCalculatorInput {
   roomKey: number;
   occupancyPercent: number;
   otaSharePercent: number;
 
-  highSeason: {
-    months: number;
-    adr: number;
-  };
-
-  shoulderSeason: {
-    months: number;
-    adr: number;
-  };
-
-  lowSeason: {
-    months: number;
-    adr: number;
-  };
+  highSeason: SeasonInput;
+  shoulderSeason: SeasonInput;
+  lowSeason: SeasonInput;
 }
+
+/* ------------ NORMALIZED ------------ */
 
 export interface NormalizedORMInput {
   roomKey: number;
-  occupancyRate: number;
-  otaShareRate: number;
+  occupancy: number;
+  otaShare: number;
 
-  highSeason: {
-    months: number;
-    adr: number;
-  };
-
-  shoulderSeason: {
-    months: number;
-    adr: number;
-  };
-
-  lowSeason: {
-    months: number;
-    adr: number;
-  };
+  high: SeasonInput;
+  shoulder: SeasonInput;
+  low: SeasonInput;
 }
+
+/* ------------ RESULT ------------ */
 
 export interface ORMLiteResult {
   roomAvailable: number;
 
   averageRevenuePerMonth: number;
-
   highRevenuePerMonth: number;
   shoulderRevenuePerMonth: number;
   lowRevenuePerMonth: number;
@@ -52,10 +42,10 @@ export interface ORMLiteResult {
   otaRevenuePerMonth: number;
 }
 
-export type LiteTier = "STARTER" | "GROWTH" | "PRO";
+/* ------------ PACKAGE COMPARE ------------ */
 
 export interface PackageComparisonResult {
   recommendation: string;
   reason: string;
-  gapPercent?: number;   // 🔥 สำคัญมาก
+  gapPercent?: number;
 }

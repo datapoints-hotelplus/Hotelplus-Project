@@ -28,6 +28,8 @@ export interface AddOnOption {
   price: number;
 }
 
+export interface AddOnItem extends AddOnOption {}
+
 export interface AddOnService {
   code: AddOnCode;
   name: string;
