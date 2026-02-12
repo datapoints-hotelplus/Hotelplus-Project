@@ -1,4 +1,4 @@
-// model/fullPricing.types.ts
+import type { FullTier } from "./pricing.types";
 
 export type FullTier =
   | "NONE"
@@ -13,10 +13,11 @@ export type FullTier =
 export interface FixedPackageResult {
   baseValue: number;
   discountedValue: number;
-  finalFee: number;     // 🔥 เพิ่ม
+  price: number;
+  finalFee: number;
 }
 
-export type FullPricingResult = {
+export interface FullPricingResult {
   tier: FullTier;
   isEligible: boolean;
 
@@ -29,9 +30,9 @@ export type FullPricingResult = {
 
   totalMonthlyFee: number;
 
-  smartPackage?: number;
-  fixedPackage?: FixedPackageResult;
-  performancePackage?: number;   // ✅
-  bOnlyRate?: number;            // ✅
-};
-
+  /* ✅ ADD THESE */
+  smartPackage: number;
+  fixedPackage: FixedPackageResult;
+  performancePackage: number;
+  bOnlyRate: number;
+}
