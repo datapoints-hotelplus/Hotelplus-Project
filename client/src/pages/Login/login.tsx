@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import "./login.css";
-import logo from "../../assets/logo/Hotelplus-logo.jpg";
+const logo = "/logo/Hotelplus-logo.jpg";
+
 
 export default function Login() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function Login() {
       }}
 >
   <div className="login-card">
-    <img src={logo} alt="Hotel Plus" className="login-logo" />
+    <img src={logo} alt="Hotelplus" />
     <h2 className="login-title">เข้าสู่ระบบ</h2>
 
     <label>อีเมล</label>
