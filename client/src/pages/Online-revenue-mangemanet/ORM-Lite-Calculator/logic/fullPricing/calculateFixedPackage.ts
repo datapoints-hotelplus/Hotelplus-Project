@@ -1,7 +1,6 @@
-import type {
-  FixedPackageResult,
-  FullTier,
-} from "../../model/fullPricing.types";
+import type { FixedPackageResult } from "../../model/fullPricing.types";
+import type { FullTier } from "../../model/pricing.types";
+
 
 const CONFIG: Record<
   FullTier,

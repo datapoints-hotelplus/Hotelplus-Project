@@ -19,9 +19,33 @@ export function useFullPricing({
   input: ORMLiteCalculatorInput;
 }) {
 
-  const fullPricing = useMemo<FullPricingResult | null>(() => {
+  const fullPricing = useMemo<FullPricingResult>(() => {
 
-    if (!revenueResult) return null;
+    /* ---------- DEFAULT (NO DATA) ---------- */
+    if (!revenueResult) {
+      return {
+        tier: "NONE",
+        isEligible: false,
+
+        systemCost: 0,
+        aMultiplier: 0,
+        adjustedCommissionRate: 0,
+
+        A: 0,
+        B: 0,
+        totalMonthlyFee: 0,
+
+        smartPackage: 0,
+        fixedPackage: {
+          baseValue: 0,
+          discountedValue: 0,
+          price: 0,
+          finalFee: 0,
+        },
+        performancePackage: 0,
+        bOnlyRate: 0,
+      };
+    }
 
     /* ---------- TIER ---------- */
     const tier = getFullTier(
@@ -38,7 +62,22 @@ export function useFullPricing({
       input.lowSeason.adr
     );
 
-    if (!baseFull.isEligible) return baseFull;
+    /* ---------- IF NOT ELIGIBLE ---------- */
+    if (!baseFull.isEligible) {
+      return {
+        ...baseFull,
+
+        smartPackage: 0,
+        fixedPackage: {
+          baseValue: 0,
+          discountedValue: 0,
+          price: 0,
+          finalFee: 0,
+        },
+        performancePackage: 0,
+        bOnlyRate: 0,
+      };
+    }
 
     /* ---------- SMART (A + B) ---------- */
     const smartPackage =

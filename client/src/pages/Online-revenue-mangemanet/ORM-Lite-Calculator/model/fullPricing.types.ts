@@ -20,7 +20,7 @@ export interface FullPricingResult {
 
   totalMonthlyFee: number;
 
-  // ✅ extended packages
+  /* ---------- EXTENDED ---------- */
   smartPackage: number;
   fixedPackage: FixedPackageResult;
   performancePackage: number;
