@@ -1,15 +1,5 @@
 import type { FullTier } from "./pricing.types";
 
-export type FullTier =
-  | "NONE"
-  | "F2"
-  | "F3"
-  | "F4"
-  | "F5"
-  | "F6"
-  | "F7"
-  | "F8";
-
 export interface FixedPackageResult {
   baseValue: number;
   discountedValue: number;
@@ -30,7 +20,7 @@ export interface FullPricingResult {
 
   totalMonthlyFee: number;
 
-  /* ✅ ADD THESE */
+  // ✅ extended packages
   smartPackage: number;
   fixedPackage: FixedPackageResult;
   performancePackage: number;

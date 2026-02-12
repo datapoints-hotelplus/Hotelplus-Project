@@ -9,6 +9,8 @@ import { getFullTier } from "../logic/fullPricing/getFullTier";
 import { calculateFullPricing } from "../logic/fullPricing/calculateFullPricing";
 import { calculateFixedPackage } from "../logic/fullPricing/calculateFixedPackage";
 
+import type { FullPricingResult } from "../model/fullPricing.types";
+
 export function useFullPricing({
   revenueResult,
   input,
@@ -17,7 +19,7 @@ export function useFullPricing({
   input: ORMLiteCalculatorInput;
 }) {
 
-  const fullPricing = useMemo(() => {
+  const fullPricing = useMemo<FullPricingResult | null>(() => {
 
     if (!revenueResult) return null;
 
@@ -29,7 +31,7 @@ export function useFullPricing({
     /* ---------- BASE FULL PRICING ---------- */
     const baseFull = calculateFullPricing(
       tier,
-      input.roomKey,                          // ✅ FIXED
+      input.roomKey,
       revenueResult.otaRevenuePerMonth,
       input.otaSharePercent,
       input.highSeason.adr,
