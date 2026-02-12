@@ -87,10 +87,13 @@ INPUT CSV (NO HEADER):
 ${chunk.join("\n")}
 
 Rules:
-- Respond in CSV format ONLY
-- Do NOT output header
-- Generate exactly ONE output row per ONE input row
-- Do NOT add explanations or extra text
+- แสดงผลลัพธ์เป็น CSV เท่านั้น (Comma Separated Values)
+- ห้ามใช้ Markdown Table
+- ห้ามใส่ Header ซ้ำ
+- ห้ามมีข้อความอื่นนอก CSV
+รูปแบบผลลัพธ์ (ตัวอย่าง 1 แถว):
+ชื่อเพจ / ช่อง,ลิงก์เพจ,หมวดหมู่,เหตุผลที่เลือก
+
 `
             }
           ]
