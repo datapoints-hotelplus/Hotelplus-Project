@@ -33,7 +33,7 @@ export default function Login() {
       }}
 >
   <div className="login-card">
-    <img src={logo} alt="Hotelplus" />
+    <img src={logo} alt="Hotel Plus" className="login-logo" />
     <h2 className="login-title">เข้าสู่ระบบ</h2>
 
     <label>อีเมล</label>

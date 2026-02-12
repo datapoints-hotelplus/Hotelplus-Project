@@ -3,9 +3,12 @@ const { Readable } = require("stream");
 
 /* ===== AUTH (ตัวเดียวพอ) ===== */
 const auth = new google.auth.GoogleAuth({
-  keyFile: "service-account.json",
+  credentials: JSON.parse(
+    process.env.SERVICE_ACCOUNT_JSON
+  ),
   scopes: ["https://www.googleapis.com/auth/drive"],
 });
+
 
 const drive = google.drive({
   version: "v3",
