@@ -472,4 +472,6 @@
   text-decoration: underline;
 }
 
-
+.edit-modal-content{
+  width: 100%;
+}
