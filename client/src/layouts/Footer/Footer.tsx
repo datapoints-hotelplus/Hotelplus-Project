@@ -9,7 +9,7 @@ export default function Footer() {
 
         {/* BRAND */}
         <div className="footer-section brand">
-          <img src="/logo/logo.png" alt="Hotelplus" className="footer-logo" />
+          <img src="/logo/logo.png" alt="Hotelplus" className="footer-logo"  />
 
           <p>
             ผู้ช่วยมืออาชีพสำหรับเจ้าของโรงแรมในการดำเนินงานในด้านการขาย
