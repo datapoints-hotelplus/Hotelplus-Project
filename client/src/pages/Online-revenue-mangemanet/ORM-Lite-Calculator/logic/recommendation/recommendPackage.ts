@@ -1,20 +1,22 @@
+import type {
+  LitePricingResult,
+  FullPricingResult,
+} from "../../model/pricing.types";
 import type { ORMLiteResult } from "../../model/ormLite.types";
-import type { LitePricingResult } from "../../model/pricing.types";
-import type { FullPricingResult } from "../../logic/fullPricing/calculateFullPricing";
 
-type Params = {
+interface RecommendParams {
   revenueResult: ORMLiteResult | null;
   litePricing: LitePricingResult | null;
   fullPricing: FullPricingResult | null;
-};
+}
 
 export function recommendPackage({
   revenueResult,
   litePricing,
   fullPricing,
-}: Params) {
+}: RecommendParams) {
 
-  // no revenue → no recommendation
+  /* ---------------- NO DATA ---------------- */
   if (!revenueResult) {
     return {
       recommendation: "NONE",
@@ -22,39 +24,72 @@ export function recommendPackage({
     };
   }
 
-  // only lite
-  if (litePricing && !fullPricing) {
+  const liteEligible =
+    litePricing?.isEligible === true;
+
+  const fullEligible =
+    fullPricing?.tier !== "NONE";
+
+  /* ---------------- ONLY ONE SIDE ---------------- */
+
+  if (liteEligible && !fullEligible) {
     return {
-      recommendation: "LITE",
-      reason: "Lite package is eligible",
+      recommendation: "LITE Package",
+      reason: "Only Lite Package is eligible",
     };
   }
 
-  // only full
-  if (!litePricing && fullPricing) {
+  if (!liteEligible && fullEligible) {
     return {
-      recommendation: "FULL",
-      reason: "Full service is eligible",
+      recommendation: "Full Services",
+      reason: "Only Full Services Package is eligible",
     };
   }
 
-  // both available → compare total monthly fee
-  if (litePricing && fullPricing) {
-    if (litePricing.totalFee <= fullPricing.totalMonthlyFee) {
+  if (!liteEligible && !fullEligible) {
+    return {
+      recommendation: "NONE",
+      reason: "No eligible package",
+    };
+  }
+
+  /* ---------------- BOTH ELIGIBLE ---------------- */
+
+  const liteCost =
+    litePricing!.totalFee;
+
+  const fullCost =
+    fullPricing!.totalMonthlyFee;
+
+  // Lite cheaper than Full
+  if (liteCost < fullCost) {
+
+    const percentCheaper =
+      ((fullCost - liteCost) / fullCost) * 100;
+
+    // If cheaper <= 5% → go Full
+    if (percentCheaper <= 5) {
       return {
-        recommendation: "LITE",
-        reason: "Lite package has lower monthly cost",
+        recommendation: "FULL",
+        reason:
+          "Lite is less than 5% cheaper than Full",
+        gapPercent: percentCheaper,
       };
     }
 
+    // Cheaper > 5% → Lite
     return {
-      recommendation: "FULL",
-      reason: "Full service provides better coverage",
+      recommendation: "LITE",
+      reason:
+        "Lite is significantly cheaper than Full",
+      gapPercent: percentCheaper,
     };
   }
 
+  /* Lite more expensive or equal */
+
   return {
-    recommendation: "NONE",
-    reason: "No suitable package",
+    recommendation: "FULL",
+    reason: "Full has lower or equal monthly cost",
   };
 }

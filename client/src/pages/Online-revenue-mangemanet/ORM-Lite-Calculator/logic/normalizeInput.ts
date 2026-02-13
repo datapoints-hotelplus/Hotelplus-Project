@@ -7,26 +7,27 @@ export function normalizeInput(
   input: ORMLiteCalculatorInput
 ): NormalizedORMInput {
 
-  const { highSeason, shoulderSeason, lowSeason } = input;
+  /* ---------- ROOM AVAILABLE ---------- */
+  const roomAvailable = input.roomKey * 0.8;
 
-  const isSameADR =
-    highSeason.adr === shoulderSeason.adr &&
-    shoulderSeason.adr === lowSeason.adr;
+  /* ---------- ADR OVERWRITE ---------- */
+  const sameADR =
+    input.highSeason.adr === input.shoulderSeason.adr &&
+    input.highSeason.adr === input.lowSeason.adr;
 
-  let highADR = highSeason.adr;
-  let shoulderADR = shoulderSeason.adr;
-  let lowADR = lowSeason.adr;
+  let highADR = input.highSeason.adr;
+  let shoulderADR = input.shoulderSeason.adr;
+  let lowADR = input.lowSeason.adr;
 
-  // หากทุกฤดูใช้ ADR เท่ากัน → กระจายราคาอัตโนมัติ
-  if (isSameADR) {
-    const baseADR = highSeason.adr;
-    lowADR = baseADR;
-    shoulderADR = baseADR * 1.05;
-    highADR = baseADR * 1.1;
+  if (sameADR) {
+    lowADR = input.lowSeason.adr;
+    shoulderADR = lowADR * 1.05;
+    highADR = lowADR * 1.10;
   }
 
   return {
-    roomKey: input.roomKey,
+    roomAvailable,
+
     occupancy: input.occupancyPercent / 100,
     otaShare: input.otaSharePercent / 100,
 

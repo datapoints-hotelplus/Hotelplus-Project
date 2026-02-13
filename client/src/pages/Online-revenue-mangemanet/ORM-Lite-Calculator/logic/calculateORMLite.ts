@@ -9,38 +9,34 @@ export function calculateORMLite(
   input: NormalizedORMInput
 ): ORMLiteResult {
 
-  const { roomKey, occupancy, otaShare } = input;
+  const {
+    roomAvailable,
+    occupancy,
+    otaShare,
+    high,
+    shoulder,
+    low,
+  } = input;
 
-  // จำนวนห้องที่มีจำหน่าย
-  const roomAvailable =
-    roomKey * occupancy;
-
-  /* ---------- Revenue per season per month ---------- */
+  /* ---------- SEASON REVENUE ---------- */
 
   const highRevenuePerMonth =
-    roomAvailable *
-    input.high.adr *
-    DAYS_PER_MONTH;
+    roomAvailable * high.adr * DAYS_PER_MONTH * occupancy;
 
   const shoulderRevenuePerMonth =
-    roomAvailable *
-    input.shoulder.adr *
-    DAYS_PER_MONTH;
+    roomAvailable * shoulder.adr * DAYS_PER_MONTH * occupancy;
 
   const lowRevenuePerMonth =
-    roomAvailable *
-    input.low.adr *
-    DAYS_PER_MONTH;
+    roomAvailable * low.adr * DAYS_PER_MONTH * occupancy;
 
-  /* ---------- Weighted Average Revenue ---------- */
+  /* ---------- WEIGHTED AVG ---------- */
 
   const averageRevenuePerMonth =
-    (highRevenuePerMonth * input.high.months +
-      shoulderRevenuePerMonth * input.shoulder.months +
-      lowRevenuePerMonth * input.low.months) /
-    12;
+    (highRevenuePerMonth * high.months +
+      shoulderRevenuePerMonth * shoulder.months +
+      lowRevenuePerMonth * low.months) / 12;
 
-  /* ---------- OTA Revenue ---------- */
+  /* ---------- OTA ---------- */
 
   const otaRevenuePerMonth =
     averageRevenuePerMonth * otaShare;
