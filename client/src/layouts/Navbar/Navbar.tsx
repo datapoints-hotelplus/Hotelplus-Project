@@ -21,7 +21,7 @@ export default function Navbar() {
       <nav className="navbar">
         <div className="nav-left">
           <div className="logo">
-            <img src={logo} alt="Hotelplus" />
+            <img src="/logo/logo.png" alt="Hotelplus" />
           </div>
 
           <ul className={`nav-menu ${menuOpen ? "active" : ""}`}>
