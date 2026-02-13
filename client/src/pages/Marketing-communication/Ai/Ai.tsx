@@ -418,7 +418,7 @@ const Ai = () => {
 
         {showPromptModal && (
           <div className="modal-backdrop">
-            <div className="modal modal-large">
+            <div className="modal-masterprompt modal-large">
               <h3>Master Prompt</h3>
 
               {!isEditingPrompt ? (
