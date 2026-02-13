@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import "./login.css";
-const logo = "/logo/Hotelplus-logo.jpg";
+import logo from '../../../public/logo/logo.png'
 
 
 export default function Login() {
