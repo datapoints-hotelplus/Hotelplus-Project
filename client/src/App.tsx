@@ -14,7 +14,7 @@ import MainLayout from "./layouts/MainLayout";
 import OrmCalMain from "./pages/Online-revenue-mangemanet/ORM-Lite-Calculator/ORMLiteCalculatorView";
 import OrmCalLayout from "./layouts/OrmCalLayout";
 import DriveFolders from "./pages/Marketing-communication/DriveFolders/DriveFolders"
-
+import MarcomCalMain from "./pages/Online-revenue-mangemanet/Marcom-Calculator/MarcomCalculatorView";
 
 
 function App() {
@@ -72,6 +72,7 @@ function App() {
           }
         >
           <Route path="/orm-calculator" element={<OrmCalMain />} />
+          <Route path="/marcom-calculator" element={<MarcomCalMain />} />
         </Route>
 
         <Route path="/403" element={<Forbidden />} />

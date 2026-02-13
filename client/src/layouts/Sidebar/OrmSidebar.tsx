@@ -5,7 +5,7 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        ORM Calculator
+        Calculator
       </div>
 
       <nav className="sidebar-menu">
@@ -15,34 +15,16 @@ const Sidebar: React.FC = () => {
             `sidebar-item ${isActive ? "active" : ""}`
           }
         >
-          Calculator
+          ORM Package Calculator
         </NavLink>
 
         <NavLink
-          to="/orm-manual"
+          to="/marcom-calculator"
           className={({ isActive }) =>
             `sidebar-item ${isActive ? "active" : ""}`
           }
         >
-          Manual
-        </NavLink>
-        
-        <NavLink
-          to="/orm-presentation"
-          className={({ isActive }) =>
-            `sidebar-item ${isActive ? "active" : ""}`
-          }
-        >
-          Presentation
-        </NavLink>
-
-        <NavLink
-          to="/orm-adr"
-          className={({ isActive }) =>
-            `sidebar-item ${isActive ? "active" : ""}`
-          }
-        >
-          ADR Calculator
+          Marcom Package Calculator
         </NavLink>
       </nav>
     </aside>
