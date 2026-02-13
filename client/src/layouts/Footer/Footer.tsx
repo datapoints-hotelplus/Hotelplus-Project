@@ -1,5 +1,5 @@
 import './Footer.css';
-const logo = "/logo/Hotelplus-logo.jpg";
+const logo = "public/logo/Hotelplus-logo.jpg";
 
 export default function Footer() {
   return (
