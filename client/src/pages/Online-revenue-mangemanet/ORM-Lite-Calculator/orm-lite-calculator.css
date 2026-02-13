@@ -72,6 +72,22 @@
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
 }
 
+.orm-lite-calculator input[type="text"] {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  background: #f8f9fa;
+}
+
+.orm-lite-calculator input[type="text"]:focus {
+  outline: none;
+  border-color: #4299e1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
 /* Season Setup Section */
 .seasons-grid {
   display: grid;
@@ -803,4 +819,8 @@
 /* gap */
 .recommend-gap {
   font-size: 15px;
+}
+
+.export-section{
+  margin-top: 20px;
 }

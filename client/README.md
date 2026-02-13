@@ -9,3 +9,4 @@
  npm install react-router-dom
  npm install json2csv
  npm install googleapis
+ npm install jspdf jspdf-autotable

@@ -6,6 +6,10 @@ import {formatCurrency,formatNumber,round,} from "../../../utils/number";
 import type {AddOnService,AddOnOption,} from "./model/pricing.types";
 import {recommendPackage,} from "./logic/recommendation/recommendPackage";
 import "./orm-lite-calculator.css";
+import { exportPricingPDF } from "./logic/export/exportPricingPDF";
+import type { ExportPackageBlock } from "./logic/export/export.types";
+import { roundUpToHundred } from "./logic/pricingUtils";
+
 
 const ADD_ON_SERVICES: AddOnService[] = [
   {
@@ -99,7 +103,7 @@ export default function ORMLiteCalculatorView() {
 
   /* ------------ HELPERS ------------ */
 
-  const updateField = (field: string, value: number) => {
+  const updateField = (field: string,value: string | number) => {
     setInput((prev: any) => ({
       ...prev,
       [field]: value,
@@ -142,9 +146,41 @@ export default function ORMLiteCalculatorView() {
 
   const [showServiceInfo, setShowServiceInfo] = useState(false);
 
+  type ExportPackage =
+  | "LITE"
+  | "SMART"
+  | "FIXED"
+  | "PERFORMANCE";
+
+  const [selectedExports, setSelectedExports] =
+    useState<ExportPackage[]>([]);
+  
+  const toggleExport = (pkg: ExportPackage) => {
+    setSelectedExports(prev => {
+      if (prev.includes(pkg)) {
+        return prev.filter(p => p !== pkg);
+      }
+      return [...prev, pkg];
+    });
+  };
+  const toggleSelectAll = () => {
+    const all: ExportPackage[] = [];
+
+    if (litePricing?.isEligible) all.push("LITE");
+    if (fullPricing) {
+      all.push("SMART", "FIXED", "PERFORMANCE");
+    }
+
+    if (selectedExports.length === all.length) {
+      setSelectedExports([]);
+    } else {
+      setSelectedExports(all);
+    }
+  };
+
+
 
   const systemCost = getSystemCost(input.roomKey);
-
   /* ------------ COMMISSION RATE CALCULATION ------------ */
   const commissionData = useMemo(() => {
     if (!revenueResult) {
@@ -219,25 +255,258 @@ export default function ORMLiteCalculatorView() {
     };
   }, [revenueResult, input.otaSharePercent, input.highSeason.adr, input.lowSeason.adr]);
 
+  const buildLiteExportBlock = (): ExportPackageBlock | null => {
+    if (!litePricing || !litePricing.isEligible) return null;
+
+    return {
+      packageName: "Lite Package",
+      rows: [
+        {
+          label: "Base Monthly Fee",
+          value: formatCurrency(litePricing.baseMonthlyFee),
+        },
+        {
+          label: "Commission Rate",
+          value: `${(litePricing.commissionRate * 100).toFixed(2)}%`,
+        },
+        {
+          label: "Commission Cost",
+          value: formatCurrency(litePricing.commissionCost),
+        },
+        {
+          label: "Add-on Services",
+          value: formatCurrency(litePricing.addOnTotal),
+        },
+      ],
+      totalLabel: "ค่าบริการรวม / เดือน",
+      totalValue: formatCurrency(
+        roundUpToHundred(litePricing.totalFee)
+      ),
+    };
+  };
+
+  const buildFixedExportBlock = (): ExportPackageBlock | null => {
+    if (!revenueResult || !fullPricing) return null;
+
+    const lowOtaRevenue =
+      revenueResult.lowRevenuePerMonth *
+      (input.otaSharePercent / 100);
+
+    const lowB =
+      lowOtaRevenue * commissionData.finalRate;
+
+    // ---- weight & discount ----
+    let weight = 1;
+    let discount = 1;
+
+    switch (commissionData.tier) {
+      case "F2": weight = 0.85; discount = 0.70; break;
+      case "F3": weight = 0.90; discount = 0.75; break;
+      case "F4": weight = 0.95; discount = 0.80; break;
+      case "F5": weight = 1;    discount = 0.83; break;
+      case "F6": weight = 1;    discount = 0.85; break;
+      case "F7": weight = 1;    discount = 0.87; break;
+      case "F8": weight = 1;    discount = 0.90; break;
+    }
+
+    const base =
+      fullPricing.A + (lowB * weight);
+
+    const baseDiscounted =
+      base * discount;
+
+    const minValue =
+      fullPricing.A + 5000;
+
+    const fixedPrice =
+      roundUpToHundred(
+        Math.max(baseDiscounted, minValue)
+      );
+
+    return {
+      packageName: "Fixed Package (A Only)",
+      rows: [
+        {
+          label: "Low Season OTA Revenue",
+          value: formatCurrency(lowOtaRevenue),
+        },
+        {
+          label: "Adjusted Commission Rate",
+          value: `${(commissionData.finalRate * 100).toFixed(1)}%`,
+        },
+        {
+          label: `Base = A + (Low B × ${(weight * 100).toFixed(0)}%)`,
+          value: formatCurrency(base),
+        },
+        {
+          label: "Fixed Rate",
+          value: formatCurrency(fixedPrice),
+        },
+        {
+          label: "Setup Fee (C) - จ่ายครั้งแรก",
+          value: formatCurrency(systemCost),
+        },
+      ],
+      totalLabel: "ค่าบริการเหมาจ่าย / เดือน",
+      totalValue: formatCurrency(fixedPrice),
+    };
+  };
+
+  const buildPerformanceExportBlock = (): ExportPackageBlock | null => {
+    if (!revenueResult) return null;
+
+    const bOnlyRate = commissionData.finalRate + 0.02;
+
+    const otaRevenue =
+      revenueResult.otaRevenuePerMonth;
+
+    const baseBOnly =
+      otaRevenue * bOnlyRate;
+
+    const plusFee = 5000;
+    const minCharge = 8000;
+
+    // ราคาก่อนปัด
+    const raw =
+      baseBOnly + plusFee;
+
+    // กันขั้นต่ำ
+    const withMin =
+      Math.max(raw, minCharge);
+
+    // ✅ ปัดขึ้นหลักร้อย
+    const bOnlyAmount =
+      roundUpToHundred(withMin);
+
+    return {
+      packageName: "Performance Package (B Only)",
+      rows: [
+        {
+          label: "OTA Revenue / Month",
+          value: formatCurrency(otaRevenue),
+        },
+        {
+          label: "B Only Rate",
+          value: `${(bOnlyRate * 100).toFixed(2)}%`,
+        },
+        {
+          label: "B Only = OTA Revenue × Rate",
+          value: formatCurrency(baseBOnly),
+        },
+        {
+          label: "+ Service Fee",
+          value: formatCurrency(plusFee),
+        },
+        {
+          label: "Minimum Charge",
+          value: formatCurrency(minCharge),
+        },
+      ],
+      totalLabel: "ค่าบริการ / เดือน",
+      totalValue: formatCurrency(bOnlyAmount),
+    };
+  };
+
+  const buildSmartExportBlock = (): ExportPackageBlock | null => {
+    if (!revenueResult || !fullPricing) return null;
+
+    /* ---------- A PART (USE FROM FULL PRICING) ---------- */
+
+    const systemCost = fullPricing.systemCost;
+    const multiplier = fullPricing.aMultiplier;
+    const A = fullPricing.A;
+
+    /* ---------- B PART ---------- */
+
+    const otaRevenue = revenueResult.otaRevenuePerMonth;
+    const tier = commissionData.tier;
+    const baseRate = commissionData.baseRate;
+    const otaShare = input.otaSharePercent;
+    const adjustedRate = commissionData.finalRate;
+
+    const rawB = otaRevenue * adjustedRate;
+
+    /* ---------- TOTAL ---------- */
+
+    const rawTotal = A + rawB;
+    const cappedTotal = Math.min(rawTotal, 60000);
+    const finalTotal = roundUpToHundred(cappedTotal);
+
+    return {
+      packageName: "Smart Package (A + B)",
+
+      rows: [
+        /* ===== A BREAKDOWN ===== */
+
+        {
+          label: `A = System Cost × ${multiplier.toFixed(2)}`,
+          value: formatCurrency(A),
+        },
+        {
+          label: `System Cost (${input.roomKey} ห้อง)`,
+          value: formatCurrency(systemCost),
+        },
+        {
+          label: "A Multiplier (ตัวคูณ)",
+          value: `${multiplier.toFixed(2)}x`,
+        },
+        {
+          label: "ค่าบริการระบบ (A)",
+          value: formatCurrency(A),
+        },
+
+        /* ===== B BREAKDOWN ===== */
+
+        {
+          label: "Tier (จากรายได้เฉลี่ย)",
+          value: tier,
+        },
+        {
+          label: "Base Commission Rate",
+          value: `${(baseRate * 100).toFixed(1)}%`,
+        },
+        {
+          label: "OTA Share",
+          value: `${otaShare}%`,
+        },
+        {
+          label: "Adjusted Commission Rate",
+          value: `${(adjustedRate * 100).toFixed(1)}%`,
+        },
+        {
+          label: "B = รายได้ OTA × Rate",
+          value: formatCurrency(rawB),
+        },
+      ],
+
+      totalLabel: "ค่าบริการรวม / เดือน",
+      totalValue: formatCurrency(finalTotal),
+    };
+  };
+
+
+
+
   return (
     <div className="orm-lite-calculator">
 
       {/* BASIC INFO */}
       <section>
         <h2>ข้อมูลพื้นฐาน</h2>
-        <label>
-          ชื่อโรงแรม <span className="required">*</span>
-          <input
-            type="text"
-            value={input.hotelName || ""}
-            onChange={e =>
-              updateField("hotelName", e.target.value)
-            }
-            placeholder="กรอกชื่อโรงแรม"
-          />
-        </label>
-
+        
         <div className="basic-info-grid">
+          <label>
+            ชื่อโรงแรม <span className="required">*</span>
+            <input
+              type="text"
+              value={input.hotelName || ""}
+              onChange={e =>
+                updateField("hotelName", e.target.value)
+              }
+              placeholder="กรอกชื่อโรงแรม"
+            />
+          </label>
+          
           <label>
             จำนวนห้องพัก <span className="required">*</span>
             <input
@@ -593,7 +862,11 @@ export default function ORMLiteCalculatorView() {
 
                 <p style={{ fontWeight: "bold", fontSize: "16px" }}>
                   <span>รวมค่าบริการรายเดือน:</span>
-                  <span>{formatCurrency(litePricing.totalFee)}</span>
+                  <span>
+                    {formatCurrency(
+                      roundUpToHundred(litePricing.totalFee)
+                    )}
+                  </span>
                 </p>
               </div>
 
@@ -668,16 +941,20 @@ export default function ORMLiteCalculatorView() {
                     <h3>🍊 แพคเกจมาตรฐาน (A + B)</h3>
                     <span className="recommended-badge">แนะนำ</span>
                   </div>
-
                   <div className="price-highlight">
-                    {revenueResult && formatCurrency(
-                      Math.min(
-                        fullPricing.A + (revenueResult.otaRevenuePerMonth * commissionData.finalRate),
-                        60000
+                    {revenueResult &&
+                      formatCurrency(
+                        roundUpToHundred(
+                          Math.min(
+                            fullPricing.A +
+                              (revenueResult.otaRevenuePerMonth *
+                                commissionData.finalRate),
+                            60000
+                          )
+                        )
                       )
-                    )} บาท/เดือน
+                    } บาท/เดือน
                   </div>
-
                   <div className="package-breakdown">
                     <div className="breakdown-row">
                       <span>ค่าบริการระบบ (A)</span>
@@ -763,12 +1040,17 @@ export default function ORMLiteCalculatorView() {
                     </div>
 
                     <div className="detail-row">
-                      <span>A Multiplier (ตัวคูณ)</span>
-                      <span className="amount">1.5x</span>
+                      <span className="amount">
+                        {fullPricing.aMultiplier.toFixed(2)}x
+                      </span>
                     </div>
 
                     <div className="detail-row" style={{ borderTop: '1px solid #d1d5db', paddingTop: '8px', marginTop: '4px' }}>
-                      <span><strong>A = System Cost × 1.5</strong></span>
+                      <span>
+                        <strong>
+                          A = System Cost × {fullPricing.aMultiplier.toFixed(2)}
+                        </strong>
+                      </span>
                       <span className="amount"><strong>{formatCurrency(fullPricing.A)} บาท</strong></span>
                     </div>
 
@@ -926,12 +1208,14 @@ export default function ORMLiteCalculatorView() {
                     const rawFixed = Math.max(baseDiscounted, minValue);
                     
                     // ปัดขึ้นหลักสิบ
-                    const fixedPrice = Math.ceil(rawFixed / 10) * 10;
+                    const fixedPrice = roundUpToHundred(rawFixed);
 
                     return (
                       <>
                         <div className="price-highlight">
-                          {formatCurrency(fixedPrice)} บาท/เดือน
+                          {formatCurrency(
+                            roundUpToHundred(fixedPrice)
+                          )} บาท/เดือน
                         </div>
 
                         <div className="info-box">
@@ -1004,7 +1288,11 @@ export default function ORMLiteCalculatorView() {
                     return (
                       <>
                         <div className="price-highlight">
-                          {formatCurrency(Math.max(bOnlyAmount, minCharge))} บาท/เดือน
+                          {formatCurrency(
+                            roundUpToHundred(
+                              Math.max(bOnlyAmount, minCharge)
+                            )
+                          )} บาท/เดือน
                         </div>
 
                         {/* CHECK ELIGIBILITY */}
@@ -1133,7 +1421,93 @@ export default function ORMLiteCalculatorView() {
             </section>
           )}
 
+          <button
+            disabled={selectedExports.length === 0}
+            onClick={() => {
+              const blocks: ExportPackageBlock[] = [];
+                if (selectedExports.includes("LITE")) {
+                  const lite = buildLiteExportBlock();
+                  if (lite) blocks.push(lite);
+                }
 
+                if (selectedExports.includes("FIXED")) {
+                  const fixed = buildFixedExportBlock();
+                  if (fixed) blocks.push(fixed);
+                }
+
+                if (selectedExports.includes("PERFORMANCE")) {
+                  const performance = buildPerformanceExportBlock();
+                  if (performance) blocks.push(performance);
+                }
+
+                if (selectedExports.includes("SMART")) {
+                  const smart = buildSmartExportBlock();
+                  if (smart) blocks.push(smart);
+                }
+
+
+                if (blocks.length === 0) return;
+
+                exportPricingPDF({
+                  hotelName: input.hotelName,
+                  packages: blocks,
+                });
+
+            }}
+          >
+            Export PDF
+          </button>
+
+          <section className="export-section">
+            <h3>เลือกแพ็คเกจสำหรับ Export PDF</h3>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedExports.length === 4}
+                onChange={toggleSelectAll}
+              />
+              Select All
+            </label>
+
+            {litePricing?.isEligible && (
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedExports.includes("LITE")}
+                  onChange={() => toggleExport("LITE")}
+                />
+                Lite Package
+              </label>
+            )}
+
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedExports.includes("SMART")}
+                onChange={() => toggleExport("SMART")}
+              />
+              Smart Package (A+B)
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedExports.includes("FIXED")}
+                onChange={() => toggleExport("FIXED")}
+              />
+              Fixed Package (A Only)
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={selectedExports.includes("PERFORMANCE")}
+                onChange={() => toggleExport("PERFORMANCE")}
+              />
+              Performance Package (B Only)
+            </label>
+          </section>
           {/* NOT RECOMMENDED */}
           {!isLiteEligible && !isFullEligible && (
             <p style={{ color: "#e53e3e", textAlign: "center" }}>

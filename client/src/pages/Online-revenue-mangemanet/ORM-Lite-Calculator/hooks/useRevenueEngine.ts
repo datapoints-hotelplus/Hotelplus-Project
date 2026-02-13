@@ -13,6 +13,7 @@ import { calculateORMLite } from "../logic/calculateORMLite";
 /* ---------------- DEFAULT INPUT ---------------- */
 
 const defaultInput: ORMLiteCalculatorInput = {
+  hotelName: "",
   roomKey: 0,
   occupancyPercent: 0,
   otaSharePercent: 0,
