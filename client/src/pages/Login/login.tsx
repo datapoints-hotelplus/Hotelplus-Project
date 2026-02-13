@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import "./login.css";
-import logo from '../../../public/logo/logo.png'
+
 
 
 export default function Login() {
@@ -33,7 +33,7 @@ export default function Login() {
       }}
 >
   <div className="login-card">
-    <img src={logo} alt="Hotel Plus" className="login-logo" />
+    <img src="/logo/logo.png" alt="Hotelplus" className="login-logo" />  
     <h2 className="login-title">เข้าสู่ระบบ</h2>
 
     <label>อีเมล</label>
