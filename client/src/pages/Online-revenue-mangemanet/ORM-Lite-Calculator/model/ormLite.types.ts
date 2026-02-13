@@ -8,6 +8,7 @@ export interface SeasonInput {
 /* ------------ INPUT ------------ */
 
 export interface ORMLiteCalculatorInput {
+  hotelName?: string;
   roomKey: number;
   occupancyPercent: number;
   otaSharePercent: number;

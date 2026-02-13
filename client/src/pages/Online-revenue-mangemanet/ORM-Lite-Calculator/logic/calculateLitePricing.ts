@@ -3,11 +3,12 @@ import type {
   AddOnOption,
 } from "../model/pricing.types";
 
-
 const BASE_MONTHLY_FEE = 3900;
 const COMMISSION_RATE = 0.05;
 
-function getLiteTier(avgRevenue: number): "L1" | "L2" | "L3" | "NONE" {
+function getLiteTier(
+  avgRevenue: number
+): "L1" | "L2" | "L3" | "NONE" {
   if (avgRevenue < 40000) return "NONE";
   if (avgRevenue <= 120000) return "L1";
   if (avgRevenue <= 200000) return "L2";
@@ -30,6 +31,20 @@ export function calculateLitePricing(
 
   const tier = getLiteTier(averageRevenue);
 
+  const addOnTotal = selectedAddOns.reduce(
+    (sum, a) => sum + a.price,
+    0
+  );
+
+  const commissionCost =
+    otaRevenue * COMMISSION_RATE;
+
+  const totalFee =
+    BASE_MONTHLY_FEE +
+    commissionCost +
+    addOnTotal;
+
+  // ❗️ If tier NONE → ไม่เข้า Lite
   if (tier === "NONE") {
     return {
       tier: "NONE",
@@ -39,8 +54,8 @@ export function calculateLitePricing(
       commissionRate: 0,
       commissionCost: 0,
 
-      addOns: [],
-      addOnTotal: 0,
+      addOns: selectedAddOns,
+      addOnTotal,
 
       totalFee: 0,
 
@@ -49,19 +64,8 @@ export function calculateLitePricing(
     };
   }
 
-  const addOnTotal = selectedAddOns.reduce(
-    (sum, a) => sum + a.price,
-    0
-  );
-
-  const commissionCost = otaRevenue * COMMISSION_RATE;
-
-  const totalFee =
-    BASE_MONTHLY_FEE +
-    commissionCost +
-    addOnTotal;
-
-  const triggerMax = TRIGGER_MAX[tier];
+  const triggerMax =
+    TRIGGER_MAX[tier];
 
   const isTriggerExceeded =
     addOnTotal > triggerMax;
@@ -69,8 +73,7 @@ export function calculateLitePricing(
   const isEligible =
     roomAvailable <= 40 &&
     averageRevenue >= 40000 &&
-    otaRevenue >= 20000 &&
-    totalFee <= 4900;
+    otaRevenue >= 20000;
 
   return {
     tier,
@@ -90,4 +93,5 @@ export function calculateLitePricing(
 
     isEligible,
   };
+    
 }

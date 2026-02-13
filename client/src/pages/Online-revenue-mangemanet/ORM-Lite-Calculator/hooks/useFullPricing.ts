@@ -21,7 +21,7 @@ export function useFullPricing({
 
   const fullPricing = useMemo<FullPricingResult>(() => {
 
-    /* ---------- DEFAULT (NO DATA) ---------- */
+    /* ---------- DEFAULT ---------- */
     if (!revenueResult) {
       return {
         tier: "NONE",
@@ -52,7 +52,7 @@ export function useFullPricing({
       revenueResult.averageRevenuePerMonth
     );
 
-    /* ---------- BASE FULL PRICING ---------- */
+    /* ---------- BASE ---------- */
     const baseFull = calculateFullPricing(
       tier,
       input.roomKey,
@@ -62,7 +62,6 @@ export function useFullPricing({
       input.lowSeason.adr
     );
 
-    /* ---------- IF NOT ELIGIBLE ---------- */
     if (!baseFull.isEligible) {
       return {
         ...baseFull,
@@ -79,11 +78,34 @@ export function useFullPricing({
       };
     }
 
-    /* ---------- SMART (A + B) ---------- */
+    /* ---------- FULL ELIGIBILITY RULE ---------- */
+    const isMeetRevenueRule =
+      revenueResult.averageRevenuePerMonth >= 120000 &&
+      revenueResult.otaRevenuePerMonth >= 72000;
+
+    if (!isMeetRevenueRule) {
+      return {
+        ...baseFull,
+
+        isEligible: false,
+
+        smartPackage: 0,
+        fixedPackage: {
+          baseValue: 0,
+          discountedValue: 0,
+          price: 0,
+          finalFee: 0,
+        },
+        performancePackage: 0,
+        bOnlyRate: 0,
+      };
+    }
+
+    /* ---------- SMART ---------- */
     const smartPackage =
       Math.min(baseFull.A + baseFull.B, 60000);
 
-    /* ---------- FIXED (A Only) ---------- */
+    /* ---------- FIXED ---------- */
     const lowB =
       revenueResult.lowRevenuePerMonth *
       baseFull.adjustedCommissionRate;
@@ -95,7 +117,7 @@ export function useFullPricing({
         lowB
       );
 
-    /* ---------- PERFORMANCE (B Only) ---------- */
+    /* ---------- PERFORMANCE ---------- */
     const bOnlyRate =
       baseFull.adjustedCommissionRate + 0.02;
 

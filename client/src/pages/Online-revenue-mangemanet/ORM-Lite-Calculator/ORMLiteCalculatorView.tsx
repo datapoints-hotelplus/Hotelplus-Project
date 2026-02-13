@@ -92,7 +92,7 @@ export default function ORMLiteCalculatorView() {
 
   /* ----------- ELIGIBILITY ----------- */
 
-  const isLiteEligible = !!litePricing;
+  const isLiteEligible = litePricing?.isEligible === true;
 
   const isFullEligible =
     !!fullPricing && fullPricing.tier !== "NONE";
@@ -139,6 +139,9 @@ export default function ORMLiteCalculatorView() {
     if (roomKey <= 100) return 5400;
     return 5800;
   };
+
+  const [showServiceInfo, setShowServiceInfo] = useState(false);
+
 
   const systemCost = getSystemCost(input.roomKey);
 
@@ -222,6 +225,17 @@ export default function ORMLiteCalculatorView() {
       {/* BASIC INFO */}
       <section>
         <h2>ข้อมูลพื้นฐาน</h2>
+        <label>
+          ชื่อโรงแรม <span className="required">*</span>
+          <input
+            type="text"
+            value={input.hotelName || ""}
+            onChange={e =>
+              updateField("hotelName", e.target.value)
+            }
+            placeholder="กรอกชื่อโรงแรม"
+          />
+        </label>
 
         <div className="basic-info-grid">
           <label>
@@ -462,7 +476,17 @@ export default function ORMLiteCalculatorView() {
       {/* ADD-ONS (ONLY WHEN LITE) */}
       {isLiteEligible && (
           <section>
-            <h2>บริการเสริม (Add-On Services)</h2>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2>บริการเสริม (Add-On Services)</h2>
+
+              <button
+                type="button"
+                className="info-btn"
+                onClick={() => setShowServiceInfo(true)}
+              >
+                ตารางเปรียบเทียบบริการ
+              </button>
+            </div>
 
             {ADD_ON_SERVICES.map(service => (
               <div key={service.code} className="addon-service">
@@ -512,24 +536,25 @@ export default function ORMLiteCalculatorView() {
       {/* PACKAGE RECOMMENDATION */}
       {revenueResult && (
         <section>
-          <h2>แนะนำแพ็คเกจ</h2>
+          <div className="recommend-summary">
+            <span className="recommend-label">
+              ⭐ แพ็คเกจที่ระบบแนะนำ
+            </span>
 
-          <p>
-            แพ็คเกจที่แนะนำ:{" "}
-            <strong>
+            <span className="recommend-badge">
               {recommendation.recommendation}
-            </strong>
-          </p>
+            </span>
 
-          <p>
-            เหตุผล: {recommendation.reason}
-          </p>
-
-          {(recommendation as any).gapPercent !== undefined && (
-            <p>
-              ส่วนต่างราคา: {(recommendation as any).gapPercent.toFixed(2)}%
+            <p className="recommend-reason">
+              {recommendation.reason}
             </p>
-          )}
+
+            {(recommendation as any).gapPercent !== undefined && (
+              <p className="recommend-gap">
+                ส่วนต่างราคา {(recommendation as any).gapPercent.toFixed(2)}%
+              </p>
+            )}
+          </div>
 
           {/* LITE */}
           {isLiteEligible && litePricing && (
@@ -1116,6 +1141,85 @@ export default function ORMLiteCalculatorView() {
             </p>
           )}
         </section>
+      )}
+
+      {showServiceInfo && (
+        <div className="modal-overlay" onClick={() => setShowServiceInfo(false)}>
+
+          <div className="modal-box"onClick={(e) => e.stopPropagation()}>
+
+            <div className="modal-header">
+              <h3>เปรียบเทียบบริการ Lite vs Full Services</h3>
+              <button onClick={() => setShowServiceInfo(false)}>
+                ✖
+              </button>
+            </div>
+
+            <table className="service-table">
+              <thead>
+                <tr>
+                  <th>รายการ</th>
+                  <th>
+                    Lite <span className="badge-lite">Basic</span>
+                  </th>
+                  <th>
+                    Full Services <span className="badge-full">All Inclusive</span>
+                  </th>
+                </tr>
+              </thead>
+              
+              <tbody>
+                <tr>
+                  <td>Shop Rate Monitoring</td>
+                  <td>One-time / 1,500</td>
+                  <td>Daily / 8,000</td>
+                </tr>
+
+                <tr>
+                  <td>Compset Survey</td>
+                  <td>One-time / 2,000</td>
+                  <td>Daily / 10,000</td>
+                </tr>
+
+                <tr>
+                  <td>Visibility Management</td>
+                  <td>One-time / 2,000</td>
+                  <td>Daily / 15,000</td>
+                </tr>
+
+                <tr>
+                  <td>OTA Channel Management</td>
+                  <td>800 / OTA / Month</td>
+                  <td>6–8 OTA + Expansion (รวมฟรี)</td>
+                </tr>
+
+                <tr>
+                  <td>Reservation Management</td>
+                  <td>Monthly / 4,500</td>
+                  <td>Daily (รวมฟรี)</td>
+                </tr>
+
+                <tr>
+                  <td>H+ Specialist</td>
+                  <td>Centralize</td>
+                  <td>Personal Specialist</td>
+                </tr>
+
+                <tr>
+                  <td>Benefits อื่น ๆ</td>
+                  <td>-</td>
+                  <td>
+                    • Special Activities  
+                    • Monthly Meeting  
+                    • H+ Performance Dashboard  
+                    • OTA Market Insight
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
       )}
 
     </div>
