@@ -20,13 +20,14 @@ export interface ORMLiteCalculatorInput {
 /* ------------ NORMALIZED ------------ */
 
 export interface NormalizedORMInput {
-  roomKey: number;
-  occupancy: number;
-  otaShare: number;
+  roomAvailable: number;
 
-  high: SeasonInput;
-  shoulder: SeasonInput;
-  low: SeasonInput;
+    occupancy: number;
+    otaShare: number;
+
+    high: SeasonInput;
+    shoulder: SeasonInput;
+    low: SeasonInput;
 }
 
 /* ------------ RESULT ------------ */

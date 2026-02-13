@@ -21,7 +21,7 @@ export type AddOnItem = AddOnOption;
    LITE PRICING
 ===================================================== */
 
-export type LiteTier = "L1" | "L2" | "L3";
+export type LiteTier = "L1" | "L2" | "L3" | "NONE";
 
 export type LitePricingResult = {
   tier: LiteTier;
