@@ -8,7 +8,6 @@ import Kols from "./pages/Marketing-communication/Kols/Kols";
 import Ai from "./pages/Marketing-communication/Ai/Ai";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Calculator from "./pages/Marketing-communication/Calculator/Calculator";
 import MainLayout from "./layouts/MainLayout";
 
 import OrmCalMain from "./pages/Online-revenue-mangemanet/ORM-Lite-Calculator/ORMLiteCalculatorView";
@@ -60,7 +59,6 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/calculator" element={<Calculator />} />
         </Route>
 
         {/* ORM */}
