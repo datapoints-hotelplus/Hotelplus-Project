@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../AuthProvider";
 import "./Navbar.css";
-const logo = "public/logo/Hotelplus-logo.jpg";
 import UserMenu from "../../components/Usermenu/UserMenu";
 import UserRoleBadge from "../../components/UserRoleBadge/UserRoleBadge";
 import { Link } from "react-router-dom";
