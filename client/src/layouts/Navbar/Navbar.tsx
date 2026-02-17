@@ -29,7 +29,6 @@ export default function Navbar() {
             {!loading && isMarCom && (
               <>
                 <li><Link to="/kols">Kols</Link></li>
-                <li><Link to="/calculator">Calculator</Link></li>
               </>
             )}
 
