@@ -5,7 +5,7 @@ import { useFullPricing } from "./hooks/useFullPricing";
 import {formatCurrency,formatNumber,round,} from "../../../utils/number";
 import type {AddOnService} from "./model/pricing.types";
 import {recommendPackage,} from "./logic/recommendation/recommendPackage";
-import "./orm-lite-calculator.css";
+import "./orm-calculator.css";
 import { exportPricingPDF } from "./logic/export/exportPricingPDF";
 import type { ExportPackageBlock } from "./logic/export/export.types";
 import { roundUpToHundred } from "./logic/pricingUtils";
@@ -1452,7 +1452,6 @@ export default function ORMLiteCalculatorView() {
         <div className="modal-overlay" onClick={() => setShowServiceInfo(false)}>
 
           <div className="modal-box"onClick={(e) => e.stopPropagation()}>
-
             <div className="modal-header">
               <h3>เปรียบเทียบบริการ Lite vs Full Services</h3>
               <button onClick={() => setShowServiceInfo(false)}>
@@ -1476,31 +1475,31 @@ export default function ORMLiteCalculatorView() {
               <tbody>
                 <tr>
                   <td>Shop Rate Monitoring</td>
-                  <td>One-time / 1,500</td>
-                  <td>Daily / 8,000</td>
+                  <td>One-time</td>
+                  <td>Daily</td>
                 </tr>
 
                 <tr>
                   <td>Compset Survey</td>
-                  <td>One-time / 2,000</td>
-                  <td>Daily / 10,000</td>
+                  <td>One-time</td>
+                  <td>Daily</td>
                 </tr>
 
                 <tr>
                   <td>Visibility Management</td>
-                  <td>One-time / 2,000</td>
-                  <td>Daily / 15,000</td>
+                  <td>One-time</td>
+                  <td>Daily</td>
                 </tr>
 
                 <tr>
                   <td>OTA Channel Management</td>
-                  <td>800 / OTA / Month</td>
+                  <td>OTA / Month</td>
                   <td>6–8 OTA + Expansion (รวมฟรี)</td>
                 </tr>
 
                 <tr>
                   <td>Reservation Management</td>
-                  <td>Monthly / 4,500</td>
+                  <td>Monthly</td>
                   <td>Daily (รวมฟรี)</td>
                 </tr>
 
@@ -1514,10 +1513,14 @@ export default function ORMLiteCalculatorView() {
                   <td>Benefits อื่น ๆ</td>
                   <td>-</td>
                   <td>
-                    • Special Activities  
-                    • Monthly Meeting  
-                    • H+ Performance Dashboard  
-                    • OTA Market Insight
+                    {[
+                      'กิจกรรมส่งเสริมการตลาดพิเศษ (Special Activities) ของ Brand H+',
+                      'ประชุมประจำเดือน (Monthly Meeting)',
+                      'รายงาน H+ Performance Dashboard',
+                      'OTA Market Insight',
+                    ].map((item) => (
+                      <div key={item}>• {item}</div>
+                    ))}
                   </td>
                 </tr>
               </tbody>

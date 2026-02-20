@@ -81,7 +81,7 @@ export function recommendPackage({
     return {
       recommendation: "LITE",
       reason:
-        "Lite is significantly cheaper than Full",
+        "แพ็คเกจเริ่มต้นสำหรับโรงแรมที่ต้องการควบคุมค่าใช้จ่าย เน้นความคุ้มค่าและการใช้งานที่จำเป็น",
       gapPercent: percentCheaper,
     };
   }

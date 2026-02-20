@@ -8,13 +8,24 @@ export type AddOnOption = {
   price: number;
 };
 
+/** บริการเสริมแบบ stepper (0–4 ครั้ง) */
 export type AddOnService = {
   code: string;
   name: string;
-  options: AddOnOption[];
+  description: string;
+  unitPrice: number; // ราคาต่อ 1 ครั้ง
 };
 
-/* ใช้ alias ให้ AddOnItem = AddOnOption */
+/** ผลรวมบริการเสริม stepper แต่ละรายการ (ใช้ใน pricing hook / export) */
+export type AddOnQtyItem = {
+  code: string;
+  name: string;
+  qty: number;       // จำนวนครั้งที่เลือก
+  unitPrice: number;
+  total: number;     // qty × unitPrice
+};
+
+/* ใช้ alias ให้ AddOnItem = AddOnOption (one-time forced checkboxes) */
 export type AddOnItem = AddOnOption;
 
 /* =====================================================
@@ -31,9 +42,15 @@ export type LitePricingResult = {
   commissionRate: number;
   commissionCost: number;
 
+  // one-time / forced checkboxes (Revplus+, Register OTA)
   addOns: AddOnItem[];
   addOnTotal: number;
 
+  // stepper add-ons (Shop Rate, Compset, ฯลฯ)
+  stepperAddOns: AddOnQtyItem[];
+  stepperAddOnTotal: number;
+
+  // รวมทุกอย่าง
   totalFee: number;
 
   triggerMax: number;

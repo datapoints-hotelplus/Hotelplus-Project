@@ -19,6 +19,15 @@ const Sidebar: React.FC = () => {
         </NavLink>
 
         <NavLink
+          to="/orm-presentation"
+          className={({ isActive }) =>
+            `sidebar-item ${isActive ? "active" : ""}`
+          }
+        >
+          ORM Presentation
+        </NavLink>
+
+        <NavLink
           to="/marcom-calculator"
           className={({ isActive }) =>
             `sidebar-item ${isActive ? "active" : ""}`

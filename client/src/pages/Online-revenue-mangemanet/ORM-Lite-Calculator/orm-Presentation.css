@@ -1,0 +1,1170 @@
+.orm-lite-calculator {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Section Styling */
+.orm-lite-calculator section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.orm-lite-calculator section h2 {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orm-lite-calculator section:nth-of-type(2) h2::before {
+  content: "📅";
+}
+
+/* Basic Information Section */
+.basic-info-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.orm-lite-calculator label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+.orm-lite-calculator label .required {
+  color: #e53e3e;
+  margin-left: 4px;
+}
+
+.orm-lite-calculator input[type="number"] {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  background: #f8f9fa;
+}
+
+.orm-lite-calculator input[type="number"]:focus {
+  outline: none;
+  border-color: #4299e1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.orm-lite-calculator input[type="text"] {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  background: #f8f9fa;
+}
+
+.orm-lite-calculator input[type="text"]:focus {
+  outline: none;
+  border-color: #4299e1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+/* Season Setup Section */
+.seasons-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.season-card {
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.season-card.high {
+  border-color: #e53e3e;
+  background: #fff5f5;
+}
+
+.season-card.shoulder {
+  border-color: #ed8936;
+  background: #fffaf0;
+}
+
+.season-card.low {
+  border-color: #4299e1;
+  background: #ebf8ff;
+}
+
+.season-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.season-card.high h3::before {
+  content: "🔥";
+}
+
+.season-card.shoulder h3::before {
+  content: "🍂";
+}
+
+.season-card.low h3::before {
+  content: "❄️";
+}
+
+.season-card h3 {
+  color: inherit;
+}
+
+.season-card.high h3 {
+  color: #c53030;
+}
+
+.season-card.shoulder h3 {
+  color: #c05621;
+}
+
+.season-card.low h3 {
+  color: #2c5282;
+}
+
+.season-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.season-field label {
+  flex-direction: row;
+  align-items: center;
+  min-width: 120px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.season-field input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.orm-lite-calculator button {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-calculate {
+  background: #48bb78;
+  color: white;
+  flex: 1;
+}
+
+.btn-calculate:hover {
+  background: #38a169;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.btn-calculate::before {
+  content: "📊";
+}
+
+.btn-reset {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.btn-reset:hover {
+  background: #cbd5e0;
+}
+
+/* Errors Section */
+.errors-section {
+  background: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.errors-section h3 {
+  color: #c53030;
+  margin: 0 0 12px 0;
+  font-size: 15px;
+}
+
+.errors-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.errors-section li {
+  color: #742a2a;
+  margin-bottom: 4px;
+}
+
+/* Results Section */
+.results-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: rgb(0, 0, 0);
+  padding: 24px;
+}
+
+.results-section h2 {
+  color: white;
+  margin-bottom: 8px;
+}
+
+.results-section small {
+  opacity: 0.9;
+  font-size: 12px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.result-item {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.result-item strong {
+  display: block;
+  font-size: 13px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.result-item .value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Add-ons Section */
+.addon-service {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+
+.addon-service:last-child {
+  border-bottom: none;
+}
+
+.addon-service h3 {
+  font-size: 15px;
+  margin: 0 0 12px 0;
+  color: #2d3748;
+}
+
+.addon-option {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+
+.addon-option:hover {
+  background: #f7fafc;
+}
+
+.addon-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* Package Cards */
+.package-card {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.package-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #000000;
+}
+
+.breakdown p {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.breakdown hr {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid #e2e8f0;
+}
+
+.full-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+.fs-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: 0.25s ease;
+}
+
+.fs-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+}
+.fs-card.recommended {
+  border: 2px solid #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+.fs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.fs-title {
+  display: flex;
+  gap: 10px;
+}
+
+.fs-icon {
+  font-size: 22px;
+}
+
+.fs-title h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.fs-title p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.fs-badge {
+  background: #f59e0b;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.fs-price {
+  background: #d1fae5;
+  color: #ea580c;
+  text-align: center;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 12px 0 16px;
+}
+.fs-breakdown div {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.fs-breakdown div:last-child {
+  border-bottom: none;
+}
+.package-box {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: 0.25s ease;
+}
+
+.package-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.package-box small {
+  display: block;
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Add-on section */
+.addon-section{
+  margin-top:16px;
+  padding-top:12px;
+  border-top:1px solid #e5e7eb;
+}
+
+.addon-title{
+  font-weight:600;
+  margin-bottom:6px;
+  font-size:14px;
+}
+
+.addon-list{
+  padding-left:18px;
+  margin:0;
+  color:#000000;
+  line-height:1.6;
+  font-size:13px;
+}
+
+@media (max-width: 640px) {
+  .full-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.package-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.package-desc {
+  font-size: 15px;
+  color: #6b7280;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+/* Badges */
+.recommended-badge {
+  background: #fbbf24;
+  color: #78350f;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.stable {
+  background: #10b981;
+  color: white;
+}
+
+.status-badge.performance {
+  background: #8b5cf6;
+  color: white;
+}
+
+/* Price Highlight */
+.price-highlight {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ea580c;
+  margin: 10px 0 14px;
+}
+
+/* Package Breakdown */
+.package-breakdown {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.breakdown-row .amount {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Seasonal Breakdown */
+.seasonal-breakdown {
+  background: #f7fafc;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #e2e8f0;
+}
+
+.seasonal-breakdown h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.season-revenue-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 8px 0;
+  background: white;
+  border-radius: 6px;
+  gap: 10px;
+}
+
+.season-revenue-item .season-icon {
+  font-size: 20px;
+  min-width: 24px;
+}
+
+.season-revenue-item span:nth-child(2) {
+  flex: 1;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.season-revenue-item .amount {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Info Box */
+.info-box {
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  display: flex;
+  gap: 12px;
+}
+
+.info-box.warning {
+  background: #fef3c7;
+  border-left-color: #f59e0b;
+}
+
+.info-box.warning[style*="bold"] {
+  background: #fee2e2;
+  border-left-color: #dc2626;
+}
+
+.info-box .info-icon {
+  font-size: 20px;
+  min-width: 24px;
+}
+
+.info-box p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #1e40af;
+}
+
+.info-box.warning p {
+  color: #92400e;
+}
+
+.info-box.warning[style*="bold"] p {
+  color: #991b1b;
+}
+
+.info-box p strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Calculation Details */
+.calculation-details {
+  background: #f0fdf4;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  border: 1px solid #bbf7d0;
+}
+
+.calculation-details h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 13px;
+  color: #166534;
+}
+
+.detail-row .amount {
+  font-weight: 600;
+  color: #15803d;
+}
+
+/* Info Note */
+.info-note {
+  text-align: center;
+  color: #718096;
+  font-size: 12px;
+  margin-top: 12px;
+  font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .seasons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-tabs {
+    flex-direction: column;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #fff;
+  padding: 24px;
+  width: 320px;
+  border-radius: 12px;
+}
+
+.modal label {
+  display: block;
+  margin: 10px 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+/* ---------- Info Button ---------- */
+.info-btn {
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  cursor: pointer;
+  font-size: 10px;
+  padding: 6px 10px;
+  border-radius: 35%;
+  transition: 0.2s;
+  float: right;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: space-between;
+}
+
+.info-btn:hover {
+  background: #000000;
+  color: var(--color-primary);
+}
+
+/* ---------- Modal Overlay ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* ---------- Modal Box ---------- */
+.modal-box {
+  background: #ffffff;
+  padding: 24px;
+  width: 92%;
+  max-width: 850px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Header ---------- */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-header button {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.modal-header button:hover {
+  background: #e2e8f0;
+}
+
+/* ---------- Table ---------- */
+.service-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+/* Header row */
+.service-table thead th {
+  padding: 12px;
+  text-align: left;
+}
+
+.service-table thead th:first-child {
+  background: #f8fafc;
+}
+
+.service-table thead th:nth-child(2) {
+  background: #ecfeff;
+  color: #0369a1;
+}
+
+.service-table thead th:nth-child(3) {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+/* Body rows */
+.service-table tbody td {
+  padding: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.service-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* Rounded corners */
+.service-table thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.service-table thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* Badge */
+.badge-lite {
+  background: #cffafe;
+  color: #0369a1;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.badge-full {
+  background: #ede9fe;
+  color: #6d28d9;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+.recommend-summary {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* label เล็ก */
+.recommend-label {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+/* badge */
+.recommend-badge {
+  align-self: flex-start;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* reason */
+.recommend-reason {
+  font-size: 15px;
+}
+
+/* gap */
+.recommend-gap {
+  font-size: 15px;
+}
+
+.export-section {
+  margin-top: 20px;
+}
+
+/* เพิ่มใน orm-Presentation.css */
+
+/* เพิ่มใน orm-Presentation.css */
+
+.addon-service {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+
+.addon-service:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.addon-service-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.addon-service-info {
+  flex: 1;
+}
+
+.addon-service-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 2px;
+  color: #1f2937;
+}
+
+.addon-service-desc {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+.addon-unit-price {
+  font-size: 13px;
+  color: #ee4d2d;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ── Stepper (Shopee-style) ── */
+.addon-stepper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 32px;
+}
+
+.stepper-btn {
+  width: 32px;
+  height: 32px;
+  background: #f5f5f5;
+  border: none;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  color: #333;
+  transition: background 0.15s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.stepper-btn--add {
+  background: #fff;
+  color: #ee4d2d;
+}
+
+.stepper-btn--add:hover {
+  background: #fff3f0;
+}
+
+.stepper-btn:hover:not(:disabled) {
+  background: #ebebeb;
+}
+
+.stepper-btn--disabled {
+  color: #ccc !important;
+  cursor: not-allowed;
+  background: #f5f5f5 !important;
+}
+
+.stepper-value {
+  width: 40px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  border-left: 1px solid #d1d5db;
+  border-right: 1px solid #d1d5db;
+  height: 32px;
+  line-height: 32px;
+  background: #fff;
+}
+
+.stepper-value--active {
+  color: #ee4d2d;
+  font-weight: 700;
+}
+
+.addon-subtotal {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #ee4d2d;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ── OTA Section ── */
+.ota-section {
+  margin-top: 24px;
+}
+
+.ota-yn-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 16px;
+}
+
+.yn-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 28px;
+  border-radius: 12px;
+  border: 2px solid #000000;
+  background: var(--color-primary);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.yn-btn:hover {
+  border-color: #000000;
+  color: var(--color-clean);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.yn-btn--active {
+  border-color: #48bb78;
+  background:  #48bb78;
+  color: var(--color-clean);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(22,163,74,0.15);
+}
+
+.yn-btn--no {
+  border-color: #000000;
+  background: #ff0000;
+  color: var(--color-clean);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* OTA chip grid */
+.ota-subtitle {
+  font-size: 13px;
+  color: #000000;
+  margin: 0 0 10px;
+}
+
+.ota-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ota-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  border: 2px solid #000000;
+  background: var(--color-primary);
+  font-size: 13px;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.ota-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-clean);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.ota-chip--active {
+  border-color: var(--color-primary);
+  background: #48bb78;
+  color: var(--color-clean);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ota-chip-check {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.ota-selected-count {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #000000;
+  font-weight: 600;
+}
+
+.ota-none-msg {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 12px 16px;
+  border: 1.5px dashed #d1d5db;
+}
+
+
+/* ── Toggle Switch ── */
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  border: none;
+  background: #d1d5db;
+  cursor: pointer;
+  transition: background 0.25s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.toggle-switch--on {
+  background: #ee4d2d;
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: transform 0.25s;
+  display: block;
+}
+
+.toggle-switch--on .toggle-knob {
+  transform: translateX(30px);
+}

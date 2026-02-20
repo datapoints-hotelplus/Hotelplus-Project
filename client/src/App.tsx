@@ -9,8 +9,8 @@ import Ai from "./pages/Marketing-communication/Ai/Ai";
 import Forbidden from "./pages/Forbidden/Forbidden";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
-
-import OrmCalMain from "./pages/Online-revenue-mangemanet/ORM-Lite-Calculator/ORMLiteCalculatorView";
+import OrmCalMain from "./pages/Online-revenue-mangemanet/ORM-Lite-Calculator/ORMCalculatorView";
+import OramCalPresent from "./pages/Online-revenue-mangemanet/ORM-Lite-Calculator/ORMCalculatorPresent";
 import OrmCalLayout from "./layouts/OrmCalLayout";
 import DriveFolders from "./pages/Marketing-communication/DriveFolders/DriveFolders"
 import MarcomCalMain from "./pages/Online-revenue-mangemanet/Marcom-Calculator/MarcomCalculatorView";
@@ -70,6 +70,7 @@ function App() {
           }
         >
           <Route path="/orm-calculator" element={<OrmCalMain />} />
+          <Route path="/orm-presentation" element={<OramCalPresent />} />
           <Route path="/marcom-calculator" element={<MarcomCalMain />} />
         </Route>
 

@@ -9,6 +9,18 @@ interface SeasonInput {
   adr: number;
 }
 
+export const OTA_LIST = [
+  "Agoda",
+  "Booking.com",
+  "Trip.com",
+  "Expedia",
+  "Traveloka",
+  "Tiket.com",
+  "Gother",
+] as const;
+
+export type OTAName = typeof OTA_LIST[number];
+
 interface CalculatorInput {
   hotelName: string;
   roomKey: number;
@@ -36,8 +48,15 @@ interface CalculatorState {
   revenueResult: RevenueResult | null;
   revenueErrors: string[];
 
-  // Add-on
+  // Add-on (one-time / forced checkboxes)
   selectedAddOns: AddOnOption[];
+
+  // Add-on stepper (code → จำนวนครั้ง 0–4)
+  selectedAddOnQty: Record<string, number>;
+
+  // OTA Section
+  hasExistingOTA: boolean | null;
+  selectedOTAs: OTAName[];
 
   // UI State
   selectedFullPackage: "SMART" | "FIXED" | "PERFORMANCE";
@@ -54,6 +73,9 @@ interface CalculatorState {
   setRevenueResult: (result: RevenueResult | null) => void;
   setRevenueErrors: (errors: string[]) => void;
   toggleAddOnOption: (option: AddOnOption) => void;
+  setAddOnQty: (code: string, qty: number) => void;
+  setHasExistingOTA: (value: boolean | null) => void;
+  toggleOTA: (ota: OTAName) => void;
   setSelectedFullPackage: (pkg: "SMART" | "FIXED" | "PERFORMANCE") => void;
   toggleExport: (pkg: ExportPackage) => void;
   toggleSelectAll: (availablePackages: ExportPackage[]) => void;
@@ -79,6 +101,9 @@ export const useCalculatorStore = create<CalculatorState>()(
       revenueResult: null,
       revenueErrors: [],
       selectedAddOns: [],
+      selectedAddOnQty: {},
+      hasExistingOTA: null,
+      selectedOTAs: [],
       selectedFullPackage: "SMART",
       selectedExports: [],
       showServiceInfo: false,
@@ -107,6 +132,23 @@ export const useCalculatorStore = create<CalculatorState>()(
             : [...state.selectedAddOns, option],
         })),
 
+      setAddOnQty: (code, qty) =>
+        set((state) => ({
+          selectedAddOnQty: {
+            ...state.selectedAddOnQty,
+            [code]: Math.min(4, Math.max(0, qty)),
+          },
+        })),
+
+      setHasExistingOTA: (value) => set({ hasExistingOTA: value }),
+
+      toggleOTA: (ota) =>
+        set((state) => ({
+          selectedOTAs: state.selectedOTAs.includes(ota)
+            ? state.selectedOTAs.filter((o) => o !== ota)
+            : [...state.selectedOTAs, ota],
+        })),
+
       setSelectedFullPackage: (pkg) => set({ selectedFullPackage: pkg }),
 
       toggleExport: (pkg) =>
@@ -132,16 +174,16 @@ export const useCalculatorStore = create<CalculatorState>()(
           revenueResult: null,
           revenueErrors: [],
           selectedAddOns: [],
+          selectedAddOnQty: {},
         }),
     }),
     {
-      name: "orm-calculator-storage", // key ใน localStorage
-      // เลือก persist เฉพาะ input และ revenueResult
-      // UI states เช่น showServiceInfo ไม่จำเป็นต้อง persist
+      name: "orm-calculator-storage",
       partialize: (state) => ({
         input: state.input,
         revenueResult: state.revenueResult,
         selectedAddOns: state.selectedAddOns,
+        selectedAddOnQty: state.selectedAddOnQty,
         selectedFullPackage: state.selectedFullPackage,
         selectedExports: state.selectedExports,
       }),

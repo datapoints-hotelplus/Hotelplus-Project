@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronRight, ChevronLeft, Check, Plus, Minus, AlertCircle, TrendingUp, Target, DollarSign, Activity } from 'lucide-react';
 import styles from './MarcomCalculatorView.module.css';
 
-// Types
+
 interface Answers {
   q1: string[];
   q2: string[];
