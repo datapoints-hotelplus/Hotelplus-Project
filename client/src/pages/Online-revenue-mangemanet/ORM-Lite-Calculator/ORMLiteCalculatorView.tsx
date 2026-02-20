@@ -483,80 +483,65 @@ export default function ORMLiteCalculatorView() {
       totalValue: formatCurrency(finalTotal),
     };
   };
-
-
-
-
   return (
     <div className="orm-lite-calculator">
-
       {/* BASIC INFO */}
-      <section>
-        <h2>ข้อมูลพื้นฐาน</h2>
-        
-        <div className="basic-info-grid">
-          <label>
-            ชื่อโรงแรม <span className="required">*</span>
-            <input
-              type="text"
-              value={input.hotelName || ""}
-              onChange={e =>
-                updateField("hotelName", e.target.value)
-              }
-              placeholder="กรอกชื่อโรงแรม"
-            />
-          </label>
-          
-          <label>
-            จำนวนห้องพัก <span className="required">*</span>
-            <input
-              type="number"
-              value={input.roomKey}
-              onChange={e =>
-                updateField("roomKey", Number(e.target.value))
-              }
-            />
-          </label>
-
-          <label>
-            อัตราการเข้าพัก (%)
-            <input
-              type="number"
-              value={input.occupancyPercent}
-              onChange={e =>
-                updateField(
-                  "occupancyPercent",
-                  Number(e.target.value)
-                )
-              }
-            />
-          </label>
-
-          <label>
-            สัดส่วนการขายผ่าน OTA (%) <span className="required">*</span>
-            <input
-              type="number"
-              value={input.otaSharePercent}
-              onChange={e =>
-                updateField(
-                  "otaSharePercent",
-                  Number(e.target.value)
-                )
-              }
-            />
-          </label>
-        </div>
-      </section>
+        <section>
+          <div className="section-header">
+            <h2>🏨ข้อมูลพื้นฐาน</h2>
+            <button
+              type="button"
+              className="info-btn"
+              onClick={() => setShowServiceInfo(true)}>ตารางเปรียบเทียบบริการ
+            </button>
+          </div>
+          <div className="basic-info-grid">
+            <label>
+              <span>ชื่อโรงแรม <span className="required">*</span></span>
+              <input
+                type="text"
+                value={input.hotelName || ""}
+                onChange={e => updateField("hotelName", e.target.value)}
+                placeholder="กรอกชื่อโรงแรม"
+              />
+            </label>
+            <label>
+              <span>จำนวนห้องพัก <span className="required">*</span></span>
+              <input
+                type="number"
+                value={input.roomKey || ""}
+                onChange={e => updateField("roomKey", Number(e.target.value))}
+                placeholder="กรอกจำนวนห้องพัก"
+              />
+            </label>
+            <label>
+              อัตราการเข้าพัก (%)
+              <input
+                type="number"
+                value={input.occupancyPercent || ""}
+                onChange={e => updateField("occupancyPercent", Number(e.target.value))}
+                placeholder="กรอกอัตราการเข้าพัก (%)"
+              />
+            </label>
+            <label>
+              <span>สัดส่วนการขายผ่าน OTA (%) <span className="required">*</span></span>
+              <input
+                type="number"
+                value={input.otaSharePercent || ""}
+                onChange={e => updateField("otaSharePercent", Number(e.target.value))}
+                placeholder="กรอกสัดส่วนการขายผ่าน OTA (%)"
+              />
+            </label>
+          </div>
+        </section>
 
       {/* SEASONS */}
       <section>
         <h2>ข้อมูลตามฤดูกาล</h2>
-
         <div className="seasons-grid">
           {/* HIGH SEASON */}
           <div className="season-card high">
             <h3>High Season</h3>
-            
             <div className="season-field">
               <label>จำนวนเดือน</label>
               <input
@@ -571,7 +556,6 @@ export default function ORMLiteCalculatorView() {
                 }
               />
             </div>
-
             <div className="season-field">
               <label>ADR (บาท)</label>
               <input
@@ -587,11 +571,9 @@ export default function ORMLiteCalculatorView() {
               />
             </div>
           </div>
-
           {/* SHOULDER SEASON */}
           <div className="season-card shoulder">
             <h3>Shoulder Season</h3>
-            
             <div className="season-field">
               <label>จำนวนเดือน</label>
               <input
@@ -606,7 +588,6 @@ export default function ORMLiteCalculatorView() {
                 }
               />
             </div>
-
             <div className="season-field">
               <label>ADR (บาท)</label>
               <input
@@ -622,11 +603,9 @@ export default function ORMLiteCalculatorView() {
               />
             </div>
           </div>
-
           {/* LOW SEASON */}
           <div className="season-card low">
             <h3>Low Season</h3>
-            
             <div className="season-field">
               <label>จำนวนเดือน</label>
               <input
@@ -641,7 +620,6 @@ export default function ORMLiteCalculatorView() {
                 }
               />
             </div>
-
             <div className="season-field">
               <label>ADR (บาท)</label>
               <input
@@ -747,14 +725,6 @@ export default function ORMLiteCalculatorView() {
           <section>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <h2>บริการเสริม (Add-On Services)</h2>
-
-              <button
-                type="button"
-                className="info-btn"
-                onClick={() => setShowServiceInfo(true)}
-              >
-                ตารางเปรียบเทียบบริการ
-              </button>
             </div>
 
             {ADD_ON_SERVICES.map(service => (

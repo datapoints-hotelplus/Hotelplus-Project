@@ -2,9 +2,6 @@
   max-width: 1440px;
   margin: 0 auto;
   padding: 20px;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-    Cantarell, sans-serif;
 }
 
 /* Section Styling */
@@ -24,12 +21,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-/* Add icons to section headers */
-.orm-lite-calculator section h2::before {
-  content: "⭐";
-  font-size: 20px;
 }
 
 .orm-lite-calculator section:nth-of-type(2) h2::before {
@@ -659,18 +650,25 @@
 }
 /* ---------- Info Button ---------- */
 .info-btn {
-  background: #eef2ff;
-  border: 1px solid #c7d2fe;
-  color: #4338ca;
+  background: var(--color-primary);
+  color: var(--color-secondary);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 10px;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: 35%;
   transition: 0.2s;
+  float: right;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: space-between;
 }
 
 .info-btn:hover {
-  background: #e0e7ff;
+  background: #000000;
+  color: var(--color-primary);
 }
 
 /* ---------- Modal Overlay ---------- */
@@ -821,6 +819,6 @@
   font-size: 15px;
 }
 
-.export-section{
+.export-section {
   margin-top: 20px;
 }
