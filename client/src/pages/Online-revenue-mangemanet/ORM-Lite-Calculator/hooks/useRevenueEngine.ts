@@ -1,71 +1,63 @@
-import { useState } from "react";
-
-import type {
-  ORMLiteCalculatorInput,
-  ORMLiteResult
-} from "../model/ormLite.types";
-
-
+import { useCalculatorStore } from "../store/useCalculatorStore";
 import { validateORMLiteInput } from "../logic/validators";
 import { normalizeInput } from "../logic/normalizeInput";
 import { calculateORMLite } from "../logic/calculateORMLite";
 
-/* ---------------- DEFAULT INPUT ---------------- */
-
-const defaultInput: ORMLiteCalculatorInput = {
-  hotelName: "",
-  roomKey: 0,
-  occupancyPercent: 0,
-  otaSharePercent: 0,
-
-  highSeason: { months: 0, adr: 0 },
-  shoulderSeason: { months: 0, adr: 0 },
-  lowSeason: { months: 0, adr: 0 },
-};
-
-/* ------------------------------------------------ */
-
 export function useRevenueEngine() {
 
-  const [input, setInput] =
-    useState<ORMLiteCalculatorInput>(defaultInput);
-
-  const [result, setResult] =
-    useState<ORMLiteResult | null>(null);
-
-  const [errors, setErrors] =
-    useState<string[]>([]);
+  const {
+    input,
+    updateField,
+    updateSeason,
+    setRevenueResult,
+    setRevenueErrors,
+    revenueResult,
+    revenueErrors,
+    reset,
+  } = useCalculatorStore();
 
   /* ----------- ACTION ----------- */
 
   const calculateRevenue = () => {
-
     const validation = validateORMLiteInput(input);
 
     if (!validation.isValid) {
-      setErrors(validation.errors);
-      setResult(null);
+      setRevenueErrors(validation.errors);
+      setRevenueResult(null);
       return;
     }
 
     const normalized = normalizeInput(input);
     const revenue = calculateORMLite(normalized);
 
-    setErrors([]);
-    setResult(revenue);
+    setRevenueErrors([]);
+    setRevenueResult(revenue);
   };
 
   const resetRevenue = () => {
-    setInput(defaultInput);
-    setResult(null);
-    setErrors([]);
+    reset();
+  };
+
+  // setInput ยังคง expose ไว้เพื่อ backward compatible กับ View
+  const setInput = (updater: (prev: any) => any) => {
+    const next = updater(input);
+    Object.entries(next).forEach(([key, val]) => {
+      if (typeof val === "object" && val !== null && !Array.isArray(val)) {
+        const season = key as "highSeason" | "shoulderSeason" | "lowSeason";
+        Object.entries(val as any).forEach(([field, v]) => {
+          updateSeason(season, field as "months" | "adr", v as number);
+        });
+      } else {
+        updateField(key, val as string | number);
+      }
+    });
   };
 
   return {
     input,
     setInput,
-    revenueResult: result,
-    revenueErrors: errors,
+    revenueResult,
+    revenueErrors,
     calculateRevenue,
     resetRevenue,
   };

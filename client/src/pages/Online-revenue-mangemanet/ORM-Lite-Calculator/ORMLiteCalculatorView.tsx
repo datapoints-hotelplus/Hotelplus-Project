@@ -1,16 +1,16 @@
-import { useState, useMemo } from "react";
+import {useMemo } from "react";
 import { useRevenueEngine } from "./hooks/useRevenueEngine";
 import { useLitePricing } from "./hooks/useLitePricing";
 import { useFullPricing } from "./hooks/useFullPricing";
 import {formatCurrency,formatNumber,round,} from "../../../utils/number";
-import type {AddOnService,AddOnOption,} from "./model/pricing.types";
+import type {AddOnService} from "./model/pricing.types";
 import {recommendPackage,} from "./logic/recommendation/recommendPackage";
 import "./orm-lite-calculator.css";
 import { exportPricingPDF } from "./logic/export/exportPricingPDF";
 import type { ExportPackageBlock } from "./logic/export/export.types";
 import { roundUpToHundred } from "./logic/pricingUtils";
-
-
+import { useCalculatorStore } from "./store/useCalculatorStore";
+import type { ExportPackage } from "./store/useCalculatorStore";
 const ADD_ON_SERVICES: AddOnService[] = [
   {
     code: "SHOP_RATE_MONITORING",
@@ -52,11 +52,16 @@ const ADD_ON_SERVICES: AddOnService[] = [
   },
 ];
 
-
 export default function ORMLiteCalculatorView() {
 
+  const {
+    selectedAddOns, toggleAddOnOption,
+    selectedFullPackage, setSelectedFullPackage,
+    selectedExports, toggleExport, toggleSelectAll,
+    showServiceInfo, setShowServiceInfo,
+    reset,
+  } = useCalculatorStore();
   /* ----------- REVENUE ----------- */
-
   const {
     input,
     setInput,
@@ -65,11 +70,6 @@ export default function ORMLiteCalculatorView() {
     calculateRevenue,
     resetRevenue,
   } = useRevenueEngine();
-
-  /* ----------- ADD-ON ----------- */
-
-  const [selectedAddOns, setSelectedAddOns] =
-    useState<AddOnOption[]>([]);
 
   /* ----------- LITE PRICING ----------- */
 
@@ -124,16 +124,7 @@ export default function ORMLiteCalculatorView() {
     }));
   };
 
-  const toggleAddOnOption = (option: AddOnOption) => {
-    setSelectedAddOns(prev =>
-      prev.some(o => o.id === option.id)
-        ? prev.filter(o => o.id !== option.id)
-        : [...prev, option]
-    );
-  };
 
-  const [selectedFullPackage, setSelectedFullPackage] =
-  useState<"SMART" | "FIXED" | "PERFORMANCE">("SMART");
 
   /* ------------ SYSTEM COST CALCULATION ------------ */
   const getSystemCost = (roomKey: number): number => {
@@ -143,41 +134,6 @@ export default function ORMLiteCalculatorView() {
     if (roomKey <= 100) return 5400;
     return 5800;
   };
-
-  const [showServiceInfo, setShowServiceInfo] = useState(false);
-
-  type ExportPackage =
-  | "LITE"
-  | "SMART"
-  | "FIXED"
-  | "PERFORMANCE";
-
-  const [selectedExports, setSelectedExports] =
-    useState<ExportPackage[]>([]);
-  
-  const toggleExport = (pkg: ExportPackage) => {
-    setSelectedExports(prev => {
-      if (prev.includes(pkg)) {
-        return prev.filter(p => p !== pkg);
-      }
-      return [...prev, pkg];
-    });
-  };
-  const toggleSelectAll = () => {
-    const all: ExportPackage[] = [];
-
-    if (litePricing?.isEligible) all.push("LITE");
-    if (fullPricing) {
-      all.push("SMART", "FIXED", "PERFORMANCE");
-    }
-
-    if (selectedExports.length === all.length) {
-      setSelectedExports([]);
-    } else {
-      setSelectedExports(all);
-    }
-  };
-
 
 
   const systemCost = getSystemCost(input.roomKey);
@@ -646,7 +602,7 @@ export default function ORMLiteCalculatorView() {
             className="btn-reset"
             onClick={() => {
               resetRevenue();
-              setSelectedAddOns([]);
+              reset();
             }}
           >
             รีเซ็ต
@@ -1435,7 +1391,12 @@ export default function ORMLiteCalculatorView() {
               <input
                 type="checkbox"
                 checked={selectedExports.length === 4}
-                onChange={toggleSelectAll}
+                onChange={() => {
+                  const available: ExportPackage[] = [];
+                  if (litePricing?.isEligible) available.push("LITE");
+                  if (fullPricing) available.push("SMART", "FIXED", "PERFORMANCE");
+                  toggleSelectAll(available);
+                }}
               />
               Select All
             </label>
