@@ -73,7 +73,7 @@ const defaultInput: CalculatorInput = {
 
 export const useCalculatorStore = create<CalculatorState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Initial State
       input: defaultInput,
       revenueResult: null,
