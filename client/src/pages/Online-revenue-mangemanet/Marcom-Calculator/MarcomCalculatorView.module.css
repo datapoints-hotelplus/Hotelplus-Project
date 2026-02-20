@@ -1,0 +1,769 @@
+/* ==================== Container & Layout ==================== */
+.container {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  width: 1440px;
+}
+
+.contentWrapper {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.resultsWrapper {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+/* ==================== Header ==================== */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #6b7280;
+}
+
+/* ==================== Progress Bar ==================== */
+.progressSection {
+  margin-bottom: 2rem;
+}
+
+.progressInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.progressText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.progressPercent {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4f46e5;
+}
+
+.progressBarBg {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 0.75rem;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  background-color: #4f46e5;
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+/* ==================== Question Card ==================== */
+.questionCard {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.questionHeader {
+  margin-bottom: 1rem;
+}
+
+.categoryBadge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: #e0e7ff;
+  color: #4338ca;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.questionText {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* ==================== Options ==================== */
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.optionButton {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid #e5e7eb;
+  background-color: white;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.optionButton:hover {
+  border-color: #a5b4fc;
+  background-color: #f9fafb;
+}
+
+.optionSelected {
+  border-color: #4f46e5;
+  background-color: #eff6ff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.optionLabel {
+  color: #374151;
+}
+
+.checkIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #4f46e5;
+}
+
+/* ==================== Navigation ==================== */
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navButton:not(.navButtonDisabled) {
+  background-color: white;
+  color: #374151;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.navButton:not(.navButtonDisabled):hover {
+  background-color: #f9fafb;
+}
+
+.navButtonPrimary:not(.navButtonDisabled) {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.navButtonPrimary:not(.navButtonDisabled):hover {
+  background-color: #4338ca;
+}
+
+.navButtonDisabled {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.navIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* ==================== Profile Grid ==================== */
+.profileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.profileCard {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.profileCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.profileCardTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.profileIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #3b82f6;
+}
+
+.profileIconOrange {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #f97316;
+}
+
+.profileIconGreen {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #10b981;
+}
+
+.profileIconPurple {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #8b5cf6;
+}
+
+.profileCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profileLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0;
+}
+
+.profileDivider {
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.resultList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.resultList p {
+  margin: 0;
+}
+
+.resultKey {
+  font-weight: 500;
+}
+
+.profileSecondary {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.budgetText {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #6b21a8;
+  margin: 0;
+}
+
+/* ==================== Tags ==================== */
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+}
+
+.tagBlue {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.tagOrange {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+
+.tagGreen {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+/* ==================== Recommendation Card ==================== */
+.recommendationCard {
+  background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.recommendationHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.recommendationIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
+}
+
+.recommendationTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.recommendationList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recommendationItem {
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.priorityBadge {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  background-color: white;
+  color: #4f46e5;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.recommendationReason {
+  color: white;
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+}
+
+.recommendationCount {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* ==================== Package Selection ==================== */
+.packageCard {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.packageCardTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0 0 1.5rem 0;
+}
+
+.packageSection {
+  margin-bottom: 2rem;
+}
+
+.packageSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.packageSectionTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.sectionBadge {
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.sectionBadgeBlue {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.sectionBadgePurple {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+}
+
+.packageList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ==================== Package Item ==================== */
+.packageItem {
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  background-color: white;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.packageItem:hover:not(.packageItemDisabled) {
+  border-color: #a5b4fc;
+}
+
+.packageItemChecked {
+  border-color: #4f46e5;
+  background-color: #eff6ff;
+}
+
+.packageItemDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.packageItemContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #d1d5db;
+  background-color: transparent;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.checkboxChecked {
+  border-color: #4f46e5;
+  background-color: #4f46e5;
+}
+
+.checkboxIcon {
+  width: 1rem;
+  height: 1rem;
+  color: white;
+}
+
+.packageItemInfo {
+  flex: 1;
+}
+
+.packageItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.packageItemLabel {
+  font-weight: 500;
+  color: #1f2937;
+  margin: 0;
+}
+
+.packageBadge {
+  padding: 0.125rem 0.5rem;
+  background-color: #fef3c7;
+  color: #92400e;
+  font-size: 0.75rem;
+  border-radius: 9999px;
+}
+
+.packageItemNote {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0 0;
+}
+
+.packageItemPrice {
+  font-weight: bold;
+  color: #4f46e5;
+  margin: 0;
+}
+
+/* ==================== Add-on Controls ==================== */
+.addOnSection {
+  margin-top: 1.5rem;
+  margin-left: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid #e5e7eb;
+}
+
+.addOnLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0 0 0.75rem 0;
+}
+
+.addOnList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.addOnControl {
+  padding: 0.75rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.addOnControlDisabled {
+  opacity: 0.5;
+}
+
+.addOnControlHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.addOnControlInfo {
+  flex: 1;
+}
+
+.addOnControlLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin: 0;
+}
+
+.addOnControlNote {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.addOnControlPrice {
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #4f46e5;
+  margin-left: 0.5rem;
+}
+
+.addOnControlActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.addOnButton {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.addOnButton:hover:not(:disabled) {
+  background-color: #f9fafb;
+}
+
+.addOnButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.addOnButtonIcon {
+  width: 1rem;
+  height: 1rem;
+  color: #6b7280;
+}
+
+.addOnControlValue {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.addOnControlMax {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-left: 0.5rem;
+}
+
+.comingSoon {
+  padding: 0.75rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  opacity: 0.5;
+}
+
+.comingSoonTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.comingSoonText {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* ==================== Total Card ==================== */
+.totalCard {
+  background: linear-gradient(90deg, #10b981 0%, #14b8a6 100%);
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.totalLabel {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.totalAmount {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.totalCurrency {
+  font-size: 1.5rem;
+}
+
+.contactButton {
+  padding: 0.75rem 1.5rem;
+  background-color: white;
+  color: #059669;
+  font-weight: bold;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.contactButton:hover {
+  background-color: #f0fdf4;
+}
+
+/* ==================== Reset Section ==================== */
+.resetSection {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.resetButton {
+  padding: 0.75rem 1.5rem;
+  color: #6b7280;
+  font-weight: 500;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.resetButton:hover {
+  color: #1f2937;
+}
+
+/* ==================== Responsive ==================== */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .questionText {
+    font-size: 1.25rem;
+  }
+
+  .totalAmount {
+    font-size: 2rem;
+  }
+
+  .totalCurrency {
+    font-size: 1.25rem;
+  }
+
+  .profileGrid {
+    grid-template-columns: 1fr;
+  }
+}
