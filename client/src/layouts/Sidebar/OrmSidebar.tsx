@@ -9,14 +9,14 @@ const Sidebar: React.FC = () => {
       </div>
 
       <nav className="sidebar-menu">
-        <NavLink
+        {/* <NavLink
           to="/orm-calculator"
           className={({ isActive }) =>
             `sidebar-item ${isActive ? "active" : ""}`
           }
         >
           ORM Package Calculator
-        </NavLink>
+        </NavLink> */}
 
         <NavLink
           to="/orm-presentation"
