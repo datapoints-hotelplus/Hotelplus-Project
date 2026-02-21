@@ -257,7 +257,7 @@ const MarcomCalculator: React.FC = () => {
   const isStepComplete = (): boolean => {
     const currentQ = questions[currentStep];
     if (currentQ.type === 'multiple') {
-      return answers[currentQ.key] && (answers[currentQ.key] as string[]).length > 0;
+      return (answers[currentQ.key] as string[]).length > 0;
     }
     return answers[currentQ.key] !== '';
   };
@@ -627,7 +627,8 @@ const PackageSelectionView: React.FC<any> = ({
       <PackageCheckbox label="Social Plus + Meta 4 Content (Single Post / Album ต่อเดือน)" price="4,000" checked={selectedPackages.liteMetaContent} onChange={() => togglePackage('liteMetaContent')} />
       <PackageCheckbox label="บริการ KOL (nano) 1 ท่าน: 1 Slide show + 1 VDO / 2 posts" price="4,000" note="ไม่รวมค่าเดินทาง+ที่พัก" checked={selectedPackages.liteKol} onChange={() => togglePackage('liteKol')} />
       <PackageCheckbox label="บริการ Ad Management (ไม่จำกัดแคมเปญ)" price="3,000" note="ยังไม่รวมงบ Ads" checked={selectedPackages.liteAdManagement} onChange={() => togglePackage('liteAdManagement')} />
-      <PackageCheckbox label="Google My Business + IBE" price="TBD" checked={selectedPackages.liteGmbIbe} onChange={() => togglePackage('liteGmbIbe')} disabled note="รอค่าระบบจาก PS" />
+      <PackageCheckbox label="Google My Business + IBE" price="TBD" checked={selectedPackages.liteGmbIbe} onChange={() => togglePackage('liteGmbIbe')} disabled={true}note="รอค่าระบบจาก PS" 
+/>
       
       <div className={styles.addOnSection}>
         <p className={styles.addOnLabel}>Add-ons (บริการเสริม)</p>
