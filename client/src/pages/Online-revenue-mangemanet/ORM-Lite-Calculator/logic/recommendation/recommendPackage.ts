@@ -42,7 +42,7 @@ export function recommendPackage({
   if (!liteEligible && fullEligible) {
     return {
       recommendation: "Full Services",
-      reason: "Only Full Services Package is eligible",
+      reason: "แพ็กเกจบริหารครบวงจร พร้อมกลยุทธ์เชิงลึกเฉพาะโรงแรม",
     };
   }
 

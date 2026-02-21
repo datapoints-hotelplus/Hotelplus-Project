@@ -6,25 +6,25 @@
 
 /* Section Styling */
 .orm-lite-calculator section {
-  background: white;
+  background: var(--color-clean);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .orm-lite-calculator section h2 {
   margin: 0 0 20px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .orm-lite-calculator section:nth-of-type(2) h2::before {
-  content: "📅";
+  content: "🎁";
 }
 
 /* Basic Information Section */
@@ -38,45 +38,45 @@
   flex-direction: column;
   gap: 8px;
   font-size: 14px;
-  color: #555;
+  color: var(--color-secondary);
   font-weight: 500;
 }
 
 .orm-lite-calculator label .required {
-  color: #e53e3e;
+  color: #ff0000;
   margin-left: 4px;
 }
 
 .orm-lite-calculator input[type="number"] {
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-primary);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.2s;
-  background: #f8f9fa;
+  background: var(--color-clean);
 }
 
 .orm-lite-calculator input[type="number"]:focus {
   outline: none;
-  border-color: #4299e1;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  border-color: var(--color-secondary);
+  background: var(--color-clean);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .orm-lite-calculator input[type="text"] {
   padding: 10px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-primary);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.2s;
-  background: #f8f9fa;
+  background: var(--color-clean);
 }
 
 .orm-lite-calculator input[type="text"]:focus {
   outline: none;
-  border-color: #4299e1;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  border-color: var(--color-secondary);
+  background: var(--color-clean);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Season Setup Section */
@@ -96,12 +96,12 @@
 
 .season-card.high {
   border-color: #e53e3e;
-  background: #fff5f5;
+  background: var(--color-clean)5f5;
 }
 
 .season-card.shoulder {
   border-color: #ed8936;
-  background: #fffaf0;
+  background: var(--color-clean)af0;
 }
 
 .season-card.low {
@@ -189,7 +189,7 @@
 
 .btn-calculate {
   background: #48bb78;
-  color: white;
+  color: var(--color-clean);
   flex: 1;
 }
 
@@ -214,7 +214,7 @@
 
 /* Errors Section */
 .errors-section {
-  background: #fff5f5;
+  background: var(--color-clean)5f5;
   border: 1px solid #feb2b2;
   border-radius: 8px;
   padding: 16px;
@@ -244,7 +244,7 @@
 }
 
 .results-section h2 {
-  color: white;
+  color: var(--color-clean);
   margin-bottom: 8px;
 }
 
@@ -281,11 +281,11 @@
 
 /* Add-ons Section */
 .addon-service {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--bt-gray);
   border-radius: 12px;
   padding: 14px 16px;
   margin-bottom: 10px;
-  background: #fff;
+  background: var(--color-clean);
   transition: box-shadow 0.2s;
 }
 
@@ -309,7 +309,7 @@
 }
 
 .addon-option:hover {
-  background: #f7fafc;
+  background: var(--color-primary);
 }
 
 .addon-option input[type="checkbox"] {
@@ -319,19 +319,22 @@
   cursor: pointer;
 }
 
+
+
 /* Package Cards */
 .package-card {
-  background: white;
-  border: 2px solid #e2e8f0;
+  background: var(--color-clean);
+  border: 2px solid #006eff;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .package-card h3 {
   margin: 0 0 16px 0;
   font-size: 16px;
-  color: #000000;
+  color: var(--color-secondary);
 }
 
 .breakdown p {
@@ -354,9 +357,10 @@
   gap: 24px;
   margin-top: 24px;
 }
+
 .fs-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--color-clean);
+  border: 1px solid var(--bt-gray);
   border-radius: 16px;
   padding: 22px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -367,10 +371,63 @@
   transform: translateY(-4px);
   box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
 }
+
+
+/* ── B Only Info Icon + Tooltip ── */
+.bonly-info {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.bonly-info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: var(--color-clean);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.bonly-tooltip-inner {
+  display: none;
+  position: absolute;
+  top: 28px;
+  right: 0;
+  z-index: 50;
+  width: 370px;
+  background: rgba(17, 24, 39, 0.96);
+  color:var(--color-clean);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 13px;
+  line-height: 1.7;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.bonly-tooltip-inner p {
+  margin: 0 0 4px;
+}
+
+.bonly-info:hover .bonly-tooltip-inner {
+  display: block;
+}
+
+
 .fs-card.recommended {
   border: 2px solid #f59e0b;
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
 }
+
+
 .fs-header {
   display: flex;
   justify-content: space-between;
@@ -401,14 +458,14 @@
 
 .fs-badge {
   background: #f59e0b;
-  color: #fff;
-  font-size: 11px;
+  color: var(--color-clean);
+  font-size: 12px;
   padding: 4px 10px;
   border-radius: 999px;
 }
 .fs-price {
-  background: #d1fae5;
-  color: #ea580c;
+  background: var(--color-primary);
+  color: var(--color-secondary);
   text-align: center;
   padding: 14px;
   border-radius: 12px;
@@ -421,15 +478,12 @@
   justify-content: space-between;
   padding: 8px 0;
   font-size: 14px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--bt-gray);
 }
 
-.fs-breakdown div:last-child {
-  border-bottom: none;
-}
 .package-box {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--color-clean);
+  border: 1px solid var(--bt-gray);
   border-radius: 14px;
   padding: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -450,9 +504,7 @@
 
 /* Add-on section */
 .addon-section{
-  margin-top:16px;
   padding-top:12px;
-  border-top:1px solid #e5e7eb;
 }
 
 .addon-title{
@@ -464,7 +516,7 @@
 .addon-list{
   padding-left:18px;
   margin:0;
-  color:#000000;
+  color:var(--color-secondary);
   line-height:1.6;
   font-size:13px;
 }
@@ -508,12 +560,12 @@
 
 .status-badge.stable {
   background: #10b981;
-  color: white;
+  color: var(--color-clean);
 }
 
 .status-badge.performance {
   background: #8b5cf6;
-  color: white;
+  color: var(--color-clean);
 }
 
 /* Price Highlight */
@@ -526,7 +578,7 @@
 
 /* Package Breakdown */
 .package-breakdown {
-  background: white;
+  background: var(--color-clean);
   border-radius: 8px;
   padding: 16px;
   margin: 16px 0;
@@ -571,7 +623,7 @@
   align-items: center;
   padding: 10px;
   margin: 8px 0;
-  background: white;
+  background: var(--color-clean);
   border-radius: 6px;
   gap: 10px;
 }
@@ -703,7 +755,7 @@
 }
 
 .modal {
-  background: #fff;
+  background: var(--color-clean);
   padding: 24px;
   width: 320px;
   border-radius: 12px;
@@ -739,7 +791,7 @@
 }
 
 .info-btn:hover {
-  background: #000000;
+  background: var(--color-secondary);
   color: var(--color-primary);
 }
 
@@ -756,7 +808,7 @@
 
 /* ---------- Modal Box ---------- */
 .modal-box {
-  background: #ffffff;
+  background: var(--color-clean);
   padding: 24px;
   width: 92%;
   max-width: 850px;
@@ -821,7 +873,7 @@
 /* Body rows */
 .service-table tbody td {
   padding: 12px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--bt-gray);
 }
 
 .service-table tbody tr:hover {
@@ -854,20 +906,14 @@
   font-size: 12px;
 }
 .recommend-summary {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-clean);
+  border: 2px solid var(--color-secondary);
   border-radius: 10px;
   padding: 12px 14px;
-  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-
-/* label เล็ก */
-.recommend-label {
-  font-size: 20px;
-  margin-bottom: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 /* badge */
@@ -875,10 +921,11 @@
   align-self: flex-start;
   background: #e0f2fe;
   color: #0369a1;
-  padding: 4px 10px;
+  padding: 0px 10px;
   border-radius: 999px;
   font-size: 15px;
   font-weight: 600;
+  margin-top: -15px;
 }
 
 /* reason */
@@ -895,16 +942,13 @@
   margin-top: 20px;
 }
 
-/* เพิ่มใน orm-Presentation.css */
-
-/* เพิ่มใน orm-Presentation.css */
 
 .addon-service {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--bt-gray);
   border-radius: 12px;
   padding: 14px 16px;
   margin-bottom: 10px;
-  background: #fff;
+  background: var(--color-clean);
   transition: box-shadow 0.2s;
 }
 
@@ -973,12 +1017,12 @@
 }
 
 .stepper-btn--add {
-  background: #fff;
+  background: var(--color-clean);
   color: #ee4d2d;
 }
 
 .stepper-btn--add:hover {
-  background: #fff3f0;
+  background: var(--color-clean)3f0;
 }
 
 .stepper-btn:hover:not(:disabled) {
@@ -1001,7 +1045,7 @@
   border-right: 1px solid #d1d5db;
   height: 32px;
   line-height: 32px;
-  background: #fff;
+  background: var(--color-clean);
 }
 
 .stepper-value--active {
@@ -1034,7 +1078,7 @@
   gap: 8px;
   padding: 10px 28px;
   border-radius: 12px;
-  border: 2px solid #000000;
+  border: 2px solid var(--color-secondary);
   background: var(--color-primary);
   font-size: 14px;
   font-weight: 500;
@@ -1045,7 +1089,7 @@
 }
 
 .yn-btn:hover {
-  border-color: #000000;
+  border-color: var(--color-secondary);
   color: var(--color-clean);
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
@@ -1059,7 +1103,7 @@
 }
 
 .yn-btn--no {
-  border-color: #000000;
+  border-color: var(--color-secondary);
   background: #ff0000;
   color: var(--color-clean);
   font-weight: 700;
@@ -1069,7 +1113,7 @@
 /* OTA chip grid */
 .ota-subtitle {
   font-size: 13px;
-  color: #000000;
+  color: var(--color-secondary);
   margin: 0 0 10px;
 }
 
@@ -1085,10 +1129,10 @@
   gap: 6px;
   padding: 8px 18px;
   border-radius: 12px;
-  border: 2px solid #000000;
+  border: 2px solid var(--color-secondary);
   background: var(--color-primary);
   font-size: 13px;
-  color: #000000;
+  color: var(--color-secondary);
   cursor: pointer;
   transition: all 0.15s;
   font-weight: 500;
@@ -1119,7 +1163,7 @@
 .ota-selected-count {
   margin: 10px 0 0;
   font-size: 12px;
-  color: #000000;
+  color: var(--color-secondary);
   font-weight: 600;
 }
 
@@ -1159,7 +1203,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--color-clean);
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   transition: transform 0.25s;
   display: block;
@@ -1167,4 +1211,15 @@
 
 .toggle-switch--on .toggle-knob {
   transform: translateX(30px);
+}
+
+.full-services-section {
+  border: 2px solid var(--color-primary);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 0 0 3px rgba(245, 11, 11, 0.15);
+}
+
+.addon-main{
+  border: 2px solid var(--color-secondary);
 }

@@ -203,6 +203,21 @@ export default function ORMLiteCalculatorView() {
     return { baseRate, otaAdjustment, varianceAdjustment, finalRate, tier };
   }, [revenueResult, input.otaSharePercent, input.highSeason.adr, input.lowSeason.adr]);
 
+  /* ----------- ADDON SECTION (shared UI) ----------- */
+  const AddonSection = () => (
+    <div className="addon-section">
+      <div className="addon-title">บริการเสริม</div>
+      <ul className="addon-list">
+        {allSelectedAddOns.length > 0 ? allSelectedAddOns.map(a => <li key={a.id}>{a.label}</li>) : <li>-</li>}
+      </ul>
+      {stepperSummary.length > 0 && (
+        <ul className="addon-list">
+          {stepperSummary.map(s => <li key={s.code}>{s.name} × {s.qty} ครั้ง</li>)}
+        </ul>
+      )}
+    </div>
+  );
+
   /* ----------- EXPORT BUILDERS ----------- */
   const buildLiteExportBlock = (): ExportPackageBlock | null => {
     if (!litePricing || !litePricing.isEligible) return null;
@@ -295,7 +310,6 @@ export default function ORMLiteCalculatorView() {
   /* ----------- RENDER ----------- */
   return (
     <div className="orm-lite-calculator">
-
       {/* BASIC INFO */}
       <section>
         <div className="section-header">
@@ -367,12 +381,8 @@ export default function ORMLiteCalculatorView() {
         <div className="ota-section">
           <h3>โรงแรมมี OTA อยู่แล้วหรือไม่?</h3>
           <div className="ota-yn-buttons">
-            <button type="button" className={`yn-btn ${hasExistingOTA === true ? "yn-btn--active" : ""}`} onClick={() => setHasExistingOTA(true)}>
-              Yes
-            </button>
-            <button type="button" className={`yn-btn ${hasExistingOTA === false ? "yn-btn--no" : ""}`} onClick={() => setHasExistingOTA(false)}>
-              No
-            </button>
+            <button type="button" className={`yn-btn ${hasExistingOTA === true ? "yn-btn--active" : ""}`} onClick={() => setHasExistingOTA(true)}>Yes</button>
+            <button type="button" className={`yn-btn ${hasExistingOTA === false ? "yn-btn--no" : ""}`} onClick={() => setHasExistingOTA(false)}>No</button>
           </div>
           {hasExistingOTA === true && (
             <div className="ota-checkbox-list">
@@ -399,7 +409,7 @@ export default function ORMLiteCalculatorView() {
             </div>
           )}
           {hasExistingOTA === false && (
-            <p className="ota-none-msg">🛎️ระบบจะจัดการลงทะเบียน OTA ให้กับโรงแรม</p>
+            <p className="ota-none-msg">📢 ระบบจะจัดการลงทะเบียน OTA ให้กับโรงแรม</p>
           )}
         </div>
 
@@ -424,14 +434,14 @@ export default function ORMLiteCalculatorView() {
 
           {/* RECOMMEND SUMMARY */}
           <div className="recommend-summary">
-            <span className="recommend-label">⭐ แพ็คเกจที่ระบบแนะนำ</span>
+            <h2 className="recommend-label">📌แพ็คเกจที่ระบบแนะนำ</h2>
             <span className="recommend-badge">{recommendation.recommendation}</span>
             <p className="recommend-reason">{recommendation.reason}</p>
           </div>
 
           {/* ADD-ONS (LITE ONLY) */}
           {isLiteEligible && (
-            <section>
+            <section className="addon-main">
               <h2>บริการเสริม (Add-On Services)</h2>
 
               {ADD_ON_SERVICES.map(service => {
@@ -480,7 +490,6 @@ export default function ORMLiteCalculatorView() {
                     />
                     <label htmlFor={item.id}>
                       <strong>{item.label}</strong>
-                      {item.forced && <span className="badge-required"> (บังคับ)</span>}
                       <p className="addon-desc">{item.description}</p>
                     </label>
                   </div>
@@ -506,7 +515,7 @@ export default function ORMLiteCalculatorView() {
           {/* LITE PACKAGE */}
           {isLiteEligible && litePricing && (
             <div className="package-card">
-              <h3>Lite Package{recommendation.recommendation === "LITE" && " ⭐ แนะนำ"}</h3>
+              <h3>Lite Package{recommendation.recommendation === "LITE" && " ⭐"}</h3>
               <p className="package-desc">แพ็กเกจบริหารโครงสร้างเริ่มต้นอย่างมีทิศทาง ในงบประมาณที่คุ้มค่า</p>
               <p>ระดับ: {litePricing.tier}</p>
               <div className="breakdown">
@@ -514,7 +523,7 @@ export default function ORMLiteCalculatorView() {
                 <p><span>อัตราค่าคอมมิชชั่น:</span><span>{(litePricing.commissionRate * 100).toFixed(2)}%</span></p>
                 {(stepperSummary.length > 0 || allSelectedAddOns.length > 0) && (
                   <div style={{ margin: "12px 0", padding: "12px 14px", background: "#f9fafb", borderRadius: "10px", border: "1px solid #e5e7eb" }}>
-                    <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 700, color: "#374151" }}>🛎️บริการเสริมที่เลือก</p>
+                    <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 700, color: "#374151" }}>🛒 บริการเสริมที่เลือก</p>
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       {stepperSummary.map(s => (
                         <div key={s.code} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -543,51 +552,44 @@ export default function ORMLiteCalculatorView() {
             </div>
           )}
 
-          {/* FULL PACKAGES */}
+          {/* ─────────────────────────────────────────────FULL PACKAGES───────────────────────────────────────────── */}
           {isFullEligible && fullPricing && (
-            <section>
+            <section className="full-services-section">
               <h2>แพ็คเกจ Full Services</h2>
               <div className="full-grid">
-
-                {/* SMART (A + B) */}
-                {/* SMART (A + B) */}
-                {revenueResult && (
-                  <div className="fs-card recommended">
-                    <div className="fs-header">
-                      <div className="fs-title">
-                        <span className="fs-icon">📦</span>
-                        <div>
-                          <h3>แพ็คเกจมาตรฐาน (A + B)</h3>
-                          <p>แพ็กเกจบริหารครบวงจร พร้อมกลยุทธ์เชิงลึกเฉพาะโรงแรม</p>
+                {/* ── SMART (A + B) ── */}
+                {revenueResult && (() => {
+                  const rawB = revenueResult.otaRevenuePerMonth * commissionData.finalRate;
+                  const packageCore = roundUpToHundred(Math.min(fullPricing.A + rawB + addOnTotal, 60000)); // cap ทุกกรณีที่ 60,000
+                  return (
+                    <div className="fs-card recommended">
+                      <div className="fs-header">
+                        <div className="fs-title">
+                          <span className="fs-icon">📦</span>
+                          <div>
+                            <h3>Smart Package (A + B) </h3>
+                            <p>แพ็กเกจบริหารครบวงจร พร้อมกลยุทธ์เชิงลึกเฉพาะโรงแรม</p>
+                          </div>
                         </div>
+                        <span className="fs-badge">แนะนำ</span>
                       </div>
-                      <span className="fs-badge">แนะนำ</span>
+                      <div className="fs-price">
+                        {formatCurrency(packageCore)} บาท/เดือน
+                        <p style={{ fontSize: "13px", color: "#000000"}}>ค่าบริการรายเดือน</p>
+                      </div>
+                      <div className="fs-breakdown">
+                        <div><span>ค่าบริการระบบ (A)</span><span>{formatCurrency(fullPricing.A)}</span></div>
+                        <div><span>ค่าคอมมิชชั่นที่เหมาะสมกับโรงแรมคุณ</span><span>{(commissionData.finalRate * 100).toFixed(2)}%</span></div>
+                      </div>
+                      <AddonSection />
                     </div>
-                    <div className="fs-price">
-                      {formatCurrency(roundUpToHundred(Math.min(fullPricing.A + revenueResult.otaRevenuePerMonth * commissionData.finalRate, 60000) + addOnTotal))} บาท/เดือน
-                    </div>
-                    <div className="fs-breakdown">
-                      <div><span>ค่าบริการระบบ (A)</span><span>{formatCurrency(fullPricing.A)}</span></div>
-                      <div><span>ค่าคอมมิชชั่นเฉลี่ย (B)</span><span>{formatCurrency(revenueResult.otaRevenuePerMonth * commissionData.finalRate)}</span></div>
-                    </div>
-                    <div className="addon-section">
-                      <div className="addon-title">บริการเสริม</div>
-                      <ul className="addon-list">
-                        {allSelectedAddOns.length > 0 ? allSelectedAddOns.map(a => <li key={a.id}>{a.label}</li>) : <li>-</li>}
-                      </ul>
-                      {stepperSummary.length > 0 && (
-                        <ul className="addon-list">
-                          {stepperSummary.map(s => <li key={s.code}>{s.name} × {s.qty} ครั้ง</li>)}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                )}
+                  );
+                })()}
 
-                {/* FIXED (A Only) */}
+                {/* ── FIXED (A Only) ── */}
                 {revenueResult && (() => {
                   const lowOtaRevenue = revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100);
-                  const lowB = lowOtaRevenue * commissionData.finalRate;
+                  const lowB          = lowOtaRevenue * commissionData.finalRate;
                   let weight = 1, discount = 1;
                   switch (commissionData.tier) {
                     case "F2": weight = 0.85; discount = 0.70; break;
@@ -599,76 +601,72 @@ export default function ORMLiteCalculatorView() {
                     case "F8": discount = 0.90; break;
                   }
                   const base = fullPricing.A + (lowB * weight);
-                  const fixedPrice = roundUpToHundred(Math.max(base * discount, fullPricing.A + 5000) + addOnTotal);
-                  return (
-                    <div className="fs-card">
-                      <div className="fs-header">
-                        <div className="fs-title">
-                          <span className="fs-icon">📦</span>
-                          <div>
-                            <h3>แพ็คเกจเหมาจ่าย (A Only)</h3>
-                            <p>แพ็กเกจบริหารครบวงจร พร้อมกลยุทธ์เชิงลึกเฉพาะโรงแรม</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="fs-price">{formatCurrency(fixedPrice)} บาท/เดือน</div>
-                      <div className="fs-breakdown">
-                        <div><span>Base</span><span>{formatCurrency(base)}</span></div>
-                      </div>
-                      <div className="addon-section">
-                        <div className="addon-title">บริการเสริม</div>
-                        <ul className="addon-list">
-                          {allSelectedAddOns.length > 0 ? allSelectedAddOns.map(a => <li key={a.id}>{a.label}</li>) : <li>-</li>}
-                        </ul>
-                        {stepperSummary.length > 0 && (
-                          <ul className="addon-list">
-                            {stepperSummary.map(s => <li key={s.code}>{s.name} × {s.qty} ครั้ง</li>)}
-                          </ul>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
+                  const packageCore = roundUpToHundred(Math.max(base * discount, fullPricing.A + 5000) + addOnTotal + systemCost);
 
-                {/* PERFORMANCE (B Only) */}
-                {revenueResult && (() => {
-                  const bOnlyRate = commissionData.finalRate + 0.02;
-                  const base = revenueResult.otaRevenuePerMonth * bOnlyRate;
-                  const bOnlyAmount = base + 5000;
-                  const minCharge = 8000;
-                  if (bOnlyAmount < 15000) return null;
                   return (
                     <div className="fs-card">
                       <div className="fs-header">
                         <div className="fs-title">
                           <span className="fs-icon">📦</span>
                           <div>
-                            <h3>แพ็คเกจคอมมิชชั่นเท่านั้น (B Only)</h3>
-                            <p>แพ็กเกจบริหารครบวงจร พร้อมกลยุทธ์เชิงลึกเฉพาะโรงแรม</p>
+                            <h3>Fixed Package (A Only)</h3>
+                            <p>เหมาะสำหรับโรงแรมที่ต้องการควบคุมต้นทุนและค่าใช้จ่าย ค่าบริการคงไม่ขึ้นกับรายได้โรงแรม “ตลอดอายุสัญญา” </p>
                           </div>
                         </div>
                       </div>
                       <div className="fs-price">
-                        {formatCurrency(roundUpToHundred(Math.max(bOnlyAmount, minCharge) + addOnTotal))} บาท/เดือน
+                        {formatCurrency(packageCore)} บาท/เดือน
+                        <p style={{ fontSize: "13px", color: "#000000"}}>ไม่มีค่าบริการรายเดือน</p>
                       </div>
                       <div className="fs-breakdown">
-                        <div><span>B Only Rate</span><span>{(bOnlyRate * 100).toFixed(2)}%</span></div>
+                        <div><span>ค่าใช้จ่ายเริ่มต้น</span> <span>{formatCurrency(systemCost)}</span></div>
+                        <div><span>ค่าบริการระบบ (A)</span>  <span>{formatCurrency(fullPricing.A)}</span></div>
                       </div>
-                      <div className="addon-section">
-                        <div className="addon-title">บริการเสริม</div>
-                        <ul className="addon-list">
-                          {allSelectedAddOns.length > 0 ? allSelectedAddOns.map(a => <li key={a.id}>{a.label}</li>) : <li>-</li>}
-                        </ul>
-                        {stepperSummary.length > 0 && (
-                          <ul className="addon-list">
-                            {stepperSummary.map(s => <li key={s.code}>{s.name} × {s.qty} ครั้ง</li>)}
-                          </ul>
-                        )}
-                      </div>
+                      <AddonSection />
                     </div>
                   );
                 })()}
 
+                {/* ── PERFORMANCE (B Only) ── */}
+                {revenueResult && (() => {
+                  const bOnlyRate   = commissionData.finalRate + 0.02;
+                  const bOnly       = revenueResult.otaRevenuePerMonth * bOnlyRate;
+                  const packageCore = roundUpToHundred(Math.max(bOnly+ 5000, 8000) + addOnTotal);
+                  if (packageCore < 15000) return null;
+                  return (
+                    <div className="fs-card">
+                      <div className="fs-header">
+                        <div className="fs-title">
+                          <span className="fs-icon">📦</span>
+                          <div>
+                            <h3>Performance Package (B Only)</h3>
+                            <p>แพ็กเกจบริหารครบวงจร พร้อมกลยุทธ์เชิงลึกเฉพาะโรงแรม</p>
+                          </div>
+                        </div>
+                        {/* Info icon with tooltip */}
+                        <div className="bonly-info">
+                          <span className="bonly-info-icon">?</span>
+                          <div className="bonly-tooltip-inner">
+                            <p style={{ fontWeight: 700, marginBottom: 8 }}>เงื่อนไขการใช้งาน</p>
+                            <p>✓ เหมาะสำหรับโรงแรมที่บริหารจัดการได้เองในยอดขาย OTA</p>
+                            <p>✓ ใช้ได้เฉพาะโรงแรมที่ไม่ใช่ "รายได้ต่ำ"</p>
+                            <p>✓ B Only ต้อง ≥ 15,000 บาท</p>
+                            <p style={{ fontWeight: 700, margin: "10px 0 8px" }}>เงื่อนไขการเรียกเก็บค่าบริการ</p>
+                            <p>บริษัทฯ จะเรียกเก็บค่าบริการจากยอดการจองที่เกิดขึ้นจริงในแต่ละเดือน หรือค่าบริการขั้นต่ำจำนวน 8,000 บาท (แปดพันบาทถ้วน) ต่อเดือน ทั้งนี้ บริษัทฯ จะเรียกเก็บค่าบริการตามจำนวนที่มีมูลค่าสูงกว่า</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="fs-price">
+                        {formatCurrency(packageCore)} บาท/เดือน
+                        <p style={{ fontSize: "13px", color: "#000000"}}>ไม่มีค่าบริการรายเดือน</p>
+                      </div>
+                      <div className="fs-breakdown">
+                        <div><span>B Only Rate</span><span>{(bOnlyRate * 100).toFixed(2)}%</span></div>
+                      </div>
+                      <AddonSection />
+                    </div>
+                  );
+                })()}
               </div>
             </section>
           )}
@@ -730,7 +728,7 @@ export default function ORMLiteCalculatorView() {
               <thead>
                 <tr>
                   <th>รายการ</th>
-                  <th>Lite <span className="badge-lite">Basic</span></th>
+                  <th>Lite <span className="badge-lite">Standard</span></th>
                   <th>Full Services <span className="badge-full">All Inclusive</span></th>
                 </tr>
               </thead>
