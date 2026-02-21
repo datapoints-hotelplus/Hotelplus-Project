@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useAuth } from "../../../AuthProvider";
 import { useRevenueEngine } from "./hooks/useRevenueEngine";
 import { useLitePricing } from "./hooks/useLitePricing";
 import { useFullPricing } from "./hooks/useFullPricing";
@@ -50,6 +51,8 @@ const ADD_ON_SERVICES = [
 /* ----------- COMPONENT ----------- */
 
 export default function ORMLiteCalculatorView() {
+  const { session } = useAuth();
+  const username = session?.user?.email ?? "Unknown";
 
   /* ----------- STORE ----------- */
   const {
@@ -802,13 +805,13 @@ export default function ORMLiteCalculatorView() {
                       className="export-main__checkbox"
                       checked={checked}
                       onChange={() => toggleExport(item.id as ExportPackage)}
-                      onClick={e => e.stopPropagation()} // ← เพิ่มตรงนี้
+                      onClick={e => e.stopPropagation()}
                     />
                     <div className="export-main__label-group">
                       <label
                         htmlFor={item.id}
                         className="export-main__label"
-                        onClick={e => e.stopPropagation()} // ← เพิ่มตรงนี้
+                        onClick={e => e.stopPropagation()}
                       >
                         {item.label}
                       </label>
@@ -827,7 +830,7 @@ export default function ORMLiteCalculatorView() {
                 if (selectedExports.includes("FIXED"))       { const b = buildFixedExportBlock();       if (b) blocks.push(b); }
                 if (selectedExports.includes("PERFORMANCE")) { const b = buildPerformanceExportBlock(); if (b) blocks.push(b); }
                 if (blocks.length === 0) return;
-                exportPricingPDF({ hotelName: input.hotelName, packages: blocks });
+                exportPricingPDF({ hotelName: input.hotelName, packages: blocks, preparedBy: username });
               }}
             >
               📤 Export PDF
@@ -877,7 +880,6 @@ export default function ORMLiteCalculatorView() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

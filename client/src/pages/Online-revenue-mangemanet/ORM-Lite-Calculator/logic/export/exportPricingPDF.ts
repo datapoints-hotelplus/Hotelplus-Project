@@ -125,6 +125,7 @@ function drawTable(doc: jsPDF, config: TableConfig, fontName: string): number {
 export function exportPricingPDF(params: {
   hotelName: string;
   packages: ExportPackageBlock[];
+  preparedBy: string;
 }) {
   const doc = new jsPDF("p", "mm", "a4");
   const pageW = doc.internal.pageSize.width;
@@ -318,27 +319,39 @@ export function exportPricingPDF(params: {
       for (let i = 1; i <= total; i++) {
         doc.setPage(i);
 
-        // Bottom bar — เพิ่มความสูงเป็น 14
+        // Bottom bar
         doc.setFillColor(...COLORS.headerBg);
-        doc.rect(0, pageH - 14, pageW, 14, "F");
+        doc.rect(0, pageH - 16, pageW, 16, "F");
 
-        // Hotel Plus+ — อยู่กึ่งกลาง bar แนวตั้ง
-        doc.setFont(fontName, "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(...COLORS.primary);
+        // Yellow accent line บนสุดของ footer
+        doc.setFillColor(...COLORS.primary);
+        doc.rect(0, pageH - 16, pageW, 1, "F");
 
-        // หมายเหตุ — กึ่งกลาง
+        // ฝั่งซ้าย — preparedBy
         doc.setFont(fontName, "normal");
         doc.setFontSize(8);
+        doc.setTextColor(...COLORS.footerText);
+        doc.text("จัดทำโดย", margin, pageH - 9);
+
+        doc.setFont(fontName, "bold");
+        doc.setFontSize(9);
+        doc.setTextColor(...COLORS.primary);
+        doc.text(params.preparedBy, margin, pageH - 4);
+
+        // กึ่งกลาง — หมายเหตุ
+        doc.setFont(fontName, "normal");
+        doc.setFontSize(7.5);
         doc.setTextColor(...COLORS.footerText);
         doc.text(
           "หมายเหตุ: ราคานี้เป็นการประเมินเบื้องต้น บริษัทขอสงวนสิทธิ์ในการเปลี่ยนแปลง",
           pageW / 2, pageH - 6, { align: "center" }
         );
 
-        // เลขหน้า — ขวา
+        // ฝั่งขวา — เลขหน้า
+        doc.setFont(fontName, "normal");
+        doc.setFontSize(8);
         doc.setTextColor(...COLORS.footerText);
-        doc.text(`${i} / ${total}`, pageW - margin, pageH - 6, { align: "right" });
+        doc.text(`${i} / ${total}`, pageW - margin, pageH - 4, { align: "right" });
       }
 
       /* ========== SAVE ========== */
