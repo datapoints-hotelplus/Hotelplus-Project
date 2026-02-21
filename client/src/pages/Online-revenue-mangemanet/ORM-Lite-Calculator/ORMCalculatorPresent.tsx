@@ -208,11 +208,31 @@ export default function ORMLiteCalculatorView() {
     <div className="addon-section">
       <div className="addon-title">บริการเสริม</div>
       <ul className="addon-list">
-        {allSelectedAddOns.length > 0 ? allSelectedAddOns.map(a => <li key={a.id}>{a.label}</li>) : <li>-</li>}
+        {allSelectedAddOns.length > 0
+          ? allSelectedAddOns.map(a => (
+              <li key={a.id}>
+                <span>• {a.label}</span>
+                {(a.id === "REVPLUS" || a.id === "REGISTER_OTA") && (
+                  <span className="addon-unit">One Time Service</span>
+                )}
+              </li>
+            ))
+          : <li>-</li>}
       </ul>
       {stepperSummary.length > 0 && (
         <ul className="addon-list">
-          {stepperSummary.map(s => <li key={s.code}>{s.name} × {s.qty} ครั้ง</li>)}
+          {stepperSummary.map(s => (
+            <li key={s.code}>
+              <span>• {s.name}</span>
+              <span className="addon-unit--stepper">
+                {s.code === "EXTRA_OTA"
+                  ? `${s.qty} OTA / Month`
+                  : s.code === "RESERVATION_MANAGEMENT"
+                    ? "Monthly"
+                    : `${s.qty} Item`}
+              </span>
+            </li>
+          ))}
         </ul>
       )}
     </div>
@@ -221,19 +241,39 @@ export default function ORMLiteCalculatorView() {
   /* ----------- EXPORT BUILDERS ----------- */
   const buildLiteExportBlock = (): ExportPackageBlock | null => {
     if (!litePricing || !litePricing.isEligible) return null;
+
+    const addonRows = [
+      ...stepperSummary.map(s => ({
+        label: `  • ${s.name} × ${s.qty}`,
+        value: s.code === "EXTRA_OTA"
+          ? `${s.qty} OTA / Month`
+          : s.code === "RESERVATION_MANAGEMENT"
+            ? "Monthly"
+            : "One Time Service",
+      })),
+      ...allSelectedAddOns.map(a => ({
+        label: `  • ${a.label}`,
+        value: "One Time Service",
+      })),
+    ];
+
     return {
       packageName: "Lite Package",
       rows: [
-        { label: "Base Monthly Fee", value: formatCurrency(litePricing.baseMonthlyFee) },
-        { label: "Commission Rate", value: `${(litePricing.commissionRate * 100).toFixed(2)}%` },
-        { label: "Commission Cost", value: formatCurrency(litePricing.commissionCost) },
-        { label: "Add-on Services", value: formatCurrency(addOnTotal) },
+        { label: "ค่าบริการรายเดือนพื้นฐาน", value: formatCurrency(litePricing.baseMonthlyFee) },
+        { label: "อัตราค่าคอมมิชชั่น",        value: `${(litePricing.commissionRate * 100).toFixed(2)}%` },
+        ...(addonRows.length > 0 ? [
+          { label: "บริการเสริม", value: "" },
+          ...addonRows,
+        ] : [
+          { label: "บริการเสริม", value: "" },
+        ]),
       ],
       totalLabel: "ค่าบริการรวม / เดือน",
-      totalValue: formatCurrency(roundUpToHundred(litePricing.totalFee)),
+      totalValue: formatCurrency(roundUpToHundred(litePricing.baseMonthlyFee + litePricing.commissionCost + addOnTotal)),
     };
   };
-
+  
   const buildFixedExportBlock = (): ExportPackageBlock | null => {
     if (!revenueResult || !fullPricing) return null;
     const lowOtaRevenue = revenueResult.lowRevenuePerMonth * (input.otaSharePercent / 100);
@@ -249,58 +289,91 @@ export default function ORMLiteCalculatorView() {
       case "F8": weight = 1;    discount = 0.90; break;
     }
     const base = fullPricing.A + (lowB * weight);
-    const fixedPrice = roundUpToHundred(Math.max(base * discount, fullPricing.A + 5000));
+    const packageCore = roundUpToHundred(Math.max(base * discount, fullPricing.A + 5000) + addOnTotal + systemCost);
+
     return {
       packageName: "Fixed Package (A Only)",
+      description: "แพ็คเกจค่าบริการคงที่ ไม่ขึ้นกับรายได้โรงแรม",
       rows: [
-        { label: "Low Season OTA Revenue", value: formatCurrency(lowOtaRevenue) },
-        { label: "Adjusted Commission Rate", value: `${(commissionData.finalRate * 100).toFixed(1)}%` },
-        { label: `Base = A + (Low B × ${(weight * 100).toFixed(0)}%)`, value: formatCurrency(base) },
-        { label: "Fixed Rate", value: formatCurrency(fixedPrice) },
-        { label: "Setup Fee (C) - จ่ายครั้งแรก", value: formatCurrency(systemCost) },
+        { label: "ค่าบริการระบบ (A)",        value: formatCurrency(fullPricing.A) },
+        { label: "ค่าคอมมิชชั่นที่เหมาะสมกับโรงแรมคุณ", value: `${(commissionData.finalRate * 100).toFixed(1)}%` },
+        { label: "Setup Fee - จ่ายครั้งแรก", value: formatCurrency(systemCost) },
       ],
       totalLabel: "ค่าบริการเหมาจ่าย / เดือน",
-      totalValue: formatCurrency(fixedPrice),
+      totalValue: formatCurrency(packageCore),
     };
   };
 
   const buildPerformanceExportBlock = (): ExportPackageBlock | null => {
     if (!revenueResult) return null;
     const bOnlyRate = commissionData.finalRate + 0.02;
-    const otaRevenue = revenueResult.otaRevenuePerMonth;
-    const baseBOnly = otaRevenue * bOnlyRate;
-    const bOnlyAmount = roundUpToHundred(Math.max(baseBOnly + 5000, 8000));
+    const addonRows = [
+      ...stepperSummary.map(s => ({
+        label: `  • ${s.name} × ${s.qty}`,
+        value: s.code === "EXTRA_OTA"
+          ? `${s.qty} OTA / Month`
+          : s.code === "RESERVATION_MANAGEMENT"
+            ? "Monthly"
+            : "One Time Service",
+      })),
+      ...allSelectedAddOns.map(a => ({
+        label: `  • ${a.label}`,
+        value: "One Time Service",
+      })),
+    ];
+
     return {
       packageName: "Performance Package (B Only)",
+      description: "แพ็กเกจคิดค่าบริการตามผลงาน",
       rows: [
-        { label: "OTA Revenue / Month", value: formatCurrency(otaRevenue) },
-        { label: "B Only Rate", value: `${(bOnlyRate * 100).toFixed(2)}%` },
-        { label: "B Only = OTA Revenue × Rate", value: formatCurrency(baseBOnly) },
-        { label: "+ Service Fee", value: formatCurrency(5000) },
-        { label: "Minimum Charge", value: formatCurrency(8000) },
+        { label: "ค่าคอมมิชชั่นที่เหมาะสมกับโรงแรมคุณ", value: `${(bOnlyRate * 100).toFixed(2)}%` },
+        ...(addonRows.length > 0 ? [
+          { label: "บริการเสริม", value: "" },
+          ...addonRows,
+        ] : []),
       ],
-      totalLabel: "ค่าบริการ / เดือน",
-      totalValue: formatCurrency(bOnlyAmount),
+      totalLabel: "ค่าคอมมิชชั่น / เดือน",
+      totalValue: `${(bOnlyRate * 100).toFixed(2)}%`,
+      conditions: [
+        "เงื่อนไขการใช้งาน",
+        "  • เหมาะสำหรับโรงแรมที่ต้องการควบคุมต้นทุนคงที่",
+        "  • บริษัทฯ จะเรียกเก็บค่าบริการจากยอดการจองที่เกิดขึ้นจริงในแต่ละเดือน หรือค่าบริการขั้นต่ำ 8,000 บาท (แปดพันบาทถ้วน) ต่อเดือน ทั้งนี้ บริษัทฯ จะเรียกเก็บค่าบริการตามจำนวนที่มีมูลค่าสูงกว่า",
+      ],
     };
   };
 
   const buildSmartExportBlock = (): ExportPackageBlock | null => {
     if (!revenueResult || !fullPricing) return null;
+
     const otaRevenue = revenueResult.otaRevenuePerMonth;
     const rawB = otaRevenue * commissionData.finalRate;
-    const finalTotal = roundUpToHundred(Math.min(fullPricing.A + rawB, 60000));
+    const finalTotal = roundUpToHundred(Math.min(fullPricing.A + rawB + addOnTotal, 60000));
+
+    const addonRows = [
+      ...stepperSummary.map(s => ({
+        label: `  • ${s.name} × ${s.qty}`,
+        value: s.code === "EXTRA_OTA"
+          ? `${s.qty} OTA / Month`
+          : s.code === "RESERVATION_MANAGEMENT"
+            ? "Monthly"
+            : "One Time Service",
+      })),
+      ...allSelectedAddOns.map(a => ({
+        label: `  • ${a.label}`,
+        value: "One Time Service",
+      })),
+    ];
+
     return {
       packageName: "Smart Package (A + B)",
+      description: "แพ็คเกจผสมผสาน เพื่อผลลัพธ์ที่ครอบคลุมยิ่งขึ้น",
       rows: [
-        { label: `A = System Cost × ${fullPricing.aMultiplier.toFixed(2)}`, value: formatCurrency(fullPricing.A) },
-        { label: `System Cost (${input.roomKey} ห้อง)`, value: formatCurrency(fullPricing.systemCost) },
-        { label: "A Multiplier (ตัวคูณ)", value: `${fullPricing.aMultiplier.toFixed(2)}x` },
-        { label: "ค่าบริการระบบ (A)", value: formatCurrency(fullPricing.A) },
-        { label: "Tier (จากรายได้เฉลี่ย)", value: commissionData.tier },
-        { label: "Base Commission Rate", value: `${(commissionData.baseRate * 100).toFixed(1)}%` },
-        { label: "OTA Share", value: `${input.otaSharePercent}%` },
-        { label: "Adjusted Commission Rate", value: `${(commissionData.finalRate * 100).toFixed(1)}%` },
-        { label: "B = รายได้ OTA × Rate", value: formatCurrency(rawB) },
+        { label: "ค่าบริการระบบ (A)",                          value: formatCurrency(fullPricing.A) },
+        { label: "ค่าคอมมิชชั่นที่เหมาะสมกับโรงแรมของคุณ",    value: `${(commissionData.finalRate * 100).toFixed(2)}%` },
+        ...(addonRows.length > 0 ? [
+          { label: "บริการเสริม", value: "" },
+          ...addonRows,
+        ] : []),
       ],
       totalLabel: "ค่าบริการรวม / เดือน",
       totalValue: formatCurrency(finalTotal),
@@ -442,7 +515,7 @@ export default function ORMLiteCalculatorView() {
           {/* ADD-ONS (LITE ONLY) */}
           {isLiteEligible && (
             <section className="addon-main">
-              <h2>บริการเสริม (Add-On Services)</h2>
+              <h2>🤝 บริการเสริม (Add-On Services)</h2>
 
               {ADD_ON_SERVICES.map(service => {
                 const isToggle = service.code === "RESERVATION_MANAGEMENT";
@@ -491,7 +564,10 @@ export default function ORMLiteCalculatorView() {
                       />
                     </label>
                     <div>
-                      <strong>{item.label}</strong>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <strong>{item.label}</strong>
+                        <span className="addon-unit">One Time Service</span>
+                      </div>
                       <p className="addon-desc">{item.description}</p>
                     </div>
                   </div>
@@ -530,13 +606,21 @@ export default function ORMLiteCalculatorView() {
                       {stepperSummary.map(s => (
                         <div key={s.code} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                           <span style={{ fontSize: "13px", color: "#4b5563" }}>• {s.name}</span>
-                          <span style={{ fontSize: "12px", background: "#ee4d2d", color: "#fff", borderRadius: "20px", padding: "2px 10px", fontWeight: 600 }}>{s.qty} Item</span>
+                          <span style={{ fontSize: "12px", background: "#ee4d2d", color: "#fff", borderRadius: "20px", padding: "2px 10px", fontWeight: 600 }}>
+                            {s.code === "EXTRA_OTA"
+                              ? `${s.qty} OTA / Month`
+                              : s.code === "RESERVATION_MANAGEMENT"
+                                ? "Monthly"
+                                : `${s.qty} Item`}
+                          </span>
                         </div>
                       ))}
                       {allSelectedAddOns.map(a => (
                         <div key={a.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                           <span style={{ fontSize: "13px", color: "#4b5563" }}>• {a.label}</span>
-                          <span style={{ fontSize: "12px", background: "#6366f1", color: "#fff", borderRadius: "20px", padding: "2px 10px", fontWeight: 600 }}>Included</span>
+                          <span style={{ fontSize: "12px", background: "#6366f1", color: "#fff", borderRadius: "20px", padding: "2px 10px", fontWeight: 600 }}>
+                            {a.id === "REVPLUS" || a.id === "REGISTER_OTA" ? "One Time Service" : "Included"}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -642,7 +726,7 @@ export default function ORMLiteCalculatorView() {
                           <span className="fs-icon">📦</span>
                           <div>
                             <h3>Performance Package (B Only)</h3>
-                            <p>แพ็กเกจบริหารครบวงจร พร้อมกลยุทธ์เชิงลึกเฉพาะโรงแรม</p>
+                            <p>แพ็กเกจบริหารครบวงจร พร้อมกลยุทธ์เชิงลึกเฉพาะโรงแรม เติมคำเติมคำเติมคำ</p>
                           </div>
                         </div>
                         {/* Info icon with tooltip */}
@@ -698,10 +782,10 @@ export default function ORMLiteCalculatorView() {
 
             {/* Package options */}
             {[
-              { id: "LITE",        label: "Lite Package",                show: !!litePricing?.isEligible },
-              { id: "SMART",       label: "Smart Package (A+B)",         show: true },
-              { id: "FIXED",       label: "Fixed Package (A Only)",      show: true },
-              { id: "PERFORMANCE", label: "Performance Package (B Only)", show: true },
+              { id: "SMART",       label: "Smart Package (A+B)",          desc: "แพ็คเกจผสมผสาน เพื่อผลลัพธ์ที่ครอบคลุมยิ่งขึ้น",  show: true },
+              { id: "FIXED",       label: "Fixed Package (A Only)",       desc: "แพ็คเกจค่าบริการคงที่ ไม่ขึ้นกับรายได้โรงแรม",      show: true },
+              { id: "PERFORMANCE", label: "Performance Package (B Only)", desc: "แพ็กเกจคิดค่าบริการตามผลงาน",                        show: true },
+              { id: "LITE",        label: "Lite Package",                 desc: "",                                                   show: !!litePricing?.isEligible },
             ]
               .filter(item => item.show)
               .map(item => {
@@ -718,28 +802,36 @@ export default function ORMLiteCalculatorView() {
                       className="export-main__checkbox"
                       checked={checked}
                       onChange={() => toggleExport(item.id as ExportPackage)}
+                      onClick={e => e.stopPropagation()} // ← เพิ่มตรงนี้
                     />
-                    <label htmlFor={item.id} className="export-main__label">
-                      {item.label}
-                    </label>
+                    <div className="export-main__label-group">
+                      <label
+                        htmlFor={item.id}
+                        className="export-main__label"
+                        onClick={e => e.stopPropagation()} // ← เพิ่มตรงนี้
+                      >
+                        {item.label}
+                      </label>
+                      {item.desc && <span className="export-main__desc">{item.desc}</span>}
+                    </div>
                   </div>
                 );
               })}
               <button
-                className="export-main__btn"
-                disabled={selectedExports.length === 0}
-                onClick={() => {
-                  const blocks: ExportPackageBlock[] = [];
-                  if (selectedExports.includes("LITE"))        { const b = buildLiteExportBlock();        if (b) blocks.push(b); }
-                  if (selectedExports.includes("FIXED"))       { const b = buildFixedExportBlock();       if (b) blocks.push(b); }
-                  if (selectedExports.includes("PERFORMANCE")) { const b = buildPerformanceExportBlock(); if (b) blocks.push(b); }
-                  if (selectedExports.includes("SMART"))       { const b = buildSmartExportBlock();       if (b) blocks.push(b); }
-                  if (blocks.length === 0) return;
-                  exportPricingPDF({ hotelName: input.hotelName, packages: blocks });
-                }}
-              >
-                📤 Export PDF
-              </button>
+              className="export-main__btn"
+              disabled={selectedExports.length === 0}
+              onClick={() => {
+                const blocks: ExportPackageBlock[] = [];
+                if (selectedExports.includes("SMART"))       { const b = buildSmartExportBlock();       if (b) blocks.push(b); }
+                if (selectedExports.includes("FIXED"))       { const b = buildFixedExportBlock();       if (b) blocks.push(b); }
+                if (selectedExports.includes("PERFORMANCE")) { const b = buildPerformanceExportBlock(); if (b) blocks.push(b); }
+                if (selectedExports.includes("LITE"))        { const b = buildLiteExportBlock();        if (b) blocks.push(b); }
+                if (blocks.length === 0) return;
+                exportPricingPDF({ hotelName: input.hotelName, packages: blocks });
+              }}
+            >
+              📤 Export PDF
+            </button>
           </section>
 
           {!isLiteEligible && !isFullEligible && (

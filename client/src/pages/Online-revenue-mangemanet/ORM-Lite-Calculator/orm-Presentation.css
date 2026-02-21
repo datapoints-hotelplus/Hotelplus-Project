@@ -521,6 +521,14 @@
   font-size:13px;
 }
 
+.addon-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  list-style: none; /* ปิด bullet เดิม */
+}
+
 @media (max-width: 640px) {
   .full-grid {
     grid-template-columns: 1fr;
@@ -907,7 +915,7 @@
 }
 .recommend-summary {
   background: var(--color-clean);
-  border: 2px solid var(--color-secondary);
+  border: 2px solid #ff0000;
   border-radius: 10px;
   padding: 12px 14px;
   display: flex;
@@ -981,6 +989,34 @@
   color: #ee4d2d;
   font-weight: 600;
   margin: 0;
+}
+
+.addon-unit {
+  font-size: 11px;
+  color: var(--color-clean);
+  background: #6366f1;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.addon-section .addon-unit {
+  font-size: 10px;
+  color: var(--color-clean);
+  background: #6366f1;
+  border-radius: 20px;
+  padding: 2px 6px;
+  font-weight: 500;
+}
+
+/* stepperSummary — แดง-ส้ม */
+.addon-unit--stepper {
+  font-size: 10px;
+  color: var(--color-clean);
+  background: #ee4d2d;
+  border-radius: 20px;
+  padding: 2px 6px;
+  font-weight: 500;
 }
 
 /* ── Stepper (Shopee-style) ── */
@@ -1216,7 +1252,7 @@
 }
 
 .addon-main{
-  border: 2px solid var(--color-secondary);
+  border: 2px solid var(--color-primary);
 }
 
 
@@ -1310,4 +1346,15 @@
   color: #9ca3af;
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.export-main__label-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.export-main__desc {
+  font-size: 12px;
+  color: #9ca3af;
 }

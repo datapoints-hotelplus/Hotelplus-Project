@@ -5,9 +5,11 @@ export type ExportSectionRow = {
 
 export type ExportPackageBlock = {
   packageName: string;
+  description?: string;
   rows: ExportPackageRow[];
   totalLabel: string;
   totalValue: string;
+  conditions?: string[];
 };
 
 export type ExportPayload = {
