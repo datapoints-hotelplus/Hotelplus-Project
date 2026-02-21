@@ -782,10 +782,10 @@ export default function ORMLiteCalculatorView() {
 
             {/* Package options */}
             {[
-              { id: "SMART",       label: "Smart Package (A+B)",          desc: "แพ็คเกจผสมผสาน เพื่อผลลัพธ์ที่ครอบคลุมยิ่งขึ้น",  show: true },
-              { id: "FIXED",       label: "Fixed Package (A Only)",       desc: "แพ็คเกจค่าบริการคงที่ ไม่ขึ้นกับรายได้โรงแรม",      show: true },
-              { id: "PERFORMANCE", label: "Performance Package (B Only)", desc: "แพ็กเกจคิดค่าบริการตามผลงาน",                        show: true },
-              { id: "LITE",        label: "Lite Package",                 desc: "",                                                   show: !!litePricing?.isEligible },
+              { id: "SMART",       label: "Smart Package (A+B)",          desc: "แพ็คเกจผสมผสาน เพื่อผลลัพธ์ที่ครอบคลุมยิ่งขึ้น",show: true },
+              { id: "FIXED",       label: "Fixed Package (A Only)",       desc: "แพ็คเกจค่าบริการคงที่ ไม่ขึ้นกับรายได้โรงแรม",show: true },
+              { id: "PERFORMANCE", label: "Performance Package (B Only)", desc: "แพ็กเกจคิดค่าบริการตามผลงาน",show: true },
+              { id: "LITE",        label: "Lite Package",                 desc: "แพ็กเกจบริหารโครงสร้างเริ่มต้นอย่างมีทิศทาง ในงบประมาณที่คุ้มค่า",show: !!litePricing?.isEligible },
             ]
               .filter(item => item.show)
               .map(item => {
