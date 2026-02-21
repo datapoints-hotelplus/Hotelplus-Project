@@ -416,7 +416,7 @@ export default function ORMLiteCalculatorView() {
         {/* ACTION BUTTONS */}
         <div className="action-buttons">
           <button className="btn-calculate" onClick={calculateRevenue}>คำนวณผลลัพธ์</button>
-          <button className="btn-reset" onClick={() => { resetRevenue(); reset(); }}>รีเซ็ต</button>
+          <button className="btn-reset" onClick={() => { resetRevenue(); reset(); }}>⟳ รีเซ็ต</button>
         </div>
       </section>
 
@@ -434,7 +434,7 @@ export default function ORMLiteCalculatorView() {
 
           {/* RECOMMEND SUMMARY */}
           <div className="recommend-summary">
-            <h2 className="recommend-label">📌แพ็คเกจที่ระบบแนะนำ</h2>
+            <h2 className="recommend-label">📌แพ็กเกจที่ระบบแนะนำ</h2>
             <span className="recommend-badge">{recommendation.recommendation}</span>
             <p className="recommend-reason">{recommendation.reason}</p>
           </div>
@@ -479,19 +479,21 @@ export default function ORMLiteCalculatorView() {
               <div>
                 {ADD_ON_ONE_TIME.map((item) => (
                   <div key={item.id} className={`addon-option ${item.forced ? "forced" : ""}`}>
-                    <input
-                      type="checkbox"
-                      id={item.id}
-                      checked={item.forced || selectedAddOns.some(o => o.id === item.id)}
-                      disabled={item.forced}
-                      onChange={() => {
-                        if (!item.forced) toggleAddOnOption({ id: item.id, label: item.label, price: item.price });
-                      }}
-                    />
                     <label htmlFor={item.id}>
+                      <input
+                        type="checkbox"
+                        id={item.id}
+                        checked={item.forced || selectedAddOns.some(o => o.id === item.id)}
+                        disabled={item.forced}
+                        onChange={() => {
+                          if (!item.forced) toggleAddOnOption({ id: item.id, label: item.label, price: item.price });
+                        }}
+                      />
+                    </label>
+                    <div>
                       <strong>{item.label}</strong>
                       <p className="addon-desc">{item.description}</p>
-                    </label>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -555,7 +557,7 @@ export default function ORMLiteCalculatorView() {
           {/* ─────────────────────────────────────────────FULL PACKAGES───────────────────────────────────────────── */}
           {isFullEligible && fullPricing && (
             <section className="full-services-section">
-              <h2>แพ็คเกจ Full Services</h2>
+              <h2>แพ็กเกจ Full Services</h2>
               <div className="full-grid">
                 {/* ── SMART (A + B) ── */}
                 {revenueResult && (() => {
@@ -672,26 +674,15 @@ export default function ORMLiteCalculatorView() {
           )}
 
           {/* EXPORT */}
-          <button
-            disabled={selectedExports.length === 0}
-            onClick={() => {
-              const blocks: ExportPackageBlock[] = [];
-              if (selectedExports.includes("LITE"))        { const b = buildLiteExportBlock();        if (b) blocks.push(b); }
-              if (selectedExports.includes("FIXED"))       { const b = buildFixedExportBlock();       if (b) blocks.push(b); }
-              if (selectedExports.includes("PERFORMANCE")) { const b = buildPerformanceExportBlock(); if (b) blocks.push(b); }
-              if (selectedExports.includes("SMART"))       { const b = buildSmartExportBlock();       if (b) blocks.push(b); }
-              if (blocks.length === 0) return;
-              exportPricingPDF({ hotelName: input.hotelName, packages: blocks });
-            }}
-          >
-            Export PDF
-          </button>
+          <section className="export-main">
+            <h3>💾 เลือกแพ็กเกจเพื่อดาวน์โหลด PDF</h3>
 
-          <section className="export-section">
-            <h3>เลือกแพ็คเกจสำหรับ Export PDF</h3>
-            <label>
+            {/* Select All */}
+            <div className="export-main__select-all">
               <input
                 type="checkbox"
+                id="select-all"
+                className="export-main__checkbox"
                 checked={selectedExports.length === (litePricing?.isEligible ? 4 : 3)}
                 onChange={() => {
                   const available: ExportPackage[] = [];
@@ -700,18 +691,59 @@ export default function ORMLiteCalculatorView() {
                   toggleSelectAll(available);
                 }}
               />
-              Select All
-            </label>
-            {litePricing?.isEligible && (
-              <label><input type="checkbox" checked={selectedExports.includes("LITE")} onChange={() => toggleExport("LITE")} />Lite Package</label>
-            )}
-            <label><input type="checkbox" checked={selectedExports.includes("SMART")} onChange={() => toggleExport("SMART")} />Smart Package (A+B)</label>
-            <label><input type="checkbox" checked={selectedExports.includes("FIXED")} onChange={() => toggleExport("FIXED")} />Fixed Package (A Only)</label>
-            <label><input type="checkbox" checked={selectedExports.includes("PERFORMANCE")} onChange={() => toggleExport("PERFORMANCE")} />Performance Package (B Only)</label>
+              <label htmlFor="select-all" className="export-main__label">
+                เลือกทั้งหมด
+              </label>
+            </div>
+
+            {/* Package options */}
+            {[
+              { id: "LITE",        label: "Lite Package",                show: !!litePricing?.isEligible },
+              { id: "SMART",       label: "Smart Package (A+B)",         show: true },
+              { id: "FIXED",       label: "Fixed Package (A Only)",      show: true },
+              { id: "PERFORMANCE", label: "Performance Package (B Only)", show: true },
+            ]
+              .filter(item => item.show)
+              .map(item => {
+                const checked = selectedExports.includes(item.id as ExportPackage);
+                return (
+                  <div
+                    key={item.id}
+                    className={`export-main__row ${checked ? "export-main__row--checked" : ""}`}
+                    onClick={() => toggleExport(item.id as ExportPackage)}
+                  >
+                    <input
+                      type="checkbox"
+                      id={item.id}
+                      className="export-main__checkbox"
+                      checked={checked}
+                      onChange={() => toggleExport(item.id as ExportPackage)}
+                    />
+                    <label htmlFor={item.id} className="export-main__label">
+                      {item.label}
+                    </label>
+                  </div>
+                );
+              })}
+              <button
+                className="export-main__btn"
+                disabled={selectedExports.length === 0}
+                onClick={() => {
+                  const blocks: ExportPackageBlock[] = [];
+                  if (selectedExports.includes("LITE"))        { const b = buildLiteExportBlock();        if (b) blocks.push(b); }
+                  if (selectedExports.includes("FIXED"))       { const b = buildFixedExportBlock();       if (b) blocks.push(b); }
+                  if (selectedExports.includes("PERFORMANCE")) { const b = buildPerformanceExportBlock(); if (b) blocks.push(b); }
+                  if (selectedExports.includes("SMART"))       { const b = buildSmartExportBlock();       if (b) blocks.push(b); }
+                  if (blocks.length === 0) return;
+                  exportPricingPDF({ hotelName: input.hotelName, packages: blocks });
+                }}
+              >
+                📤 Export PDF
+              </button>
           </section>
 
           {!isLiteEligible && !isFullEligible && (
-            <p style={{ color: "#e53e3e", textAlign: "center" }}>ไม่สามารถแนะนำแพ็คเกจที่เหมาะสมได้</p>
+            <p style={{ color: "#e53e3e", textAlign: "center" }}>ไม่สามารถแนะนำแพ็กเกจที่เหมาะสมได้</p>
           )}
         </section>
       )}
