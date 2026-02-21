@@ -782,10 +782,10 @@ export default function ORMLiteCalculatorView() {
 
             {/* Package options */}
             {[
+              { id: "LITE",        label: "Lite Package",                 desc: "แพ็กเกจบริหารโครงสร้างเริ่มต้นอย่างมีทิศทาง ในงบประมาณที่คุ้มค่า",show: !!litePricing?.isEligible },
               { id: "SMART",       label: "Smart Package (A+B)",          desc: "แพ็คเกจผสมผสาน เพื่อผลลัพธ์ที่ครอบคลุมยิ่งขึ้น",show: true },
               { id: "FIXED",       label: "Fixed Package (A Only)",       desc: "แพ็คเกจค่าบริการคงที่ ไม่ขึ้นกับรายได้โรงแรม",show: true },
               { id: "PERFORMANCE", label: "Performance Package (B Only)", desc: "แพ็กเกจคิดค่าบริการตามผลงาน",show: true },
-              { id: "LITE",        label: "Lite Package",                 desc: "แพ็กเกจบริหารโครงสร้างเริ่มต้นอย่างมีทิศทาง ในงบประมาณที่คุ้มค่า",show: !!litePricing?.isEligible },
             ]
               .filter(item => item.show)
               .map(item => {
@@ -822,10 +822,10 @@ export default function ORMLiteCalculatorView() {
               disabled={selectedExports.length === 0}
               onClick={() => {
                 const blocks: ExportPackageBlock[] = [];
+                if (selectedExports.includes("LITE"))        { const b = buildLiteExportBlock();        if (b) blocks.push(b); }
                 if (selectedExports.includes("SMART"))       { const b = buildSmartExportBlock();       if (b) blocks.push(b); }
                 if (selectedExports.includes("FIXED"))       { const b = buildFixedExportBlock();       if (b) blocks.push(b); }
                 if (selectedExports.includes("PERFORMANCE")) { const b = buildPerformanceExportBlock(); if (b) blocks.push(b); }
-                if (selectedExports.includes("LITE"))        { const b = buildLiteExportBlock();        if (b) blocks.push(b); }
                 if (blocks.length === 0) return;
                 exportPricingPDF({ hotelName: input.hotelName, packages: blocks });
               }}
