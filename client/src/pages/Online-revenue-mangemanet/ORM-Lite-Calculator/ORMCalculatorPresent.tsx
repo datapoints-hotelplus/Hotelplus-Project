@@ -73,7 +73,7 @@ export default function ORMLiteCalculatorView() {
   } = useRevenueEngine();
 
   /* ----------- PRICING ----------- */
-  const { litePricing } = useLitePricing({ revenueResult, selectedAddOns });
+  const { litePricing } = useLitePricing({ revenueResult, selectedAddOns, selectedAddOnQty });
   const { fullPricing } = useFullPricing({ revenueResult, input });
 
   /* ----------- ELIGIBILITY ----------- */
