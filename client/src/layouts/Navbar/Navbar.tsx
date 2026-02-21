@@ -33,7 +33,7 @@ export default function Navbar() {
             )}
 
             {!loading && isOrm && (
-              <li><Link to="/orm-calculator">ORM Calculator</Link></li>
+              <li><Link to="/orm-presentation">ORM Calculator</Link></li>
             )}
           </ul>
         </div>
